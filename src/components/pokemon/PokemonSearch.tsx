@@ -26,7 +26,7 @@ export function PokemonSearch({ keyword = "" }: PokemonSearchProps) {
 
   return (
     <form
-      className="flex gap-3"
+      className="flex items-center gap-3 h-[2.7rem]"
       onSubmit={(e) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
@@ -42,21 +42,21 @@ export function PokemonSearch({ keyword = "" }: PokemonSearchProps) {
         });
       }}
     >
-      <div className="relative flex-1">
+      <div className="relative flex-1 h-full">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
         <Input
           name="keyword"
           defaultValue={keyword}
           placeholder="포켓몬 이름 또는 ID로 검색하세요..."
           className={cn(
-            "pl-10 pr-4 h-12 text-base",
+            "pl-10 pr-4 h-full text-base",
             "focus:ring-2 focus:ring-primary/20",
             "transition-all duration-200",
           )}
         />
       </div>
 
-      <Button type="submit" size="lg" className="gap-2 px-6">
+      <Button type="submit" size="lg" className="gap-2 h-full">
         <Search className="w-4 h-4" />
         검색
       </Button>
