@@ -69,10 +69,10 @@ type PokemonListFilters = {
  * // Jotai 방식 (전역에서 공유)
  * // 📌 값과 설정 함수 모두 필요 - useAtom 사용
  * const [filters, setFilters] = useAtom(pokemonListFiltersAtom);
- * 
+ *
  * // 📌 설정만 필요한 경우 - useSetAtom 사용
  * const setFilters = useSetAtom(pokemonListFiltersAtom);
- * 
+ *
  * // 📌 값만 읽는 경우 - useAtomValue 사용
  * const filters = useAtomValue(pokemonListFiltersAtom);
  * ```
@@ -117,7 +117,7 @@ export const pokemonListQueryAtom = atomWithQuery((get) => {
  * const [pokemonId, setPokemonId] = useAtom(pokemonIdOrNameAtom);
  * setPokemonId("pikachu"); // 이름으로 설정
  * setPokemonId(25);        // ID로 설정
- * 
+ *
  * // 📌 설정만 필요한 경우 - useSetAtom 사용
  * const setPokemonId = useSetAtom(pokemonIdOrNameAtom);
  * setPokemonId("charizard");

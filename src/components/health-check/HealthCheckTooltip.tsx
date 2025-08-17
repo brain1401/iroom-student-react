@@ -33,12 +33,10 @@ export default function HealthCheckTooltip({
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger asChild>
-          {children}
-        </TooltipTrigger>
-        
-        <TooltipContent 
-          side="bottom" 
+        <TooltipTrigger asChild>{children}</TooltipTrigger>
+
+        <TooltipContent
+          side="bottom"
           align="end"
           className="max-w-xs whitespace-pre-line text-sm"
         >
