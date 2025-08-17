@@ -4,11 +4,7 @@
  */
 
 // 포켓몬 카드 이미지 관리 훅
-export {
-  usePokemonCardImage,
-  type UsePokemonCardImageProps,
-  type UsePokemonCardImageReturn,
-} from "./usePokemonCardImage";
+export { usePokemonCardImage } from "./usePokemonCardImage";
 
 // 포켓몬 상세 이미지 관리 훅
 export { usePokemonImage } from "./usePokemonImage";

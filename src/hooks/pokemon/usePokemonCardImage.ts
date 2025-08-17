@@ -17,7 +17,7 @@ interface UsePokemonCardImageReturn {
   /** 이미지 에러 상태 */
   hasError: boolean;
   /** 이미지 ref */
-  imgRef: React.RefObject<HTMLImageElement>;
+  imgRef: React.RefObject<HTMLImageElement | null>;
   /** 이미지 로드 완료 핸들러 */
   handleImageLoad: () => void;
   /** 이미지 에러 핸들러 */
