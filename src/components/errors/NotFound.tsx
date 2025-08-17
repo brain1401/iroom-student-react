@@ -1,6 +1,6 @@
 export function NotFound() {
   return (
-    <div className="p-6 text-center">
+    <div className="flex-1 p-6 text-center">
       <h1 className="text-2xl font-bold">찾을 수 없는 페이지</h1>
       <p className="text-sm text-muted-foreground mt-2">
         요청한 페이지가 존재하지 않음
