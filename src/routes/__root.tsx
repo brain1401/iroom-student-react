@@ -133,7 +133,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         {/* RouteOptions.head에서 설정된 메타데이터와 링크를 렌더링 */}
         <HeadContent />
       </head>
-      <body className="h-full w-full flex flex-col font-[Noto_Sans_KR]">
+      <body className="h-full w-full flex flex-col font-noto-sans-kr">
         {/* 메인 애플리케이션 콘텐츠 */}
         {children}
 
