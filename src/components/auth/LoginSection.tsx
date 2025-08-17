@@ -3,6 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BookOpen } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const inputStyles = "h-12";
 
 /**
  * 로그인 섹션 컴포넌트
@@ -32,7 +35,7 @@ export function LoginSection() {
             id="username"
             name="username"
             placeholder="아이디를 입력하세요"
-            className="h-[2.6rem]"
+            className={inputStyles}
           />
         </div>
         <div className="space-y-2">
@@ -42,10 +45,10 @@ export function LoginSection() {
             name="password"
             type="password"
             placeholder="비밀번호를 입력하세요"
-            className="h-[2.6rem]"
+            className={inputStyles}
           />
         </div>
-        <Button type="submit" className="w-full h-[3rem]">
+        <Button type="submit" className={cn(inputStyles, "w-full")}>
           로그인
         </Button>
       </form>
