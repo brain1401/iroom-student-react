@@ -4,6 +4,7 @@ import {
   HealthCheckIcon,
   HealthCheckBadge,
   HealthCheckTooltip,
+  HealthCheckErrorFeedback,
 } from "@/components/health-check";
 
 /**
@@ -32,27 +33,47 @@ export default function HealthCheckStatus() {
     return null;
   }
 
+  const isError = healthSummary.status === "unhealthy";
+
   return (
-    <HealthCheckTooltip
-      message={healthSummary.message}
-      lastChecked={healthSummary.lastChecked}
-      responseTime={healthSummary.responseTime}
-    >
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={refreshHealthCheck}
-        disabled={isRefreshing}
-        className="h-8 px-2 gap-1.5 text-xs"
-        aria-label={`서버 상태: ${healthSummary.message}`}
+    <div className="relative flex flex-col items-end">
+      {/* 기존 컴팩트한 버튼 */}
+      <HealthCheckTooltip
+        message={healthSummary.message}
+        lastChecked={healthSummary.lastChecked}
+        responseTime={healthSummary.responseTime}
       >
-        <HealthCheckIcon status={healthSummary.status} className="text-sm" />
-        <HealthCheckBadge
-          status={healthSummary.status}
-          text="서버"
-          className="text-xs px-1.5 py-0.5 h-5"
-        />
-      </Button>
-    </HealthCheckTooltip>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={refreshHealthCheck}
+          disabled={isRefreshing}
+          className="h-8 px-2 gap-1.5 text-xs"
+          aria-label={`서버 상태: ${healthSummary.message}`}
+        >
+          <HealthCheckIcon status={healthSummary.status} className="text-sm" />
+          <HealthCheckBadge
+            status={healthSummary.status}
+            text="서버"
+            className="text-xs px-1.5 py-0.5 h-5"
+          />
+        </Button>
+      </HealthCheckTooltip>
+
+      {/* 에러 상태일 때 상세 피드백 표시 */}
+      {isError && (
+        <div className="absolute top-full right-0 mt-2 w-80 z-50">
+          <HealthCheckErrorFeedback
+            status={healthSummary.status}
+            message={healthSummary.message}
+            lastChecked={healthSummary.lastChecked}
+            responseTime={healthSummary.responseTime}
+            onRetry={refreshHealthCheck}
+            isRetrying={isRefreshing}
+            className="shadow-lg"
+          />
+        </div>
+      )}
+    </div>
   );
 }
