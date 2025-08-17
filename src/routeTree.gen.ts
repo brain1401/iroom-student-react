@@ -8,143 +8,143 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./routes/__root";
-import { Route as IndexRouteImport } from "./routes/index";
-import { Route as SignupIndexRouteImport } from "./routes/signup/index";
-import { Route as ExamplesPokemonRouteRouteImport } from "./routes/examples/pokemon/route";
-import { Route as ExamplesPokemonIndexRouteImport } from "./routes/examples/pokemon/index";
-import { Route as ExamplesPokemonIdIndexRouteImport } from "./routes/examples/pokemon/$id/index";
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as SignupIndexRouteImport } from './routes/signup/index'
+import { Route as ExamplesPokemonRouteRouteImport } from './routes/examples/pokemon/route'
+import { Route as ExamplesPokemonIndexRouteImport } from './routes/examples/pokemon/index'
+import { Route as ExamplesPokemonIdIndexRouteImport } from './routes/examples/pokemon/$id/index'
 
 const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const SignupIndexRoute = SignupIndexRouteImport.update({
-  id: "/signup/",
-  path: "/signup/",
+  id: '/signup/',
+  path: '/signup/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ExamplesPokemonRouteRoute = ExamplesPokemonRouteRouteImport.update({
-  id: "/examples/pokemon",
-  path: "/examples/pokemon",
+  id: '/examples/pokemon',
+  path: '/examples/pokemon',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ExamplesPokemonIndexRoute = ExamplesPokemonIndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => ExamplesPokemonRouteRoute,
-} as any);
+} as any)
 const ExamplesPokemonIdIndexRoute = ExamplesPokemonIdIndexRouteImport.update({
-  id: "/$id/",
-  path: "/$id/",
+  id: '/$id/',
+  path: '/$id/',
   getParentRoute: () => ExamplesPokemonRouteRoute,
-} as any);
+} as any)
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
-  "/examples/pokemon": typeof ExamplesPokemonRouteRouteWithChildren;
-  "/signup": typeof SignupIndexRoute;
-  "/examples/pokemon/": typeof ExamplesPokemonIndexRoute;
-  "/examples/pokemon/$id": typeof ExamplesPokemonIdIndexRoute;
+  '/': typeof IndexRoute
+  '/examples/pokemon': typeof ExamplesPokemonRouteRouteWithChildren
+  '/signup': typeof SignupIndexRoute
+  '/examples/pokemon/': typeof ExamplesPokemonIndexRoute
+  '/examples/pokemon/$id': typeof ExamplesPokemonIdIndexRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
-  "/signup": typeof SignupIndexRoute;
-  "/examples/pokemon": typeof ExamplesPokemonIndexRoute;
-  "/examples/pokemon/$id": typeof ExamplesPokemonIdIndexRoute;
+  '/': typeof IndexRoute
+  '/signup': typeof SignupIndexRoute
+  '/examples/pokemon': typeof ExamplesPokemonIndexRoute
+  '/examples/pokemon/$id': typeof ExamplesPokemonIdIndexRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
-  "/examples/pokemon": typeof ExamplesPokemonRouteRouteWithChildren;
-  "/signup/": typeof SignupIndexRoute;
-  "/examples/pokemon/": typeof ExamplesPokemonIndexRoute;
-  "/examples/pokemon/$id/": typeof ExamplesPokemonIdIndexRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/examples/pokemon': typeof ExamplesPokemonRouteRouteWithChildren
+  '/signup/': typeof SignupIndexRoute
+  '/examples/pokemon/': typeof ExamplesPokemonIndexRoute
+  '/examples/pokemon/$id/': typeof ExamplesPokemonIdIndexRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | "/"
-    | "/examples/pokemon"
-    | "/signup"
-    | "/examples/pokemon/"
-    | "/examples/pokemon/$id";
-  fileRoutesByTo: FileRoutesByTo;
-  to: "/" | "/signup" | "/examples/pokemon" | "/examples/pokemon/$id";
+    | '/'
+    | '/examples/pokemon'
+    | '/signup'
+    | '/examples/pokemon/'
+    | '/examples/pokemon/$id'
+  fileRoutesByTo: FileRoutesByTo
+  to: '/' | '/signup' | '/examples/pokemon' | '/examples/pokemon/$id'
   id:
-    | "__root__"
-    | "/"
-    | "/examples/pokemon"
-    | "/signup/"
-    | "/examples/pokemon/"
-    | "/examples/pokemon/$id/";
-  fileRoutesById: FileRoutesById;
+    | '__root__'
+    | '/'
+    | '/examples/pokemon'
+    | '/signup/'
+    | '/examples/pokemon/'
+    | '/examples/pokemon/$id/'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  ExamplesPokemonRouteRoute: typeof ExamplesPokemonRouteRouteWithChildren;
-  SignupIndexRoute: typeof SignupIndexRoute;
+  IndexRoute: typeof IndexRoute
+  ExamplesPokemonRouteRoute: typeof ExamplesPokemonRouteRouteWithChildren
+  SignupIndexRoute: typeof SignupIndexRoute
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/signup/": {
-      id: "/signup/";
-      path: "/signup";
-      fullPath: "/signup";
-      preLoaderRoute: typeof SignupIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/examples/pokemon": {
-      id: "/examples/pokemon";
-      path: "/examples/pokemon";
-      fullPath: "/examples/pokemon";
-      preLoaderRoute: typeof ExamplesPokemonRouteRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/examples/pokemon/": {
-      id: "/examples/pokemon/";
-      path: "/";
-      fullPath: "/examples/pokemon/";
-      preLoaderRoute: typeof ExamplesPokemonIndexRouteImport;
-      parentRoute: typeof ExamplesPokemonRouteRoute;
-    };
-    "/examples/pokemon/$id/": {
-      id: "/examples/pokemon/$id/";
-      path: "/$id";
-      fullPath: "/examples/pokemon/$id";
-      preLoaderRoute: typeof ExamplesPokemonIdIndexRouteImport;
-      parentRoute: typeof ExamplesPokemonRouteRoute;
-    };
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup/': {
+      id: '/signup/'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/examples/pokemon': {
+      id: '/examples/pokemon'
+      path: '/examples/pokemon'
+      fullPath: '/examples/pokemon'
+      preLoaderRoute: typeof ExamplesPokemonRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/examples/pokemon/': {
+      id: '/examples/pokemon/'
+      path: '/'
+      fullPath: '/examples/pokemon/'
+      preLoaderRoute: typeof ExamplesPokemonIndexRouteImport
+      parentRoute: typeof ExamplesPokemonRouteRoute
+    }
+    '/examples/pokemon/$id/': {
+      id: '/examples/pokemon/$id/'
+      path: '/$id'
+      fullPath: '/examples/pokemon/$id'
+      preLoaderRoute: typeof ExamplesPokemonIdIndexRouteImport
+      parentRoute: typeof ExamplesPokemonRouteRoute
+    }
   }
 }
 
 interface ExamplesPokemonRouteRouteChildren {
-  ExamplesPokemonIndexRoute: typeof ExamplesPokemonIndexRoute;
-  ExamplesPokemonIdIndexRoute: typeof ExamplesPokemonIdIndexRoute;
+  ExamplesPokemonIndexRoute: typeof ExamplesPokemonIndexRoute
+  ExamplesPokemonIdIndexRoute: typeof ExamplesPokemonIdIndexRoute
 }
 
 const ExamplesPokemonRouteRouteChildren: ExamplesPokemonRouteRouteChildren = {
   ExamplesPokemonIndexRoute: ExamplesPokemonIndexRoute,
   ExamplesPokemonIdIndexRoute: ExamplesPokemonIdIndexRoute,
-};
+}
 
 const ExamplesPokemonRouteRouteWithChildren =
-  ExamplesPokemonRouteRoute._addFileChildren(ExamplesPokemonRouteRouteChildren);
+  ExamplesPokemonRouteRoute._addFileChildren(ExamplesPokemonRouteRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ExamplesPokemonRouteRoute: ExamplesPokemonRouteRouteWithChildren,
   SignupIndexRoute: SignupIndexRoute,
-};
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()
