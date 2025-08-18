@@ -1,0 +1,313 @@
+# iRoom Student React 프로젝트 - Cursor 규칙
+
+## 프로젝트 개요
+
+TanStack Start (React 19 + SSR) + Vite 기반 현대적 React 프로젝트
+- 포트: 3012 (개발 서버)
+- 타겟: Bun 런타임
+- 스타일링: Tailwind CSS v4 + shadcn/ui
+- 상태 관리: Jotai + TanStack Query 통합
+- 테스트: Vitest + Testing Library
+
+## ⚠️ 핵심 금지사항 (절대 준수)
+
+### 1. API 호출 규칙
+- **fetch 사용 절대 금지** → `src/api/client/index.ts`의 클라이언트만 사용
+- 인증 필요: `authApiClient` (httpOnly 쿠키 포함)
+- 일반 호출: `baseApiClient`
+
+```typescript
+// ❌ 절대 금지
+const response = await fetch("/api/data");
+
+// ✅ 필수
+import { baseApiClient, authApiClient } from "@/api/client";
+const data = await baseApiClient.get("/api/pokemon");
+```
+
+### 2. 타입 정의 규칙
+- **interface 사용 금지** → **type만 사용**
+- 모든 Props에 JSDoc 주석 포함
+
+```typescript
+// ✅ type 사용
+type ComponentProps = {
+  /** 설명 */
+  name: string;
+};
+
+// ❌ interface 사용 금지
+interface ComponentProps { ... }
+```
+
+### 3. 주석 작성 규칙
+- **모든 주석은 한국어 명사형**으로 작성 (존댓말 사용 안함)
+- **영어 주석 절대 금지**
+- **TSDoc 형식 적극 활용** (`@description`, `@param`, `@returns`, `@example`)
+
+```typescript
+/**
+ * 포켓몬 카드 컴포넌트
+ * @description 이미지, 이름, 번호를 표시하는 현대적 카드 UI
+ *
+ * 주요 기능:
+ * - 목록에서는 기본 정보만 표시
+ * - 커스텀 훅으로 복잡한 로직 캡슐화
+ *
+ * @example
+ * ```tsx
+ * <PokemonCard name="pikachu" url="..." />
+ * ```
+ */
+```
+
+### 4. 컴포넌트 작성 규칙
+- **함수 컴포넌트만 사용** (클래스 컴포넌트 금지)
+- **cn() 함수로 className 조합 필수**
+- **asChild 패턴 적극 활용**
+
+```typescript
+// ✅ asChild 패턴
+<Button variant="ghost" asChild>
+  <Link to="/examples/pokemon">포켓몬</Link>
+</Button>
+
+// ❌ 잘못된 중첩 구조
+<Button variant="ghost">
+  <Link to="/examples/pokemon">포켓몬</Link>
+</Button>
+```
+
+## 기술 스택 & 아키텍처
+
+### API 클라이언트 시스템
+```typescript
+// src/api/client/index.ts에서 제공
+- baseApiClient: 기본 API 호출용
+- authApiClient: 인증 필요 API 호출용 (httpOnly 쿠키)
+```
+
+### 상태 관리 패턴 (Jotai + React Query)
+```typescript
+// 서버 상태: atomWithQuery
+export const pokemonListQueryAtom = atomWithQuery((get) => {
+  const page = get(pokemonPageAtom);
+  return pokemonListQueryOptions({ page });
+});
+
+// 사용자 설정: atomWithStorage (localStorage)
+export const pokemonLimitAtom = atomWithStorage("pokemon-limit", 24);
+
+// 임시 상태: 일반 atom
+export const pokemonPageAtom = atom<number>(1);
+
+// 사용 최적화
+const pokemonList = useAtomValue(pokemonListQueryAtom); // 읽기 전용
+const setFilters = useSetAtom(pokemonListFiltersAtom);   // 쓰기 전용
+const [page, setPage] = useAtom(pokemonPageAtom);       // 읽기+쓰기
+```
+
+### 라우팅 구조
+- 파일 기반 라우팅: `src/routes/` 디렉토리
+- 루트 레이아웃: `src/routes/__root.tsx`
+- QueryClient 전역 사용 가능
+
+### 디렉토리 구조
+```
+src/
+├── api/          # API 관련 코드
+│   ├── client/   # HTTP 클라이언트
+│   └── [domain]/ # 도메인별 API
+├── atoms/        # Jotai 상태 관리
+├── components/   # React 컴포넌트
+│   ├── ui/       # shadcn/ui 기본 컴포넌트
+│   └── [domain]/ # 도메인별 컴포넌트
+├── hooks/        # 커스텀 훅
+├── routes/       # 파일 기반 라우팅
+├── utils/        # 유틸리티 함수
+└── css/          # 전역 스타일
+```
+
+## 컴포넌트 작성 패턴
+
+### 기본 구조
+```typescript
+// 1. Props 타입 정의 (type 사용, JSDoc 포함)
+type ComponentProps = {
+  /** 필수 prop 설명 */
+  requiredProp: string;
+  /** 선택적 prop 설명 */
+  optionalProp?: number;
+  /** 추가 CSS 클래스 */
+  className?: string;
+  /** 자식 요소 */
+  children?: React.ReactNode;
+};
+
+// 2. 함수 컴포넌트 구현
+export function Component({ 
+  requiredProp, 
+  optionalProp = 0, 
+  className, 
+  children 
+}: ComponentProps) {
+  // 3. 커스텀 훅으로 복잡한 로직 분리
+  const { state, handlers } = useComponentLogic();
+
+  // 4. cn() 함수로 조건부 스타일링
+  return (
+    <div className={cn("base-styles", className)}>
+      {children}
+    </div>
+  );
+}
+```
+
+### 스타일링 규칙 (cn() 함수 필수)
+```typescript
+import { cn } from "@/lib/utils";
+
+// 조건부 스타일링
+<div className={cn(
+  "base-styles",                    // 기본 스타일
+  isActive && "active-styles",      // 조건부 스타일
+  hasError && "error-styles",       // 에러 상태
+  className                         // 외부 전달 클래스
+)} />
+
+// shadcn/ui variant 활용
+<Button variant="ghost" size="sm">버튼</Button>
+
+// 반응형 디자인 (모바일 우선)
+<div className={cn(
+  "flex flex-col space-y-4 p-4",        // 모바일 기본
+  "md:flex-row md:space-y-0 md:space-x-4", // 태블릿 이상
+  "lg:p-8"                             // 데스크톱
+)}>
+```
+
+## 개발 워크플로우
+
+### 필수 명령어
+```bash
+# 개발 서버 (포트 3012)
+npm run dev
+
+# 빌드 및 분석
+npm run build
+npm run build -- --analyze
+
+# 품질 체크 (코딩 완료 후 필수)
+npm run check  # Prettier + ESLint 통합
+
+# 개별 도구들
+npm run lint
+npm run format
+npm run test
+
+# shadcn/ui 컴포넌트
+pnpx shadcn@latest add [컴포넌트명]
+pnpx shadcn@latest add [컴포넌트명] --overwrite
+```
+
+### 코딩 완료 후 필수 체크리스트
+- [ ] `npm run check` 실행 및 통과
+- [ ] 타입 에러 완전 해결
+- [ ] 모든 주석이 한국어 명사형으로 작성됨
+- [ ] `fetch` 대신 API 클라이언트 사용 확인
+- [ ] `interface` 대신 `type` 사용 확인
+- [ ] `cn()` 함수로 className 조합 확인
+- [ ] 함수 컴포넌트만 사용 확인
+
+### 성능 최적화 규칙
+```typescript
+// derived atom 활용 (useMemo 대신)
+export const filteredPokemonListAtom = atom((get) => {
+  const { data, isPending } = get(pokemonListQueryAtom);
+  return {
+    results: data?.results || [],
+    isPending,
+  };
+});
+
+// 메모리 정리
+useEffect(() => {
+  const handleResize = () => { /* ... */ };
+  window.addEventListener("resize", handleResize);
+  
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
+```
+
+## 자주 발생하는 문제 해결법
+
+### TypeScript 컴파일 에러
+```typescript
+// ❌ undefined 가능한 값
+const name: string = props.name;
+
+// ✅ 타입 가드 또는 기본값
+const name = props.name || "";
+const name = props.name ?? "기본값";
+```
+
+### Atom 무한 리렌더링
+```typescript
+// ❌ 렌더링 중 state 변경
+function Component() {
+  const [value, setValue] = useAtom(someAtom);
+  setValue({ ...value, newProp: "value" }); // 무한 루프
+}
+
+// ✅ useEffect 사용
+function Component() {
+  const [value, setValue] = useAtom(someAtom);
+  
+  useEffect(() => {
+    setValue({ ...value, newProp: "value" });
+  }, []); // 의존성 배열 주의
+}
+```
+
+### 포트 충돌 해결
+```bash
+# 포트 사용 프로세스 확인 (Windows)
+netstat -ano | findstr :3012
+
+# 프로세스 종료
+taskkill /PID [PID번호] /F
+
+# 다른 포트 사용
+npm run dev -- --port 3013
+```
+
+## 품질 보증 규칙
+
+### 코드 품질 기준
+- 모든 컴포넌트는 Props에 JSDoc 주석 포함
+- 복잡한 로직은 커스텀 훅으로 분리
+- 에러 처리 및 로딩 상태 포함
+- 반응형 디자인 적용 (모바일 우선)
+- 접근성 고려 (alt 텍스트, 키보드 네비게이션)
+
+### 성능 기준
+- 불필요한 리렌더링 방지
+- 이벤트 리스너 정리 로직 포함
+- 올바른 Atom 훅 선택 (useAtomValue vs useAtom)
+
+### 사용자 확인 필요 사항
+다음 항목들은 사용자에게 확인받을 것:
+- 새로운 라이브러리 추가 필요 여부
+- 기존 디자인 시스템과의 일관성
+- 특별한 성능 요구사항
+- 접근성 특별 요구사항
+
+## Git 커밋 규칙
+- 불렛 포인트 사용해서 가독성 높이기
+- 타입: feat, fix, docs, style, refactor, test, chore
+- **중요**: 커밋 메시지에 Claude 관련 서명 추가 금지
+
+---
+
+**중요**: 이 규칙들은 프로젝트의 일관성과 품질을 위해 반드시 준수해야 합니다. 
+특히 금지사항들은 시스템 아키텍처와 직결되므로 절대 위반하지 마세요.
