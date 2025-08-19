@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1132 410" width="1132" height="410" role="img" aria-labelledby="title">
+  <title>주관식 문제 이미지</title>
+  <defs>
+    <style>
+      .bg { fill: #6f6b6b; }
+      .label { font: 64px sans-serif; fill: #ffffff; font-weight: 700; }
+    </style>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1132" height="410" rx="8" ry="8" />
+  <text class="label" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">주관식 문제 이미지</text>
+</svg>
+
