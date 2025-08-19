@@ -14,6 +14,7 @@ import NavigationBar from "@/components/layout/NavigationBar";
 import { useAtomValue } from "jotai";
 import { mainBgExtraCombinedClassAtom } from "@/atoms/ui";
 import { cn } from "@/lib/utils";
+import UserProfileHeader from "@/components/layout/UserProfileHeader";
 
 /**
  * 라우터 컨텍스트 타입 정의
@@ -102,7 +103,6 @@ function RootComponent() {
   const extra = useAtomValue(mainBgExtraCombinedClassAtom);
   return (
     <>
-      <NavigationBar />
       <main
         className={cn(
           "flex flex-1 bg-background-400 dark:bg-background-900",

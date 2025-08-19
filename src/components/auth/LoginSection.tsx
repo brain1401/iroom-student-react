@@ -48,7 +48,7 @@ export function LoginSection() {
             className={inputStyles}
           />
         </div>
-        <Button asChild className={cn(inputStyles, "w-full")}> 
+        <Button asChild className={cn(inputStyles, "w-full")}>
           <a href="/main">로그인</a>
         </Button>
       </form>

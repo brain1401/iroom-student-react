@@ -8,5 +8,3 @@ import MainHome from "@/components/MainHome";
 export const Route = createFileRoute("/main/")({
   component: MainHome,
 });
-
-

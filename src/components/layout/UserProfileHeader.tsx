@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { BiBell } from "react-icons/bi";
+import { VscAccount } from "react-icons/vsc";
+import { RxHamburgerMenu } from "react-icons/rx";
 
 /**
  * 사용자 프로필 헤더 컴포넌트
@@ -37,19 +39,35 @@ export function UserProfileHeader({
           {badgeLabel}
         </span>
       </div>
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        className="rounded-full size-[42px]"
-        onClick={onClickBell}
-      >
-        <BiBell className="text-[#1C1C1E] size-[34px]" />
-      </Button>
+      <div className="flex items-center gap-2">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="rounded-full size-[42px]"
+          onClick={onClickBell}
+        >
+          <BiBell className="text-[#1C1C1E] size-[34px]" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="rounded-full size-[42px]"
+        >
+          <VscAccount className="text-[#1C1C1E] size-[34px]" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="rounded-full size-[42px]"
+        >
+          <RxHamburgerMenu className="text-[#1C1C1E] size-[34px]" />
+        </Button>
+      </div>
     </div>
   );
 }
 
 export default UserProfileHeader;
-
-
