@@ -122,6 +122,11 @@ body {
   flex-direction: column;
 }
 
+/* 스크롤바 공간 안정 예약 설정 */
+html {
+  scrollbar-gutter: stable both-edges;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
