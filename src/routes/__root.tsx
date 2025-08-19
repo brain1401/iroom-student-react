@@ -10,11 +10,9 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import appCss from "@/css/root.css?url";
-import NavigationBar from "@/components/layout/NavigationBar";
 import { useAtomValue } from "jotai";
 import { mainBgExtraCombinedClassAtom } from "@/atoms/ui";
 import { cn } from "@/lib/utils";
-import UserProfileHeader from "@/components/layout/UserProfileHeader";
 
 /**
  * 라우터 컨텍스트 타입 정의
@@ -57,7 +55,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: "이룸 클래스",
       },
     ],
-    // 스타일시트와 폰트 로딩을 위한 링크 설정
+    // 폰트 로딩 최적화 설정
     links: [
       {
         rel: "stylesheet",
