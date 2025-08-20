@@ -54,16 +54,7 @@ export default function ExamManagementPage() {
                 />
               </svg>
             </button>
-            <div className="flex items-center gap-2">
-              <div className="text-[20px] font-bold text-black">가다나 시험</div>
-              {/* 선택된 필터에 해당하는 버튼만 표시 - 기존 컴포넌트 디자인 재사용 */}
-              <div className="border border-black rounded-[162.7px] px-2 py-1">
-                <span className="text-[9px] leading-[1] text-black">
-                  {activeFilter === 'unit' ? '단원별' : 
-                   activeFilter === 'item' ? '항목별' : '시험별'}
-                </span>
-              </div>
-            </div>
+            <div className="text-[20px] font-bold text-black">가다나 시험</div>
             <div className="w-[25px]"></div>
           </div>
 
@@ -73,8 +64,8 @@ export default function ExamManagementPage() {
           {/* 차트 영역 - MainHome과 동일한 스타일 */}
           <div className="bg-white rounded-[10px] shadow-[0px_1px_6px_0px_rgba(0,0,0,0.25)] p-4 mb-6">
             {/* 차트 제목 */}
-            <div className="text-center mb-4">
-              <div className="text-[20px] font-bold text-black mb-2">가다나 시험</div>
+            <div className="text-center mb-2">
+              <div className="text-[20px] font-bold text-black mb-1">가다나 시험</div>
             </div>
 
             {/* 정답률 라벨 */}
@@ -157,8 +148,8 @@ export default function ExamManagementPage() {
                 </BarChart>
               </ResponsiveContainer>
               
-              {/* 성취 레전드: 그래프 내부 우측 상단 오버레이 - MainHome과 동일 */}
-              <div className="absolute right-0 top-0 flex flex-col items-end gap-2 pr-2 pt-1">
+              {/* 성취 레전드: 그래프 내부 우측 상단 오버레이 - 더 위로 이동 */}
+              <div className="absolute right-0 top-0 flex flex-col items-end gap-2 pr-2 -mt-12">
                 <div className="flex items-center gap-2">
                   <div
                     style={{
@@ -317,28 +308,25 @@ export default function ExamManagementPage() {
             ).map((problem, index) => (
               <div
                 key={index}
-                className="w-[280px] h-[37.95px] bg-white rounded-[10px] shadow-[0px_1px_6px_0px_rgba(0,0,0,0.25)] p-4 flex items-center justify-between mx-auto"
+                className="w-[280px] h-[60px] bg-white rounded-[10px] shadow-[0px_1px_6px_0px_rgba(0,0,0,0.25)] p-4 flex items-center justify-between mx-auto"
               >
                 <div className="flex items-center gap-4">
-                  {/* 상태 표시 원 - 피그마 크기 정확히 적용 */}
+                  {/* 상태 표시 원 - 크기 축소 및 흰색 원 삭제 */}
                   <div className="relative">
                     {problem.status === "correct" ? (
-                      <>
-                        <div className="w-[37.09px] h-[37.09px] bg-[#155DFC] rounded-full"></div>
-                        <div className="absolute top-[7.86px] left-[7.86px] w-[23.94px] h-[23.94px] bg-white rounded-full"></div>
-                      </>
+                      <div className="w-[20px] h-[20px] bg-[#155DFC] rounded-full"></div>
                     ) : (
-                      <div className="w-[37.09px] h-[37.09px] bg-[#FF6A71] rounded-full"></div>
+                      <div className="w-[20px] h-[20px] bg-[#FF6A71] rounded-full"></div>
                     )}
                   </div>
                   
-                  {/* 문제 정보 - 피그마 텍스트 크기와 여백 정확히 적용 */}
-                  <div className="flex flex-col gap-[21.95px]">
-                    <div className="flex items-center gap-[53.39px]">
+                  {/* 문제 정보 - 텍스트 간격 축소 및 왼쪽 정렬 */}
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-4">
                       <span className="text-[13px] font-bold text-black leading-[1.193]">{problem.number}</span>
                       <span className="text-[13px] text-[#427BFF] leading-[1.193]">{problem.topic}</span>
                     </div>
-                    <div className="flex gap-[68.81px] text-[13px] text-black leading-[1.193]">
+                    <div className="flex gap-4 text-[13px] text-black leading-[1.193]">
                       <span>{problem.type}</span>
                       <span>{problem.difficulty}</span>
                     </div>
