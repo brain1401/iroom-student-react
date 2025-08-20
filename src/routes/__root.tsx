@@ -137,6 +137,15 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         {/* RouteOptions.head에서 설정된 메타데이터와 링크를 렌더링 */}
         <HeadContent />
+        {/* latex.js 웹 컴포넌트 등록 스크립트 */}
+        <script
+          suppressHydrationWarning
+          type="module"
+          dangerouslySetInnerHTML={{
+            __html:
+              "import { LaTeXJSComponent } from 'https://cdn.jsdelivr.net/npm/latex.js/dist/latex.mjs';\ncustomElements.define('latex-js', LaTeXJSComponent);",
+          }}
+        />
       </head>
       <body className="h-full w-full flex flex-col font-noto-sans-kr">
         {/* 메인 애플리케이션 콘텐츠 */}
