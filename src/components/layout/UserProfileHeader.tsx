@@ -138,25 +138,13 @@ export function UserProfileHeader({
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-end gap-2">
-                <div className="text-[30px] font-bold leading-[1.19] text-[#000]">
-                  {name}
-                </div>
-                <span className="inline-flex items-center rounded-full border border-black px-3 py-1 text-[9px] leading-none text-black">
-                  {badgeLabel}
-                </span>
+            <div className="flex items-end gap-2 mb-4">
+              <div className="text-[30px] font-bold leading-[1.19] text-[#000]">
+                {name}
               </div>
-              <button 
-                className="opacity-70 transition-opacity hover:opacity-100"
-                onClick={() => {
-                  setMenuOpen(false);
-                  window.location.href = "/main";
-                }}
-              >
-                <RiHome5Line className="size-5" />
-                <span className="sr-only">홈으로 이동</span>
-              </button>
+              <span className="inline-flex items-center rounded-full border border-black px-3 py-1 text-[9px] leading-none text-black">
+                {badgeLabel}
+              </span>
             </div>
             <div className="h-px -mx-4 bg-[#EBEBEB] mb-4" />
             <div className="flex flex-col gap-6">
