@@ -1,7 +1,8 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useRouterState } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import UserProfileHeader from "@/components/layout/UserProfileHeader";
 import { userDisplayInfoAtom } from "@/atoms/ui";
+import { cn } from "@/lib/utils";
 
 /**
  * 메인 페이지 공통 레이아웃
@@ -17,13 +18,13 @@ export const Route = createFileRoute("/main")({
  */
 function MainLayout() {
   const { name, badgeLabel } = useAtomValue(userDisplayInfoAtom);
+
   return (
     <div className="w-full flex justify-center">
-      <div className="w-[360px] bg-white dark:bg-white p-4 space-y-6" style={{ minHeight: 780 }}>
+      <div className="flex-1 w-md h-full bg-white dark:bg-white p-4 space-y-6">
         <UserProfileHeader name={name} badgeLabel={badgeLabel} />
         <Outlet />
       </div>
     </div>
   );
 }
-
