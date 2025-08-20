@@ -136,6 +136,15 @@ html {
   }
 }
 
+/* 스크롤바 숨김 유틸리티 */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 /* 플로트 애니메이션 정의 */
 @keyframes float {
   0%,
@@ -149,4 +158,39 @@ html {
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+}
+
+/* 필터 전환 애니메이션 */
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 1000px;
+  }
+}
+
+@keyframes slideOutToTop {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 1000px;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+    max-height: 0;
+  }
+}
+
+.filter-transition-enter {
+  animation: slideInFromTop 0.5s ease-in-out forwards;
+}
+
+.filter-transition-exit {
+  animation: slideOutToTop 0.5s ease-in-out forwards;
 }
