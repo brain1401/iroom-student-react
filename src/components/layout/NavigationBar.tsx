@@ -33,6 +33,21 @@ export default function NavigationBar() {
             <Button variant="ghost" asChild>
               <Link to="/examples/pokemon">포켓몬</Link>
             </Button>
+            {/* 리포트 예시 및 모바일 화면 바로가기 */}
+            <Button variant="ghost" asChild>
+              <Link to="/main/report">리포트</Link>
+            </Button>
+            <Button variant="ghost" asChild>
+              <Link to="/main/report/mobile">모바일 리포트</Link>
+            </Button>
+            <Button variant="ghost" asChild>
+              <Link to="/main/report/mobile/objective-correct">
+                모바일 객관식 정답
+              </Link>
+            </Button>
+            <Button variant="ghost" asChild>
+              <Link to="/main/report/mobile/all-display">모바일 모두 펼침</Link>
+            </Button>
           </div>
         </div>
 
