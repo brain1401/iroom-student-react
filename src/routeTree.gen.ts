@@ -9,17 +9,31 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ProfileRouteRouteImport } from './routes/profile/route'
 import { Route as MainRouteRouteImport } from './routes/main/route'
+import { Route as ExamManagementRouteRouteImport } from './routes/exam-management/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SignupIndexRouteImport } from './routes/signup/index'
+import { Route as ProfileIndexRouteImport } from './routes/profile/index'
 import { Route as MainIndexRouteImport } from './routes/main/index'
+import { Route as ExamManagementIndexRouteImport } from './routes/exam-management/index'
 import { Route as ExamplesPokemonRouteRouteImport } from './routes/examples/pokemon/route'
 import { Route as ExamplesPokemonIndexRouteImport } from './routes/examples/pokemon/index'
 import { Route as ExamplesPokemonIdIndexRouteImport } from './routes/examples/pokemon/$id/index'
 
+const ProfileRouteRoute = ProfileRouteRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MainRouteRoute = MainRouteRouteImport.update({
   id: '/main',
   path: '/main',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExamManagementRouteRoute = ExamManagementRouteRouteImport.update({
+  id: '/exam-management',
+  path: '/exam-management',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -32,10 +46,20 @@ const SignupIndexRoute = SignupIndexRouteImport.update({
   path: '/signup/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileIndexRoute = ProfileIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProfileRouteRoute,
+} as any)
 const MainIndexRoute = MainIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => MainRouteRoute,
+} as any)
+const ExamManagementIndexRoute = ExamManagementIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ExamManagementRouteRoute,
 } as any)
 const ExamplesPokemonRouteRoute = ExamplesPokemonRouteRouteImport.update({
   id: '/examples/pokemon',
@@ -55,16 +79,22 @@ const ExamplesPokemonIdIndexRoute = ExamplesPokemonIdIndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/exam-management': typeof ExamManagementRouteRouteWithChildren
   '/main': typeof MainRouteRouteWithChildren
+  '/profile': typeof ProfileRouteRouteWithChildren
   '/examples/pokemon': typeof ExamplesPokemonRouteRouteWithChildren
+  '/exam-management/': typeof ExamManagementIndexRoute
   '/main/': typeof MainIndexRoute
+  '/profile/': typeof ProfileIndexRoute
   '/signup': typeof SignupIndexRoute
   '/examples/pokemon/': typeof ExamplesPokemonIndexRoute
   '/examples/pokemon/$id': typeof ExamplesPokemonIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/exam-management': typeof ExamManagementIndexRoute
   '/main': typeof MainIndexRoute
+  '/profile': typeof ProfileIndexRoute
   '/signup': typeof SignupIndexRoute
   '/examples/pokemon': typeof ExamplesPokemonIndexRoute
   '/examples/pokemon/$id': typeof ExamplesPokemonIdIndexRoute
@@ -72,9 +102,13 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/exam-management': typeof ExamManagementRouteRouteWithChildren
   '/main': typeof MainRouteRouteWithChildren
+  '/profile': typeof ProfileRouteRouteWithChildren
   '/examples/pokemon': typeof ExamplesPokemonRouteRouteWithChildren
+  '/exam-management/': typeof ExamManagementIndexRoute
   '/main/': typeof MainIndexRoute
+  '/profile/': typeof ProfileIndexRoute
   '/signup/': typeof SignupIndexRoute
   '/examples/pokemon/': typeof ExamplesPokemonIndexRoute
   '/examples/pokemon/$id/': typeof ExamplesPokemonIdIndexRoute
@@ -83,20 +117,35 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/exam-management'
     | '/main'
+    | '/profile'
     | '/examples/pokemon'
+    | '/exam-management/'
     | '/main/'
+    | '/profile/'
     | '/signup'
     | '/examples/pokemon/'
     | '/examples/pokemon/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/main' | '/signup' | '/examples/pokemon' | '/examples/pokemon/$id'
+  to:
+    | '/'
+    | '/exam-management'
+    | '/main'
+    | '/profile'
+    | '/signup'
+    | '/examples/pokemon'
+    | '/examples/pokemon/$id'
   id:
     | '__root__'
     | '/'
+    | '/exam-management'
     | '/main'
+    | '/profile'
     | '/examples/pokemon'
+    | '/exam-management/'
     | '/main/'
+    | '/profile/'
     | '/signup/'
     | '/examples/pokemon/'
     | '/examples/pokemon/$id/'
@@ -104,18 +153,34 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ExamManagementRouteRoute: typeof ExamManagementRouteRouteWithChildren
   MainRouteRoute: typeof MainRouteRouteWithChildren
+  ProfileRouteRoute: typeof ProfileRouteRouteWithChildren
   ExamplesPokemonRouteRoute: typeof ExamplesPokemonRouteRouteWithChildren
   SignupIndexRoute: typeof SignupIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/main': {
       id: '/main'
       path: '/main'
       fullPath: '/main'
       preLoaderRoute: typeof MainRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/exam-management': {
+      id: '/exam-management'
+      path: '/exam-management'
+      fullPath: '/exam-management'
+      preLoaderRoute: typeof ExamManagementRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -132,12 +197,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile/': {
+      id: '/profile/'
+      path: '/'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof ProfileIndexRouteImport
+      parentRoute: typeof ProfileRouteRoute
+    }
     '/main/': {
       id: '/main/'
       path: '/'
       fullPath: '/main/'
       preLoaderRoute: typeof MainIndexRouteImport
       parentRoute: typeof MainRouteRoute
+    }
+    '/exam-management/': {
+      id: '/exam-management/'
+      path: '/'
+      fullPath: '/exam-management/'
+      preLoaderRoute: typeof ExamManagementIndexRouteImport
+      parentRoute: typeof ExamManagementRouteRoute
     }
     '/examples/pokemon': {
       id: '/examples/pokemon'
@@ -163,6 +242,17 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface ExamManagementRouteRouteChildren {
+  ExamManagementIndexRoute: typeof ExamManagementIndexRoute
+}
+
+const ExamManagementRouteRouteChildren: ExamManagementRouteRouteChildren = {
+  ExamManagementIndexRoute: ExamManagementIndexRoute,
+}
+
+const ExamManagementRouteRouteWithChildren =
+  ExamManagementRouteRoute._addFileChildren(ExamManagementRouteRouteChildren)
+
 interface MainRouteRouteChildren {
   MainIndexRoute: typeof MainIndexRoute
 }
@@ -173,6 +263,18 @@ const MainRouteRouteChildren: MainRouteRouteChildren = {
 
 const MainRouteRouteWithChildren = MainRouteRoute._addFileChildren(
   MainRouteRouteChildren,
+)
+
+interface ProfileRouteRouteChildren {
+  ProfileIndexRoute: typeof ProfileIndexRoute
+}
+
+const ProfileRouteRouteChildren: ProfileRouteRouteChildren = {
+  ProfileIndexRoute: ProfileIndexRoute,
+}
+
+const ProfileRouteRouteWithChildren = ProfileRouteRoute._addFileChildren(
+  ProfileRouteRouteChildren,
 )
 
 interface ExamplesPokemonRouteRouteChildren {
@@ -190,7 +292,9 @@ const ExamplesPokemonRouteRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ExamManagementRouteRoute: ExamManagementRouteRouteWithChildren,
   MainRouteRoute: MainRouteRouteWithChildren,
+  ProfileRouteRoute: ProfileRouteRouteWithChildren,
   ExamplesPokemonRouteRoute: ExamplesPokemonRouteRouteWithChildren,
   SignupIndexRoute: SignupIndexRoute,
 }
