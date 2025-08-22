@@ -14,6 +14,7 @@ import NavigationBar from "@/components/layout/NavigationBar";
 import { useAtomValue } from "jotai";
 import { mainBgExtraCombinedClassAtom } from "@/atoms/ui";
 import { cn } from "@/lib/utils";
+import UserProfileHeader from "@/components/layout/UserProfileHeader";
 
 /**
  * 라우터 컨텍스트 타입 정의
@@ -102,7 +103,6 @@ function RootComponent() {
   const extra = useAtomValue(mainBgExtraCombinedClassAtom);
   return (
     <>
-      <NavigationBar />
       <main
         className={cn(
           "flex flex-1 bg-background-400 dark:bg-background-900",
@@ -137,6 +137,15 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         {/* RouteOptions.head에서 설정된 메타데이터와 링크를 렌더링 */}
         <HeadContent />
+        {/* latex.js 웹 컴포넌트 등록 스크립트 */}
+        <script
+          suppressHydrationWarning
+          type="module"
+          dangerouslySetInnerHTML={{
+            __html:
+              "import { LaTeXJSComponent } from 'https://cdn.jsdelivr.net/npm/latex.js/dist/latex.mjs';\ncustomElements.define('latex-js', LaTeXJSComponent);",
+          }}
+        />
       </head>
       <body className="h-full w-full flex flex-col font-noto-sans-kr">
         {/* 메인 애플리케이션 콘텐츠 */}
