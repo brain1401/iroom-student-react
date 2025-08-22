@@ -33,6 +33,9 @@ export default function NavigationBar() {
             <Button variant="ghost" asChild>
               <Link to="/examples/pokemon">포켓몬</Link>
             </Button>
+            <Button variant="ghost" asChild>
+              <Link to="/mypage">마이페이지</Link>
+            </Button>
           </div>
         </div>
 

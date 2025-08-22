@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SignupIndexRouteImport } from './routes/signup/index'
+import { Route as MypageIndexRouteImport } from './routes/mypage/index'
 import { Route as ExamplesPokemonRouteRouteImport } from './routes/examples/pokemon/route'
+import { Route as MypageEditIndexRouteImport } from './routes/mypage/edit/index'
 import { Route as ExamplesPokemonIndexRouteImport } from './routes/examples/pokemon/index'
 import { Route as ExamplesPokemonIdIndexRouteImport } from './routes/examples/pokemon/$id/index'
 
@@ -25,9 +27,19 @@ const SignupIndexRoute = SignupIndexRouteImport.update({
   path: '/signup/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MypageIndexRoute = MypageIndexRouteImport.update({
+  id: '/mypage/',
+  path: '/mypage/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExamplesPokemonRouteRoute = ExamplesPokemonRouteRouteImport.update({
   id: '/examples/pokemon',
   path: '/examples/pokemon',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MypageEditIndexRoute = MypageEditIndexRouteImport.update({
+  id: '/mypage/edit/',
+  path: '/mypage/edit/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExamplesPokemonIndexRoute = ExamplesPokemonIndexRouteImport.update({
@@ -44,22 +56,28 @@ const ExamplesPokemonIdIndexRoute = ExamplesPokemonIdIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/examples/pokemon': typeof ExamplesPokemonRouteRouteWithChildren
+  '/mypage': typeof MypageIndexRoute
   '/signup': typeof SignupIndexRoute
   '/examples/pokemon/': typeof ExamplesPokemonIndexRoute
+  '/mypage/edit': typeof MypageEditIndexRoute
   '/examples/pokemon/$id': typeof ExamplesPokemonIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/mypage': typeof MypageIndexRoute
   '/signup': typeof SignupIndexRoute
   '/examples/pokemon': typeof ExamplesPokemonIndexRoute
+  '/mypage/edit': typeof MypageEditIndexRoute
   '/examples/pokemon/$id': typeof ExamplesPokemonIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/examples/pokemon': typeof ExamplesPokemonRouteRouteWithChildren
+  '/mypage/': typeof MypageIndexRoute
   '/signup/': typeof SignupIndexRoute
   '/examples/pokemon/': typeof ExamplesPokemonIndexRoute
+  '/mypage/edit/': typeof MypageEditIndexRoute
   '/examples/pokemon/$id/': typeof ExamplesPokemonIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -67,24 +85,36 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/examples/pokemon'
+    | '/mypage'
     | '/signup'
     | '/examples/pokemon/'
+    | '/mypage/edit'
     | '/examples/pokemon/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/signup' | '/examples/pokemon' | '/examples/pokemon/$id'
+  to:
+    | '/'
+    | '/mypage'
+    | '/signup'
+    | '/examples/pokemon'
+    | '/mypage/edit'
+    | '/examples/pokemon/$id'
   id:
     | '__root__'
     | '/'
     | '/examples/pokemon'
+    | '/mypage/'
     | '/signup/'
     | '/examples/pokemon/'
+    | '/mypage/edit/'
     | '/examples/pokemon/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ExamplesPokemonRouteRoute: typeof ExamplesPokemonRouteRouteWithChildren
+  MypageIndexRoute: typeof MypageIndexRoute
   SignupIndexRoute: typeof SignupIndexRoute
+  MypageEditIndexRoute: typeof MypageEditIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -103,11 +133,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mypage/': {
+      id: '/mypage/'
+      path: '/mypage'
+      fullPath: '/mypage'
+      preLoaderRoute: typeof MypageIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/examples/pokemon': {
       id: '/examples/pokemon'
       path: '/examples/pokemon'
       fullPath: '/examples/pokemon'
       preLoaderRoute: typeof ExamplesPokemonRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mypage/edit/': {
+      id: '/mypage/edit/'
+      path: '/mypage/edit'
+      fullPath: '/mypage/edit'
+      preLoaderRoute: typeof MypageEditIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/examples/pokemon/': {
@@ -143,7 +187,9 @@ const ExamplesPokemonRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ExamplesPokemonRouteRoute: ExamplesPokemonRouteRouteWithChildren,
+  MypageIndexRoute: MypageIndexRoute,
   SignupIndexRoute: SignupIndexRoute,
+  MypageEditIndexRoute: MypageEditIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
