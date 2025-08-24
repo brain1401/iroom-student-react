@@ -20,8 +20,8 @@ const statIcons: Record<string, any> = {
 export function PokemonDetailStats({ pokemon }: Props) {
   return (
     <div>
-      <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-        <Zap className="w-5 h-5 text-yellow-500" />
+      <h3 className="mb-6 flex items-center gap-2 text-xl font-bold">
+        <Zap className="h-5 w-5 text-yellow-500" />
         능력치
       </h3>
       <div className="space-y-4">
@@ -29,19 +29,19 @@ export function PokemonDetailStats({ pokemon }: Props) {
           const Icon = statIcons[s.stat.name] || Zap;
           return (
             <div key={s.stat.name} className="space-y-2">
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Icon className="w-4 h-4 text-gray-500" />
-                  <span className="font-medium text-sm">
+                  <Icon className="h-4 w-4 text-gray-500" />
+                  <span className="text-sm font-medium">
                     {getStatDisplayName(s.stat.name)}
                   </span>
                 </div>
-                <span className="font-bold text-lg">{s.base_stat}</span>
+                <span className="text-lg font-bold">{s.base_stat}</span>
               </div>
-              <div className="relative h-4 bg-gray-100 rounded-full overflow-hidden">
+              <div className="relative h-4 overflow-hidden rounded-full bg-gray-100">
                 <div
                   className={cn(
-                    "absolute inset-y-0 left-0 bg-gradient-to-r rounded-full transition-all duration-1000",
+                    "absolute inset-y-0 left-0 rounded-full bg-gradient-to-r transition-all duration-1000",
                     getStatGradient(s.stat.name),
                   )}
                   style={{

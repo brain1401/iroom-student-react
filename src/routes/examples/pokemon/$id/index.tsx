@@ -109,8 +109,8 @@ function PokemonDetailPage() {
 
   // 메인 배경 테마별 그라데이션 설정 (커스텀 훅 사용)
   useMainBackground({
-    light: "bg-gradient-to-br from-blue-50 via-white to-purple-50",
-    dark: "bg-gradient-to-br from-slate-800 via-slate-900 to-purple-900",
+    onLight: "bg-gradient-to-br from-blue-50 via-white to-purple-50",
+    onDark: "bg-gradient-to-br from-slate-800 via-slate-900 to-purple-900",
   });
 
   if (isLoadingOrEmpty) return <PokemonDetailSkeleton />;
@@ -129,7 +129,7 @@ function PokemonDetailPage() {
     };
 
     return (
-      <div className="container mx-auto p-4 max-w-7xl">
+      <div className="container mx-auto max-w-7xl p-4">
         <div className="mb-6">
           <Button variant="outline" asChild>
             <Link to="/examples/pokemon" search={true}>
@@ -137,7 +137,7 @@ function PokemonDetailPage() {
             </Link>
           </Button>
         </div>
-        <div className={`text-center py-8 p-8 ${errorStyles[errorSeverity]}`}>
+        <div className={`p-8 py-8 text-center ${errorStyles[errorSeverity]}`}>
           {errorMessage}
         </div>
       </div>
@@ -146,17 +146,17 @@ function PokemonDetailPage() {
 
   return (
     <div className="">
-      <div className="container mx-auto p-4 max-w-7xl">
+      <div className="container mx-auto max-w-7xl p-4">
         {/* 뒤로가기 버튼 */}
         <div className="mb-6">
           <Button
             variant="ghost"
             size="lg"
             asChild
-            className="gap-2 hover:scale-105 transition-transform bg-zinc-100 dark:bg-zinc-900"
+            className="gap-2 bg-zinc-100 transition-transform hover:scale-105 dark:bg-zinc-900"
           >
             <Link to="/examples/pokemon" search={true}>
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="h-5 w-5" />
               목록으로
             </Link>
           </Button>

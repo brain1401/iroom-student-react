@@ -24,13 +24,13 @@ export function PokemonDetailImage({ pokemon, idParam }: Props) {
   return (
     <div
       className={cn(
-        "relative p-8 lg:p-12 flex items-center justify-center",
+        "relative flex items-center justify-center p-8 lg:p-12",
         bgGradient,
       )}
     >
       <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-10 left-10 w-32 h-32 rounded-full bg-white/30 blur-xl" />
-        <div className="absolute bottom-10 right-10 w-40 h-40 rounded-full bg-white/30 blur-xl" />
+        <div className="absolute top-10 left-10 h-32 w-32 rounded-full bg-white/30 blur-xl" />
+        <div className="absolute right-10 bottom-10 h-40 w-40 rounded-full bg-white/30 blur-xl" />
       </div>
 
       <div className="absolute top-6 right-6">
@@ -39,16 +39,16 @@ export function PokemonDetailImage({ pokemon, idParam }: Props) {
         </span>
       </div>
 
-      <div className="relative z-10 w-full max-w-sm aspect-square animate-float">
+      <div className="animate-float relative z-10 aspect-square w-full max-w-sm">
         {isImageLoading && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-32 h-32 bg-white/30 rounded-full animate-pulse" />
+            <div className="h-32 w-32 animate-pulse rounded-full bg-white/30" />
           </div>
         )}
 
         {hasImageError ? (
-          <div className="w-full h-full flex items-center justify-center bg-white/20 rounded-lg">
-            <span className="text-white/70 text-lg">이미지 없음</span>
+          <div className="flex h-full w-full items-center justify-center rounded-lg bg-white/20">
+            <span className="text-lg text-white/70">이미지 없음</span>
           </div>
         ) : (
           <img
@@ -59,7 +59,7 @@ export function PokemonDetailImage({ pokemon, idParam }: Props) {
             onLoad={handleImageLoad}
             onError={handleImageError}
             className={cn(
-              "w-full h-full object-contain drop-shadow-2xl transition-all duration-300",
+              "h-full w-full object-contain drop-shadow-2xl transition-all duration-300",
               "hover:scale-110",
               isImageLoading ? "opacity-0" : "opacity-100",
             )}

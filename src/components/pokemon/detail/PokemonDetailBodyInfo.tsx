@@ -11,10 +11,10 @@ export function PokemonDetailBodyInfo({ pokemon }: Props) {
   return (
     <div className="grid grid-cols-2 gap-4">
       <Card className="border-2">
-        <CardContent className="p-4 flex items-center gap-3">
-          <Ruler className="w-5 h-5 text-blue-500" />
+        <CardContent className="flex items-center gap-3 p-4">
+          <Ruler className="h-5 w-5 text-blue-500" />
           <div>
-            <p className="text-sm text-muted-foreground">키</p>
+            <p className="text-muted-foreground text-sm">키</p>
             <p className="text-xl font-bold">
               {(pokemon.height / 10).toFixed(1)}m
             </p>
@@ -23,10 +23,10 @@ export function PokemonDetailBodyInfo({ pokemon }: Props) {
       </Card>
 
       <Card className="border-2">
-        <CardContent className="p-4 flex items-center gap-3">
-          <Weight className="w-5 h-5 text-green-500" />
+        <CardContent className="flex items-center gap-3 p-4">
+          <Weight className="h-5 w-5 text-green-500" />
           <div>
-            <p className="text-sm text-muted-foreground">무게</p>
+            <p className="text-muted-foreground text-sm">무게</p>
             <p className="text-xl font-bold">
               {(pokemon.weight / 10).toFixed(1)}kg
             </p>

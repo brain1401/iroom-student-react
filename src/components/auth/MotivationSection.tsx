@@ -7,7 +7,7 @@ import { Lightbulb } from "lucide-react";
  */
 export function MotivationSection() {
   return (
-    <div className="relative hidden md:block">
+    <div className="relative hidden h-full md:block">
       {/* 그라디언트 배경 */}
       <div className="absolute inset-0 bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-500" />
 

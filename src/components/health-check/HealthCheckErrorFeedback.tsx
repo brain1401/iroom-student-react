@@ -93,7 +93,7 @@ export default function HealthCheckErrorFeedback({
 
         {/* 상세 정보 */}
         {(lastChecked || responseTime) && (
-          <div className="text-xs space-y-1 text-current/80">
+          <div className="space-y-1 text-xs text-current/80">
             {lastChecked && (
               <div>마지막 확인: {lastChecked.toLocaleTimeString("ko-KR")}</div>
             )}
@@ -113,11 +113,11 @@ export default function HealthCheckErrorFeedback({
           <div className="text-xs font-medium text-current/90">
             💡 해결 방법:
           </div>
-          <ul className="text-xs space-y-1 ml-4">
+          <ul className="ml-4 space-y-1 text-xs">
             {errorDetails.suggestions.map((suggestion, index) => (
               <li
                 key={index}
-                className="relative before:content-['•'] before:absolute before:-left-3 before:text-current/70"
+                className="relative before:absolute before:-left-3 before:text-current/70 before:content-['•']"
               >
                 {suggestion}
               </li>
@@ -126,7 +126,7 @@ export default function HealthCheckErrorFeedback({
         </div>
 
         {/* 개발 환경 안내 */}
-        <div className="text-xs text-current/75 pt-2 border-t border-current/20">
+        <div className="border-t border-current/20 pt-2 text-xs text-current/75">
           💻 개발 환경에서만 표시되는 정보입니다.
         </div>
       </AlertDescription>

@@ -155,11 +155,11 @@ function PokemonListPage() {
 
   return (
     <div className="">
-      <div className="container mx-auto p-4 max-w-7xl">
+      <div className="container mx-auto max-w-7xl p-4">
         <PokemonListHeader />
 
         {/* 검색 섹션 */}
-        <Card className="mb-8 shadow-lg border-2 py-0">
+        <Card className="mb-8 border-2 py-0 shadow-lg">
           <CardContent className="p-6">
             <PokemonSearch keyword={keyword} />
           </CardContent>

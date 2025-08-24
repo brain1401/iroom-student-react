@@ -18,12 +18,12 @@ export function PokemonListError({
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-7xl">
+    <div className="container mx-auto max-w-7xl p-4">
       <Card className="border-destructive/50 bg-destructive/5">
         <CardHeader>
           <CardTitle
             className={cn(
-              "text-center bg-gradient-to-r bg-clip-text text-transparent",
+              "bg-gradient-to-r bg-clip-text text-center text-transparent",
               errorStyles[severity],
             )}
           >
@@ -31,7 +31,7 @@ export function PokemonListError({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-center text-muted-foreground">{message}</p>
+          <p className="text-muted-foreground text-center">{message}</p>
         </CardContent>
       </Card>
     </div>

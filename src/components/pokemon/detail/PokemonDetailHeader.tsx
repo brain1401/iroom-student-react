@@ -13,18 +13,18 @@ export function PokemonDetailHeader({ pokemon }: Props) {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
-        <Sparkles className="w-6 h-6 text-yellow-500" />
-        <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+        <Sparkles className="h-6 w-6 text-yellow-500" />
+        <h1 className="bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-4xl font-bold text-transparent lg:text-5xl">
           {formatPokemonName(pokemon.name)}
         </h1>
       </div>
 
-      <div className="flex gap-2 flex-wrap">
+      <div className="flex flex-wrap gap-2">
         {pokemon.types.map((t) => (
           <Badge
             key={t.type.name}
             className={cn(
-              "capitalize px-4 py-2 text-sm font-semibold shadow-lg",
+              "px-4 py-2 text-sm font-semibold capitalize shadow-lg",
               getTypeBadgeClass(t.type.name as any),
             )}
           >

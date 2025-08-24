@@ -50,33 +50,33 @@ export function PokemonCard({
     >
       <Card
         className={cn(
-          "relative overflow-hidden cursor-pointer transition-all duration-300",
-          "hover:shadow-2xl hover:-translate-y-1",
+          "relative cursor-pointer overflow-hidden transition-all duration-300",
+          "hover:-translate-y-1 hover:shadow-2xl",
           "border-2 bg-gradient-to-br from-white to-gray-50",
-          "hover:ring-2 hover:ring-primary/50",
+          "hover:ring-primary/50 hover:ring-2",
         )}
       >
         {/* 배경 그라디언트 */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 to-purple-50/30" />
 
         {/* 장식용 원 */}
-        <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/20 backdrop-blur-sm" />
-        <div className="absolute -left-8 -bottom-8 w-24 h-24 rounded-full bg-white/20 backdrop-blur-sm" />
+        <div className="absolute -top-8 -right-8 h-32 w-32 rounded-full bg-white/20 backdrop-blur-sm" />
+        <div className="absolute -bottom-8 -left-8 h-24 w-24 rounded-full bg-white/20 backdrop-blur-sm" />
 
-        <div className="relative p-4 space-y-3">
+        <div className="relative space-y-3 p-4">
           {/* 포켓몬 번호 */}
           <div className="text-right">
-            <span className="text-sm font-bold text-muted-foreground/70">
+            <span className="text-muted-foreground/70 text-sm font-bold">
               {formatPokemonId(pokemonId || "0")}
             </span>
           </div>
 
           {/* 포켓몬 이미지 */}
-          <div className="relative h-32 flex items-center justify-center">
+          <div className="relative flex h-32 items-center justify-center">
             {/* 고정 크기 이미지 컨테이너 - 레이아웃 시프트 방지 */}
-            <div className="w-28 h-28 relative flex items-center justify-center transition-transform duration-300 hover:scale-110">
+            <div className="relative flex h-28 w-28 items-center justify-center transition-transform duration-300 hover:scale-110">
               {/* 로딩 스켈레톤 - 실제 이미지와 동일한 크기 */}
-              {isLoading && <Skeleton className="w-28 h-28 rounded-full" />}
+              {isLoading && <Skeleton className="h-28 w-28 rounded-full" />}
 
               {/* 실제 이미지 - 컨테이너와 동일한 크기로 고정 */}
               {!hasError && (
@@ -85,7 +85,7 @@ export function PokemonCard({
                   src={finalImageUrl}
                   alt={`${name} 포켓몬 이미지`}
                   className={cn(
-                    "absolute inset-0 w-full h-full object-contain drop-shadow-lg transition-opacity duration-300",
+                    "absolute inset-0 h-full w-full object-contain drop-shadow-lg transition-opacity duration-300",
                     isLoading ? "opacity-0" : "opacity-100",
                   )}
                   loading="eager"
@@ -99,7 +99,7 @@ export function PokemonCard({
 
               {/* 에러 상태 - 스켈레톤과 동일한 크기 */}
               {hasError && (
-                <Skeleton className="w-28 h-28 rounded-full flex items-center justify-center">
+                <Skeleton className="flex h-28 w-28 items-center justify-center rounded-full">
                   <span className="text-muted-foreground text-xs">
                     이미지 없음
                   </span>
@@ -109,13 +109,13 @@ export function PokemonCard({
           </div>
 
           {/* 포켓몬 이름 */}
-          <h3 className="text-center font-bold text-lg">
+          <h3 className="text-center text-lg font-bold">
             {formatPokemonName(name)}
           </h3>
 
           {/* 클릭 안내 */}
           <div className="text-center">
-            <span className="text-xs text-muted-foreground">
+            <span className="text-muted-foreground text-xs">
               클릭하여 자세히 보기
             </span>
           </div>

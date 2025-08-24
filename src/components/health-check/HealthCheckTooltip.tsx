@@ -55,12 +55,12 @@ export default function HealthCheckTooltip({
           <TooltipContent
             side="bottom"
             align="end"
-            className="max-w-sm p-4 bg-red-50 border-red-200 dark:bg-red-950 dark:border-red-800"
+            className="max-w-sm border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-950"
           >
             <div className="space-y-3">
               {/* 에러 제목 */}
               <div className="flex items-center justify-between">
-                <h4 className="font-semibold text-red-900 dark:text-red-100 text-sm">
+                <h4 className="text-sm font-semibold text-red-900 dark:text-red-100">
                   🔌 서버 연결 실패
                 </h4>
                 {onRetry && (
@@ -69,7 +69,7 @@ export default function HealthCheckTooltip({
                     size="sm"
                     onClick={onRetry}
                     disabled={isRetrying}
-                    className="h-6 px-2 text-xs border-red-300 hover:bg-red-100 dark:border-red-700 dark:hover:bg-red-900"
+                    className="h-6 border-red-300 px-2 text-xs hover:bg-red-100 dark:border-red-700 dark:hover:bg-red-900"
                   >
                     {isRetrying ? "재시도 중..." : "재시도"}
                   </Button>
@@ -77,7 +77,7 @@ export default function HealthCheckTooltip({
               </div>
 
               {/* 기본 메시지 */}
-              <p className="text-red-800 dark:text-red-200 text-sm">
+              <p className="text-sm text-red-800 dark:text-red-200">
                 {message}
               </p>
 
@@ -113,7 +113,7 @@ export default function HealthCheckTooltip({
 
               {/* 시간 정보 */}
               {(lastChecked || responseTime) && (
-                <div className="text-xs space-y-1 text-red-800/80 dark:text-red-200/80 pt-2 border-t border-red-200 dark:border-red-800">
+                <div className="space-y-1 border-t border-red-200 pt-2 text-xs text-red-800/80 dark:border-red-800 dark:text-red-200/80">
                   {lastChecked && (
                     <div>
                       마지막 확인: {lastChecked.toLocaleTimeString("ko-KR")}
@@ -131,11 +131,11 @@ export default function HealthCheckTooltip({
               )}
 
               {/* 해결 방법 제안 */}
-              <div className="space-y-2 pt-2 border-t border-red-200 dark:border-red-800">
+              <div className="space-y-2 border-t border-red-200 pt-2 dark:border-red-800">
                 <div className="text-xs font-medium text-red-900 dark:text-red-100">
                   💡 해결 방법:
                 </div>
-                <ul className="text-xs space-y-1 text-red-800 dark:text-red-200">
+                <ul className="space-y-1 text-xs text-red-800 dark:text-red-200">
                   <li>• 개발 서버가 정상적으로 실행 중인지 확인</li>
                   <li>• 터미널에서 'npm run dev' 명령어로 서버 실행</li>
                   <li>• 방화벽이나 보안 프로그램 차단 여부 확인</li>
@@ -163,7 +163,7 @@ export default function HealthCheckTooltip({
         <TooltipContent
           side="bottom"
           align="end"
-          className="max-w-xs whitespace-pre-line text-sm"
+          className="max-w-xs text-sm whitespace-pre-line"
         >
           {tooltipContent}
         </TooltipContent>

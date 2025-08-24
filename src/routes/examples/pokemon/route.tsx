@@ -28,7 +28,7 @@ function PokemonLayoutComponent() {
   const maxWidthClass = isDetailPage ? "max-w-[80rem]" : "max-w-[60rem]";
 
   return (
-    <div className={cn("w-full mx-auto p-4 lg:p-8", maxWidthClass)}>
+    <div className={cn("mx-auto w-full p-4 lg:p-8", maxWidthClass)}>
       {/* 자식 컴포넌트 렌더링 영역 */}
       <Outlet />
     </div>

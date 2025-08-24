@@ -20,32 +20,32 @@ import { ChevronLeft, Sparkles, Zap } from "lucide-react";
  */
 export function PokemonDetailSkeleton() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="container mx-auto p-4 max-w-7xl">
+    <div className="h-dvh bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="container mx-auto max-w-7xl p-4">
         {/* 뒤로가기 버튼 */}
         <div className="mb-6">
           <Button variant="ghost" size="lg" disabled className="gap-2">
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="h-5 w-5" />
             목록으로
           </Button>
         </div>
 
-        <Card className="overflow-hidden shadow-2xl border-2">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+        <Card className="overflow-hidden border-2 shadow-2xl">
+          <div className="grid grid-cols-1 gap-0 lg:grid-cols-2">
             {/* 이미지 영역 스켈레톤 */}
-            <div className="bg-gradient-to-br from-gray-100 to-gray-200 p-8 lg:p-12 flex items-center justify-center">
-              <div className="w-full max-w-sm aspect-square">
-                <Skeleton className="w-full h-full rounded-full" />
+            <div className="flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 p-8 lg:p-12">
+              <div className="aspect-square w-full max-w-sm">
+                <Skeleton className="h-full w-full rounded-full" />
               </div>
             </div>
 
             {/* 정보 영역 스켈레톤 */}
-            <div className="p-8 lg:p-12 bg-white">
+            <div className="bg-white p-8 lg:p-12">
               <div className="space-y-8">
                 {/* 헤더 */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <Sparkles className="w-6 h-6 text-gray-300" />
+                    <Sparkles className="h-6 w-6 text-gray-300" />
                     <Skeleton className="h-12 w-64" />
                   </div>
 
@@ -64,8 +64,8 @@ export function PokemonDetailSkeleton() {
 
                 {/* 능력치 */}
                 <div>
-                  <div className="flex items-center gap-2 mb-6">
-                    <Zap className="w-5 h-5 text-gray-300" />
+                  <div className="mb-6 flex items-center gap-2">
+                    <Zap className="h-5 w-5 text-gray-300" />
                     <Skeleton className="h-6 w-24" />
                   </div>
                   <div className="space-y-4">

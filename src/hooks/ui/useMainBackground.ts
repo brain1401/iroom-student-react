@@ -1,7 +1,7 @@
 import { useLayoutEffect } from "react";
 import { useSetAtom } from "jotai";
 import type { ThemeBgClassConfig } from "@/atoms/ui";
-import { mainBgExtraClassAtom } from "@/atoms/ui";
+import { mainExtraClassAtom } from "@/atoms/ui";
 
 // 배경 클래스 설정 타입 (문자열 또는 테마별 객체)
 type BackgroundClassConfig = string | Partial<ThemeBgClassConfig>;
@@ -35,25 +35,27 @@ export const useMainBackground = (
    * - useAtom 대신 useSetAtom 사용으로 불필요한 값 구독 및 리렌더링 방지
    * - 성능 최적화: atom 값이 변경되어도 이 훅을 사용하는 컴포넌트는 리렌더링되지 않음
    */
-  const setMainBgExtra = useSetAtom(mainBgExtraClassAtom);
+  const setMainBgExtra = useSetAtom(mainExtraClassAtom);
 
   useLayoutEffect(() => {
     // 배경 클래스 설정
     if (typeof backgroundClass === "string") {
       // 문자열인 경우 light/dark 모두 동일하게 적용
       setMainBgExtra({
-        light: backgroundClass,
-        dark: backgroundClass,
+        onLight: backgroundClass,
+        onDark: backgroundClass,
       });
     } else {
       // 객체인 경우 부분 업데이트 (병합)
       setMainBgExtra((prev) => ({
-        light:
-          backgroundClass.light !== undefined
-            ? backgroundClass.light
-            : prev.light,
-        dark:
-          backgroundClass.dark !== undefined ? backgroundClass.dark : prev.dark,
+        onLight:
+          backgroundClass.onLight !== undefined
+            ? backgroundClass.onLight
+            : prev.onLight,
+        onDark:
+          backgroundClass.onDark !== undefined
+            ? backgroundClass.onDark
+            : prev.onDark,
       }));
     }
 
@@ -62,8 +64,8 @@ export const useMainBackground = (
       try {
         // React의 Strict Mode나 Fast Refresh에서 발생할 수 있는 AggregateError 방지
         setMainBgExtra({
-          light: "",
-          dark: "",
+          onLight: "",
+          onDark: "",
         });
       } catch (error) {
         // cleanup 중 발생하는 에러는 무시 (개발 환경에서만 로그)
