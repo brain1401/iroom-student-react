@@ -47,14 +47,14 @@ export default function HealthCheckStatus() {
         size="sm"
         onClick={refreshHealthCheck}
         disabled={isRefreshing}
-        className="h-8 px-2 gap-1.5 text-xs"
+        className="h-8 gap-1.5 px-2 text-xs"
         aria-label={`서버 상태: ${healthSummary.message}`}
       >
         <HealthCheckIcon status={healthSummary.status} className="text-sm" />
         <HealthCheckBadge
           status={healthSummary.status}
           text="서버"
-          className="text-xs px-1.5 py-0.5 h-5"
+          className="h-5 px-1.5 py-0.5 text-xs"
         />
       </Button>
     </HealthCheckTooltip>
