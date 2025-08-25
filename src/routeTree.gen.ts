@@ -19,11 +19,8 @@ import { Route as MainIndexRouteImport } from './routes/main/index'
 import { Route as ExamManagementIndexRouteImport } from './routes/exam-management/index'
 import { Route as ExamplesPokemonRouteRouteImport } from './routes/examples/pokemon/route'
 import { Route as ExamplesPokemonIndexRouteImport } from './routes/examples/pokemon/index'
-<<<<<<< Updated upstream
-=======
 import { Route as ExamplesComponentsIndexRouteImport } from './routes/examples/components/index'
 import { Route as MainExamExamIdIndexRouteImport } from './routes/main/exam/$examId/index'
->>>>>>> Stashed changes
 import { Route as ExamplesPokemonIdIndexRouteImport } from './routes/examples/pokemon/$id/index'
 import { Route as MainExamExamIdProblemIdIndexRouteImport } from './routes/main/exam/$examId/$problemId/index'
 
@@ -77,8 +74,6 @@ const ExamplesPokemonIndexRoute = ExamplesPokemonIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ExamplesPokemonRouteRoute,
 } as any)
-<<<<<<< Updated upstream
-=======
 const ExamplesComponentsIndexRoute = ExamplesComponentsIndexRouteImport.update({
   id: '/examples/components/',
   path: '/examples/components/',
@@ -89,7 +84,6 @@ const MainExamExamIdIndexRoute = MainExamExamIdIndexRouteImport.update({
   path: '/exam/$examId/',
   getParentRoute: () => MainRouteRoute,
 } as any)
->>>>>>> Stashed changes
 const ExamplesPokemonIdIndexRoute = ExamplesPokemonIdIndexRouteImport.update({
   id: '/$id/',
   path: '/$id/',
@@ -112,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/main/': typeof MainIndexRoute
   '/profile/': typeof ProfileIndexRoute
   '/signup': typeof SignupIndexRoute
+  '/examples/components': typeof ExamplesComponentsIndexRoute
   '/examples/pokemon/': typeof ExamplesPokemonIndexRoute
   '/examples/pokemon/$id': typeof ExamplesPokemonIdIndexRoute
   '/main/exam/$examId': typeof MainExamExamIdIndexRoute
@@ -123,6 +118,7 @@ export interface FileRoutesByTo {
   '/main': typeof MainIndexRoute
   '/profile': typeof ProfileIndexRoute
   '/signup': typeof SignupIndexRoute
+  '/examples/components': typeof ExamplesComponentsIndexRoute
   '/examples/pokemon': typeof ExamplesPokemonIndexRoute
   '/examples/pokemon/$id': typeof ExamplesPokemonIdIndexRoute
   '/main/exam/$examId': typeof MainExamExamIdIndexRoute
@@ -139,6 +135,7 @@ export interface FileRoutesById {
   '/main/': typeof MainIndexRoute
   '/profile/': typeof ProfileIndexRoute
   '/signup/': typeof SignupIndexRoute
+  '/examples/components/': typeof ExamplesComponentsIndexRoute
   '/examples/pokemon/': typeof ExamplesPokemonIndexRoute
   '/examples/pokemon/$id/': typeof ExamplesPokemonIdIndexRoute
   '/main/exam/$examId/': typeof MainExamExamIdIndexRoute
@@ -156,6 +153,7 @@ export interface FileRouteTypes {
     | '/main/'
     | '/profile/'
     | '/signup'
+    | '/examples/components'
     | '/examples/pokemon/'
     | '/examples/pokemon/$id'
     | '/main/exam/$examId'
@@ -167,6 +165,7 @@ export interface FileRouteTypes {
     | '/main'
     | '/profile'
     | '/signup'
+    | '/examples/components'
     | '/examples/pokemon'
     | '/examples/pokemon/$id'
     | '/main/exam/$examId'
@@ -182,6 +181,7 @@ export interface FileRouteTypes {
     | '/main/'
     | '/profile/'
     | '/signup/'
+    | '/examples/components/'
     | '/examples/pokemon/'
     | '/examples/pokemon/$id/'
     | '/main/exam/$examId/'
@@ -195,6 +195,7 @@ export interface RootRouteChildren {
   ProfileRouteRoute: typeof ProfileRouteRouteWithChildren
   ExamplesPokemonRouteRoute: typeof ExamplesPokemonRouteRouteWithChildren
   SignupIndexRoute: typeof SignupIndexRoute
+  ExamplesComponentsIndexRoute: typeof ExamplesComponentsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -269,8 +270,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExamplesPokemonIndexRouteImport
       parentRoute: typeof ExamplesPokemonRouteRoute
     }
-<<<<<<< Updated upstream
-=======
     '/examples/components/': {
       id: '/examples/components/'
       path: '/examples/components'
@@ -285,7 +284,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainExamExamIdIndexRouteImport
       parentRoute: typeof MainRouteRoute
     }
->>>>>>> Stashed changes
     '/examples/pokemon/$id/': {
       id: '/examples/pokemon/$id/'
       path: '/$id'
@@ -362,6 +360,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRouteRoute: ProfileRouteRouteWithChildren,
   ExamplesPokemonRouteRoute: ExamplesPokemonRouteRouteWithChildren,
   SignupIndexRoute: SignupIndexRoute,
+  ExamplesComponentsIndexRoute: ExamplesComponentsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
