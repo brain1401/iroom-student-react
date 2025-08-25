@@ -15,7 +15,10 @@ import { Route as SignupIndexRouteImport } from './routes/signup/index'
 import { Route as MainIndexRouteImport } from './routes/main/index'
 import { Route as ExamplesPokemonRouteRouteImport } from './routes/examples/pokemon/route'
 import { Route as MainTestIndexRouteImport } from './routes/main/test/index'
+import { Route as ExamplesSubmissionIndexRouteImport } from './routes/examples/submission/index'
+import { Route as ExamplesScanIndexRouteImport } from './routes/examples/scan/index'
 import { Route as ExamplesPokemonIndexRouteImport } from './routes/examples/pokemon/index'
+import { Route as ExamplesAuthIndexRouteImport } from './routes/examples/auth/index'
 import { Route as ExamplesPokemonIdIndexRouteImport } from './routes/examples/pokemon/$id/index'
 import { Route as MainTestExamsSubmitIndexRouteImport } from './routes/main/test/exams/submit/index'
 import { Route as MainTestExamsSubmitActiveIndexRouteImport } from './routes/main/test/exams/submit/active/index'
@@ -50,10 +53,25 @@ const MainTestIndexRoute = MainTestIndexRouteImport.update({
   path: '/test/',
   getParentRoute: () => MainRouteRoute,
 } as any)
+const ExamplesSubmissionIndexRoute = ExamplesSubmissionIndexRouteImport.update({
+  id: '/examples/submission/',
+  path: '/examples/submission/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExamplesScanIndexRoute = ExamplesScanIndexRouteImport.update({
+  id: '/examples/scan/',
+  path: '/examples/scan/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExamplesPokemonIndexRoute = ExamplesPokemonIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => ExamplesPokemonRouteRoute,
+} as any)
+const ExamplesAuthIndexRoute = ExamplesAuthIndexRouteImport.update({
+  id: '/examples/auth/',
+  path: '/examples/auth/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ExamplesPokemonIdIndexRoute = ExamplesPokemonIdIndexRouteImport.update({
   id: '/$id/',
@@ -79,7 +97,10 @@ export interface FileRoutesByFullPath {
   '/examples/pokemon': typeof ExamplesPokemonRouteRouteWithChildren
   '/main/': typeof MainIndexRoute
   '/signup': typeof SignupIndexRoute
+  '/examples/auth': typeof ExamplesAuthIndexRoute
   '/examples/pokemon/': typeof ExamplesPokemonIndexRoute
+  '/examples/scan': typeof ExamplesScanIndexRoute
+  '/examples/submission': typeof ExamplesSubmissionIndexRoute
   '/main/test': typeof MainTestIndexRoute
   '/examples/pokemon/$id': typeof ExamplesPokemonIdIndexRoute
   '/main/test/exams/submit': typeof MainTestExamsSubmitIndexRoute
@@ -89,7 +110,10 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/main': typeof MainIndexRoute
   '/signup': typeof SignupIndexRoute
+  '/examples/auth': typeof ExamplesAuthIndexRoute
   '/examples/pokemon': typeof ExamplesPokemonIndexRoute
+  '/examples/scan': typeof ExamplesScanIndexRoute
+  '/examples/submission': typeof ExamplesSubmissionIndexRoute
   '/main/test': typeof MainTestIndexRoute
   '/examples/pokemon/$id': typeof ExamplesPokemonIdIndexRoute
   '/main/test/exams/submit': typeof MainTestExamsSubmitIndexRoute
@@ -102,7 +126,10 @@ export interface FileRoutesById {
   '/examples/pokemon': typeof ExamplesPokemonRouteRouteWithChildren
   '/main/': typeof MainIndexRoute
   '/signup/': typeof SignupIndexRoute
+  '/examples/auth/': typeof ExamplesAuthIndexRoute
   '/examples/pokemon/': typeof ExamplesPokemonIndexRoute
+  '/examples/scan/': typeof ExamplesScanIndexRoute
+  '/examples/submission/': typeof ExamplesSubmissionIndexRoute
   '/main/test/': typeof MainTestIndexRoute
   '/examples/pokemon/$id/': typeof ExamplesPokemonIdIndexRoute
   '/main/test/exams/submit/': typeof MainTestExamsSubmitIndexRoute
@@ -116,7 +143,10 @@ export interface FileRouteTypes {
     | '/examples/pokemon'
     | '/main/'
     | '/signup'
+    | '/examples/auth'
     | '/examples/pokemon/'
+    | '/examples/scan'
+    | '/examples/submission'
     | '/main/test'
     | '/examples/pokemon/$id'
     | '/main/test/exams/submit'
@@ -126,7 +156,10 @@ export interface FileRouteTypes {
     | '/'
     | '/main'
     | '/signup'
+    | '/examples/auth'
     | '/examples/pokemon'
+    | '/examples/scan'
+    | '/examples/submission'
     | '/main/test'
     | '/examples/pokemon/$id'
     | '/main/test/exams/submit'
@@ -138,7 +171,10 @@ export interface FileRouteTypes {
     | '/examples/pokemon'
     | '/main/'
     | '/signup/'
+    | '/examples/auth/'
     | '/examples/pokemon/'
+    | '/examples/scan/'
+    | '/examples/submission/'
     | '/main/test/'
     | '/examples/pokemon/$id/'
     | '/main/test/exams/submit/'
@@ -150,6 +186,9 @@ export interface RootRouteChildren {
   MainRouteRoute: typeof MainRouteRouteWithChildren
   ExamplesPokemonRouteRoute: typeof ExamplesPokemonRouteRouteWithChildren
   SignupIndexRoute: typeof SignupIndexRoute
+  ExamplesAuthIndexRoute: typeof ExamplesAuthIndexRoute
+  ExamplesScanIndexRoute: typeof ExamplesScanIndexRoute
+  ExamplesSubmissionIndexRoute: typeof ExamplesSubmissionIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -196,12 +235,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainTestIndexRouteImport
       parentRoute: typeof MainRouteRoute
     }
+    '/examples/submission/': {
+      id: '/examples/submission/'
+      path: '/examples/submission'
+      fullPath: '/examples/submission'
+      preLoaderRoute: typeof ExamplesSubmissionIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/examples/scan/': {
+      id: '/examples/scan/'
+      path: '/examples/scan'
+      fullPath: '/examples/scan'
+      preLoaderRoute: typeof ExamplesScanIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/examples/pokemon/': {
       id: '/examples/pokemon/'
       path: '/'
       fullPath: '/examples/pokemon/'
       preLoaderRoute: typeof ExamplesPokemonIndexRouteImport
       parentRoute: typeof ExamplesPokemonRouteRoute
+    }
+    '/examples/auth/': {
+      id: '/examples/auth/'
+      path: '/examples/auth'
+      fullPath: '/examples/auth'
+      preLoaderRoute: typeof ExamplesAuthIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/examples/pokemon/$id/': {
       id: '/examples/pokemon/$id/'
@@ -263,6 +323,9 @@ const rootRouteChildren: RootRouteChildren = {
   MainRouteRoute: MainRouteRouteWithChildren,
   ExamplesPokemonRouteRoute: ExamplesPokemonRouteRouteWithChildren,
   SignupIndexRoute: SignupIndexRoute,
+  ExamplesAuthIndexRoute: ExamplesAuthIndexRoute,
+  ExamplesScanIndexRoute: ExamplesScanIndexRoute,
+  ExamplesSubmissionIndexRoute: ExamplesSubmissionIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
