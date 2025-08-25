@@ -13,7 +13,7 @@ import appCss from "@/css/root.css?url";
 import { useAtomValue } from "jotai";
 import { mainExtraCombinedClassAtom } from "@/atoms/ui";
 import { cn } from "@/lib/utils";
-import { detectDevice } from "@/api/device";
+import UserProfileHeader from "@/components/layout/UserProfileHeader";
 
 /**
  * 라우터 컨텍스트 타입 정의
@@ -166,15 +166,17 @@ function RootComponent() {
   );
 
   return (
-    <main className={mainClasses}>
-      {/* 
-        하위 라우트가 렌더링되는 위치
-        - 각 라우트 컴포넌트가 자체적으로 레이아웃 구성
-        - PageHeader 같은 컴포넌트에서 개별적으로 네비게이션 처리
-        - Tailwind 반응형으로 최적화된 레이아웃 제공
-      */}
-      <Outlet />
-    </main>
+    <>
+      <main
+        className={cn(
+          "flex flex-1 bg-background-400 dark:bg-background-900",
+          extra,
+        )}
+      >
+        {/* 하위 라우트가 렌더링되는 위치 */}
+        <Outlet />
+      </main>
+    </>
   );
 }
 
@@ -199,6 +201,15 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         {/* RouteOptions.head에서 설정된 메타데이터와 링크를 렌더링 */}
         <HeadContent />
+        {/* latex.js 웹 컴포넌트 등록 스크립트 */}
+        <script
+          suppressHydrationWarning
+          type="module"
+          dangerouslySetInnerHTML={{
+            __html:
+              "import { LaTeXJSComponent } from 'https://cdn.jsdelivr.net/npm/latex.js/dist/latex.mjs';\ncustomElements.define('latex-js', LaTeXJSComponent);",
+          }}
+        />
       </head>
       <body className="font-noto-sans-kr h-full w-full">
         {/* 메인 애플리케이션 콘텐츠 */}

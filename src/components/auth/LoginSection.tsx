@@ -77,8 +77,8 @@ export function LoginSection() {
             className={inputStyles}
           />
         </div>
-        <Button type="submit" className={cn(inputStyles, "w-full")}>
-          로그인
+        <Button asChild className={cn(inputStyles, "w-full")}>
+          <a href="/main">로그인</a>
         </Button>
       </form>
 

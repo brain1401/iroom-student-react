@@ -12,11 +12,27 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as MainRouteRouteImport } from './routes/main/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SignupIndexRouteImport } from './routes/signup/index'
+<<<<<<< HEAD
+=======
+import { Route as MypageIndexRouteImport } from './routes/mypage/index'
+>>>>>>> 2f130098e603846699399a7aade5e1c70a504fd5
 import { Route as MainIndexRouteImport } from './routes/main/index'
 import { Route as ExamplesPokemonRouteRouteImport } from './routes/examples/pokemon/route'
+import { Route as MypageEditIndexRouteImport } from './routes/mypage/edit/index'
+import { Route as MainReportIndexRouteImport } from './routes/main/report/index'
+import { Route as MainProblemIndexRouteImport } from './routes/main/problem/index'
 import { Route as ExamplesPokemonIndexRouteImport } from './routes/examples/pokemon/index'
+<<<<<<< HEAD
 import { Route as ExamplesComponentsIndexRouteImport } from './routes/examples/components/index'
+=======
+import { Route as MainReportMobileIndexRouteImport } from './routes/main/report/mobile/index'
+import { Route as MainProblemIdIndexRouteImport } from './routes/main/problem/$id/index'
+>>>>>>> 2f130098e603846699399a7aade5e1c70a504fd5
 import { Route as ExamplesPokemonIdIndexRouteImport } from './routes/examples/pokemon/$id/index'
+import { Route as MainReportMobileSubjectiveWrongIndexRouteImport } from './routes/main/report/mobile/subjective-wrong/index'
+import { Route as MainReportMobileObjectiveWrongIndexRouteImport } from './routes/main/report/mobile/objective-wrong/index'
+import { Route as MainReportMobileObjectiveCorrectIndexRouteImport } from './routes/main/report/mobile/objective-correct/index'
+import { Route as MainReportMobileAllDisplayIndexRouteImport } from './routes/main/report/mobile/all-display/index'
 
 const MainRouteRoute = MainRouteRouteImport.update({
   id: '/main',
@@ -33,6 +49,14 @@ const SignupIndexRoute = SignupIndexRouteImport.update({
   path: '/signup/',
   getParentRoute: () => rootRouteImport,
 } as any)
+<<<<<<< HEAD
+=======
+const MypageIndexRoute = MypageIndexRouteImport.update({
+  id: '/mypage/',
+  path: '/mypage/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+>>>>>>> 2f130098e603846699399a7aade5e1c70a504fd5
 const MainIndexRoute = MainIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -43,39 +67,116 @@ const ExamplesPokemonRouteRoute = ExamplesPokemonRouteRouteImport.update({
   path: '/examples/pokemon',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MypageEditIndexRoute = MypageEditIndexRouteImport.update({
+  id: '/mypage/edit/',
+  path: '/mypage/edit/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MainReportIndexRoute = MainReportIndexRouteImport.update({
+  id: '/report/',
+  path: '/report/',
+  getParentRoute: () => MainRouteRoute,
+} as any)
+const MainProblemIndexRoute = MainProblemIndexRouteImport.update({
+  id: '/problem/',
+  path: '/problem/',
+  getParentRoute: () => MainRouteRoute,
+} as any)
 const ExamplesPokemonIndexRoute = ExamplesPokemonIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => ExamplesPokemonRouteRoute,
 } as any)
+<<<<<<< HEAD
 const ExamplesComponentsIndexRoute = ExamplesComponentsIndexRouteImport.update({
   id: '/examples/components/',
   path: '/examples/components/',
   getParentRoute: () => rootRouteImport,
+=======
+const MainReportMobileIndexRoute = MainReportMobileIndexRouteImport.update({
+  id: '/report/mobile/',
+  path: '/report/mobile/',
+  getParentRoute: () => MainRouteRoute,
+} as any)
+const MainProblemIdIndexRoute = MainProblemIdIndexRouteImport.update({
+  id: '/problem/$id/',
+  path: '/problem/$id/',
+  getParentRoute: () => MainRouteRoute,
+>>>>>>> 2f130098e603846699399a7aade5e1c70a504fd5
 } as any)
 const ExamplesPokemonIdIndexRoute = ExamplesPokemonIdIndexRouteImport.update({
   id: '/$id/',
   path: '/$id/',
   getParentRoute: () => ExamplesPokemonRouteRoute,
 } as any)
+const MainReportMobileSubjectiveWrongIndexRoute =
+  MainReportMobileSubjectiveWrongIndexRouteImport.update({
+    id: '/report/mobile/subjective-wrong/',
+    path: '/report/mobile/subjective-wrong/',
+    getParentRoute: () => MainRouteRoute,
+  } as any)
+const MainReportMobileObjectiveWrongIndexRoute =
+  MainReportMobileObjectiveWrongIndexRouteImport.update({
+    id: '/report/mobile/objective-wrong/',
+    path: '/report/mobile/objective-wrong/',
+    getParentRoute: () => MainRouteRoute,
+  } as any)
+const MainReportMobileObjectiveCorrectIndexRoute =
+  MainReportMobileObjectiveCorrectIndexRouteImport.update({
+    id: '/report/mobile/objective-correct/',
+    path: '/report/mobile/objective-correct/',
+    getParentRoute: () => MainRouteRoute,
+  } as any)
+const MainReportMobileAllDisplayIndexRoute =
+  MainReportMobileAllDisplayIndexRouteImport.update({
+    id: '/report/mobile/all-display/',
+    path: '/report/mobile/all-display/',
+    getParentRoute: () => MainRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/main': typeof MainRouteRouteWithChildren
   '/examples/pokemon': typeof ExamplesPokemonRouteRouteWithChildren
   '/main/': typeof MainIndexRoute
+<<<<<<< HEAD
+=======
+  '/mypage': typeof MypageIndexRoute
+>>>>>>> 2f130098e603846699399a7aade5e1c70a504fd5
   '/signup': typeof SignupIndexRoute
   '/examples/components': typeof ExamplesComponentsIndexRoute
   '/examples/pokemon/': typeof ExamplesPokemonIndexRoute
+  '/main/problem': typeof MainProblemIndexRoute
+  '/main/report': typeof MainReportIndexRoute
+  '/mypage/edit': typeof MypageEditIndexRoute
   '/examples/pokemon/$id': typeof ExamplesPokemonIdIndexRoute
+  '/main/problem/$id': typeof MainProblemIdIndexRoute
+  '/main/report/mobile': typeof MainReportMobileIndexRoute
+  '/main/report/mobile/all-display': typeof MainReportMobileAllDisplayIndexRoute
+  '/main/report/mobile/objective-correct': typeof MainReportMobileObjectiveCorrectIndexRoute
+  '/main/report/mobile/objective-wrong': typeof MainReportMobileObjectiveWrongIndexRoute
+  '/main/report/mobile/subjective-wrong': typeof MainReportMobileSubjectiveWrongIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/main': typeof MainIndexRoute
+<<<<<<< HEAD
+=======
+  '/mypage': typeof MypageIndexRoute
+>>>>>>> 2f130098e603846699399a7aade5e1c70a504fd5
   '/signup': typeof SignupIndexRoute
   '/examples/components': typeof ExamplesComponentsIndexRoute
   '/examples/pokemon': typeof ExamplesPokemonIndexRoute
+  '/main/problem': typeof MainProblemIndexRoute
+  '/main/report': typeof MainReportIndexRoute
+  '/mypage/edit': typeof MypageEditIndexRoute
   '/examples/pokemon/$id': typeof ExamplesPokemonIdIndexRoute
+  '/main/problem/$id': typeof MainProblemIdIndexRoute
+  '/main/report/mobile': typeof MainReportMobileIndexRoute
+  '/main/report/mobile/all-display': typeof MainReportMobileAllDisplayIndexRoute
+  '/main/report/mobile/objective-correct': typeof MainReportMobileObjectiveCorrectIndexRoute
+  '/main/report/mobile/objective-wrong': typeof MainReportMobileObjectiveWrongIndexRoute
+  '/main/report/mobile/subjective-wrong': typeof MainReportMobileSubjectiveWrongIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -83,10 +184,23 @@ export interface FileRoutesById {
   '/main': typeof MainRouteRouteWithChildren
   '/examples/pokemon': typeof ExamplesPokemonRouteRouteWithChildren
   '/main/': typeof MainIndexRoute
+<<<<<<< HEAD
+=======
+  '/mypage/': typeof MypageIndexRoute
+>>>>>>> 2f130098e603846699399a7aade5e1c70a504fd5
   '/signup/': typeof SignupIndexRoute
   '/examples/components/': typeof ExamplesComponentsIndexRoute
   '/examples/pokemon/': typeof ExamplesPokemonIndexRoute
+  '/main/problem/': typeof MainProblemIndexRoute
+  '/main/report/': typeof MainReportIndexRoute
+  '/mypage/edit/': typeof MypageEditIndexRoute
   '/examples/pokemon/$id/': typeof ExamplesPokemonIdIndexRoute
+  '/main/problem/$id/': typeof MainProblemIdIndexRoute
+  '/main/report/mobile/': typeof MainReportMobileIndexRoute
+  '/main/report/mobile/all-display/': typeof MainReportMobileAllDisplayIndexRoute
+  '/main/report/mobile/objective-correct/': typeof MainReportMobileObjectiveCorrectIndexRoute
+  '/main/report/mobile/objective-wrong/': typeof MainReportMobileObjectiveWrongIndexRoute
+  '/main/report/mobile/subjective-wrong/': typeof MainReportMobileSubjectiveWrongIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -95,36 +209,83 @@ export interface FileRouteTypes {
     | '/main'
     | '/examples/pokemon'
     | '/main/'
+<<<<<<< HEAD
+=======
+    | '/mypage'
+>>>>>>> 2f130098e603846699399a7aade5e1c70a504fd5
     | '/signup'
     | '/examples/components'
     | '/examples/pokemon/'
+    | '/main/problem'
+    | '/main/report'
+    | '/mypage/edit'
     | '/examples/pokemon/$id'
+    | '/main/problem/$id'
+    | '/main/report/mobile'
+    | '/main/report/mobile/all-display'
+    | '/main/report/mobile/objective-correct'
+    | '/main/report/mobile/objective-wrong'
+    | '/main/report/mobile/subjective-wrong'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/main'
+<<<<<<< HEAD
     | '/signup'
     | '/examples/components'
     | '/examples/pokemon'
     | '/examples/pokemon/$id'
+=======
+    | '/mypage'
+    | '/signup'
+    | '/examples/pokemon'
+    | '/main/problem'
+    | '/main/report'
+    | '/mypage/edit'
+    | '/examples/pokemon/$id'
+    | '/main/problem/$id'
+    | '/main/report/mobile'
+    | '/main/report/mobile/all-display'
+    | '/main/report/mobile/objective-correct'
+    | '/main/report/mobile/objective-wrong'
+    | '/main/report/mobile/subjective-wrong'
+>>>>>>> 2f130098e603846699399a7aade5e1c70a504fd5
   id:
     | '__root__'
     | '/'
     | '/main'
     | '/examples/pokemon'
     | '/main/'
+<<<<<<< HEAD
+=======
+    | '/mypage/'
+>>>>>>> 2f130098e603846699399a7aade5e1c70a504fd5
     | '/signup/'
     | '/examples/components/'
     | '/examples/pokemon/'
+    | '/main/problem/'
+    | '/main/report/'
+    | '/mypage/edit/'
     | '/examples/pokemon/$id/'
+    | '/main/problem/$id/'
+    | '/main/report/mobile/'
+    | '/main/report/mobile/all-display/'
+    | '/main/report/mobile/objective-correct/'
+    | '/main/report/mobile/objective-wrong/'
+    | '/main/report/mobile/subjective-wrong/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   MainRouteRoute: typeof MainRouteRouteWithChildren
   ExamplesPokemonRouteRoute: typeof ExamplesPokemonRouteRouteWithChildren
+  MypageIndexRoute: typeof MypageIndexRoute
   SignupIndexRoute: typeof SignupIndexRoute
+<<<<<<< HEAD
   ExamplesComponentsIndexRoute: typeof ExamplesComponentsIndexRoute
+=======
+  MypageEditIndexRoute: typeof MypageEditIndexRoute
+>>>>>>> 2f130098e603846699399a7aade5e1c70a504fd5
 }
 
 declare module '@tanstack/react-router' {
@@ -150,6 +311,16 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+<<<<<<< HEAD
+=======
+    '/mypage/': {
+      id: '/mypage/'
+      path: '/mypage'
+      fullPath: '/mypage'
+      preLoaderRoute: typeof MypageIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+>>>>>>> 2f130098e603846699399a7aade5e1c70a504fd5
     '/main/': {
       id: '/main/'
       path: '/'
@@ -164,6 +335,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExamplesPokemonRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mypage/edit/': {
+      id: '/mypage/edit/'
+      path: '/mypage/edit'
+      fullPath: '/mypage/edit'
+      preLoaderRoute: typeof MypageEditIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/main/report/': {
+      id: '/main/report/'
+      path: '/report'
+      fullPath: '/main/report'
+      preLoaderRoute: typeof MainReportIndexRouteImport
+      parentRoute: typeof MainRouteRoute
+    }
+    '/main/problem/': {
+      id: '/main/problem/'
+      path: '/problem'
+      fullPath: '/main/problem'
+      preLoaderRoute: typeof MainProblemIndexRouteImport
+      parentRoute: typeof MainRouteRoute
+    }
     '/examples/pokemon/': {
       id: '/examples/pokemon/'
       path: '/'
@@ -171,12 +363,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExamplesPokemonIndexRouteImport
       parentRoute: typeof ExamplesPokemonRouteRoute
     }
+<<<<<<< HEAD
     '/examples/components/': {
       id: '/examples/components/'
       path: '/examples/components'
       fullPath: '/examples/components'
       preLoaderRoute: typeof ExamplesComponentsIndexRouteImport
       parentRoute: typeof rootRouteImport
+=======
+    '/main/report/mobile/': {
+      id: '/main/report/mobile/'
+      path: '/report/mobile'
+      fullPath: '/main/report/mobile'
+      preLoaderRoute: typeof MainReportMobileIndexRouteImport
+      parentRoute: typeof MainRouteRoute
+    }
+    '/main/problem/$id/': {
+      id: '/main/problem/$id/'
+      path: '/problem/$id'
+      fullPath: '/main/problem/$id'
+      preLoaderRoute: typeof MainProblemIdIndexRouteImport
+      parentRoute: typeof MainRouteRoute
+>>>>>>> 2f130098e603846699399a7aade5e1c70a504fd5
     }
     '/examples/pokemon/$id/': {
       id: '/examples/pokemon/$id/'
@@ -185,15 +393,68 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExamplesPokemonIdIndexRouteImport
       parentRoute: typeof ExamplesPokemonRouteRoute
     }
+    '/main/report/mobile/subjective-wrong/': {
+      id: '/main/report/mobile/subjective-wrong/'
+      path: '/report/mobile/subjective-wrong'
+      fullPath: '/main/report/mobile/subjective-wrong'
+      preLoaderRoute: typeof MainReportMobileSubjectiveWrongIndexRouteImport
+      parentRoute: typeof MainRouteRoute
+    }
+    '/main/report/mobile/objective-wrong/': {
+      id: '/main/report/mobile/objective-wrong/'
+      path: '/report/mobile/objective-wrong'
+      fullPath: '/main/report/mobile/objective-wrong'
+      preLoaderRoute: typeof MainReportMobileObjectiveWrongIndexRouteImport
+      parentRoute: typeof MainRouteRoute
+    }
+    '/main/report/mobile/objective-correct/': {
+      id: '/main/report/mobile/objective-correct/'
+      path: '/report/mobile/objective-correct'
+      fullPath: '/main/report/mobile/objective-correct'
+      preLoaderRoute: typeof MainReportMobileObjectiveCorrectIndexRouteImport
+      parentRoute: typeof MainRouteRoute
+    }
+    '/main/report/mobile/all-display/': {
+      id: '/main/report/mobile/all-display/'
+      path: '/report/mobile/all-display'
+      fullPath: '/main/report/mobile/all-display'
+      preLoaderRoute: typeof MainReportMobileAllDisplayIndexRouteImport
+      parentRoute: typeof MainRouteRoute
+    }
   }
 }
 
 interface MainRouteRouteChildren {
   MainIndexRoute: typeof MainIndexRoute
+<<<<<<< HEAD
+=======
+  MainProblemIndexRoute: typeof MainProblemIndexRoute
+  MainReportIndexRoute: typeof MainReportIndexRoute
+  MainProblemIdIndexRoute: typeof MainProblemIdIndexRoute
+  MainReportMobileIndexRoute: typeof MainReportMobileIndexRoute
+  MainReportMobileAllDisplayIndexRoute: typeof MainReportMobileAllDisplayIndexRoute
+  MainReportMobileObjectiveCorrectIndexRoute: typeof MainReportMobileObjectiveCorrectIndexRoute
+  MainReportMobileObjectiveWrongIndexRoute: typeof MainReportMobileObjectiveWrongIndexRoute
+  MainReportMobileSubjectiveWrongIndexRoute: typeof MainReportMobileSubjectiveWrongIndexRoute
+>>>>>>> 2f130098e603846699399a7aade5e1c70a504fd5
 }
 
 const MainRouteRouteChildren: MainRouteRouteChildren = {
   MainIndexRoute: MainIndexRoute,
+<<<<<<< HEAD
+=======
+  MainProblemIndexRoute: MainProblemIndexRoute,
+  MainReportIndexRoute: MainReportIndexRoute,
+  MainProblemIdIndexRoute: MainProblemIdIndexRoute,
+  MainReportMobileIndexRoute: MainReportMobileIndexRoute,
+  MainReportMobileAllDisplayIndexRoute: MainReportMobileAllDisplayIndexRoute,
+  MainReportMobileObjectiveCorrectIndexRoute:
+    MainReportMobileObjectiveCorrectIndexRoute,
+  MainReportMobileObjectiveWrongIndexRoute:
+    MainReportMobileObjectiveWrongIndexRoute,
+  MainReportMobileSubjectiveWrongIndexRoute:
+    MainReportMobileSubjectiveWrongIndexRoute,
+>>>>>>> 2f130098e603846699399a7aade5e1c70a504fd5
 }
 
 const MainRouteRouteWithChildren = MainRouteRoute._addFileChildren(
@@ -217,8 +478,13 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   MainRouteRoute: MainRouteRouteWithChildren,
   ExamplesPokemonRouteRoute: ExamplesPokemonRouteRouteWithChildren,
+  MypageIndexRoute: MypageIndexRoute,
   SignupIndexRoute: SignupIndexRoute,
+<<<<<<< HEAD
   ExamplesComponentsIndexRoute: ExamplesComponentsIndexRoute,
+=======
+  MypageEditIndexRoute: MypageEditIndexRoute,
+>>>>>>> 2f130098e603846699399a7aade5e1c70a504fd5
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
