@@ -125,44 +125,53 @@ export function PageHeader({
     }
   };
 
+  // 조건부 렌더링을 위한 상수들
+  const titleJustifyClass = !showBackButton
+    ? children
+      ? "justify-start" // 우측에 children이 있으면 좌측 정렬
+      : "justify-center" // children이 없으면 완전 중앙 정렬
+    : "justify-center"; // 뒤로가기 버튼이 있으면 중앙 정렬 (기존과 동일)
+
+  const titlePaddingClass = showBackButton
+    ? !children && "pr-10 md:pr-11"
+    : !children && "pl-0";
+
+  const backButtonElement = showBackButton && (
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={handleBack}
+      className="h-11 w-11 rounded-[10px] p-0 hover:bg-gray-100 md:h-12 md:w-12 dark:hover:bg-gray-800"
+      aria-label="뒤로가기"
+    >
+      <ChevronLeft className="size-6 text-gray-800 md:size-7 dark:text-gray-200" />
+    </Button>
+  );
+
+  const rightElement = children && (
+    <div className="flex items-center">{children}</div>
+  );
+
+  const dividerElement = showDivider && (
+    <div className="absolute right-0 bottom-0 left-0 h-[2px] bg-black dark:bg-white" />
+  );
+
   return (
-    <header
+    <div
       className={cn(
         "relative flex h-12 w-full items-center px-4 py-2 md:h-15 dark:bg-gray-900",
         className,
       )}
     >
-      {/* 뒤로가기 버튼 - 조건부 렌더링 */}
-      {showBackButton && (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleBack}
-          className="h-11 w-11 rounded-[10px] p-0 hover:bg-gray-100 md:h-12 md:w-12 dark:hover:bg-gray-800"
-          aria-label="뒤로가기"
-        >
-          <ChevronLeft className="size-6 text-gray-800 md:size-7 dark:text-gray-200" />
-        </Button>
-      )}
+      {/* 뒤로가기 버튼 */}
+      {backButtonElement}
 
-      {/* 제목 영역 - 뒤로가기 버튼 유무에 따른 레이아웃 조정 */}
-      <div
-        className={cn(
-          "flex flex-1",
-          // 뒤로가기 버튼이 없을 때의 정렬 로직
-          !showBackButton
-            ? children
-              ? "justify-start" // 우측에 children이 있으면 좌측 정렬
-              : "justify-center" // children이 없으면 완전 중앙 정렬
-            : "justify-center", // 뒤로가기 버튼이 있으면 중앙 정렬 (기존과 동일)
-        )}
-      >
+      {/* 제목 영역 */}
+      <div className={cn("flex flex-1", titleJustifyClass)}>
         <h1
           className={cn(
-            "text-center text-lg font-bold text-black md:text-xl dark:text-white",
-            showBackButton
-              ? !children && "pr-10 md:pr-11"
-              : !children && "pl-0",
+            "text-center text-[1.68rem]! font-bold text-black md:text-xl dark:text-white",
+            titlePaddingClass,
           )}
         >
           {title}
@@ -170,12 +179,10 @@ export function PageHeader({
       </div>
 
       {/* 우측 추가 요소 영역 */}
-      {children && <div className="flex items-center">{children}</div>}
+      {rightElement}
 
       {/* 하단 구분선 */}
-      {showDivider && (
-        <div className="absolute right-0 bottom-0 left-0 h-[2px] bg-black dark:bg-white" />
-      )}
-    </header>
+      {dividerElement}
+    </div>
   );
 }
