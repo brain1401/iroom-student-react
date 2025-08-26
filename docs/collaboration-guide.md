@@ -96,7 +96,7 @@ Framework: TanStack Start (SSR)
 Routing: TanStack Router (파일 기반)
 State: Jotai + TanStack Query
 Styling: Tailwind CSS v4 + shadcn/ui
-Build: Vite (포트 3012, Bun 타겟)
+Build: Vite (포트 3011, Bun 타겟)
 Test: Vitest + Testing Library
 ```
 
@@ -254,7 +254,7 @@ import { cn } from "@/lib/utils";
 ### 필수 명령어
 
 ```bash
-# 개발 서버 실행 (포트 3012)
+# 개발 서버 실행 (포트 3011)
 npm run dev
 
 # 코드 품질 검사 및 자동 수정 (커밋 전 필수)

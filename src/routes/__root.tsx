@@ -131,12 +131,12 @@ function RootComponent() {
  */
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko" className="h-full" suppressHydrationWarning>
+    <html lang="ko" suppressHydrationWarning>
       <head>
         {/* RouteOptions.head에서 설정된 메타데이터와 링크를 렌더링 */}
         <HeadContent />
       </head>
-      <body className="h-full w-full flex flex-col font-noto-sans-kr">
+      <body className="font-noto-sans-kr h-dvh">
         {/* 메인 애플리케이션 콘텐츠 */}
         {children}
 

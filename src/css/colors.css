@@ -10,4 +10,8 @@
   --color-background-800: #4b4b4b;
   --color-background-900: #282828;
   --color-background-950: #181818;
+
+
+  --color-not-submitted: #D7D7D7;
+  --color-submitted: #155DFC;
 }
