@@ -13,4 +13,16 @@
 
   --color-not-submitted: #d7d7d7;
   --color-submitted: #155dfc;
+
+  --color-main-50: oklch(94.17% 0.031 295.81);
+  --color-main-100: oklch(88.35% 0.064 295.06);
+  --color-main-200: oklch(76.16% 0.137 294.94);
+  --color-main-300: oklch(65.04% 0.207 294.23);
+  --color-main-400: oklch(54.04% 0.281 292.86);
+  --color-main-500: oklch(47.46% 0.263 292.54);
+  --color-main-600: oklch(40.97% 0.227 292.76);
+  --color-main-700: oklch(34.42% 0.191 292.54);
+  --color-main-800: oklch(28.09% 0.155 292.82);
+  --color-main-900: oklch(21.38% 0.119 293.02);
+  --color-main-950: oklch(17.66% 0.099 292.14);
 }

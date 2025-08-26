@@ -2133,8 +2133,6 @@
 
     "@isaacs/cliui/wrap-ansi": ["wrap-ansi@8.1.0", "", { "dependencies": { "ansi-styles": "^6.1.0", "string-width": "^5.0.1", "strip-ansi": "^7.0.1" } }, ""],
 
-    "@mapbox/node-pre-gyp/semver": ["semver@7.7.2", "", { "bin": "bin/semver.js" }, ""],
-
     "@modelcontextprotocol/sdk/zod": ["zod@3.25.76", "", {}, ""],
 
     "@netlify/dev-utils/chokidar": ["chokidar@4.0.3", "", { "dependencies": { "readdirp": "^4.0.1" } }, ""],
@@ -2151,11 +2149,7 @@
 
     "@netlify/zip-it-and-ship-it/locate-path": ["locate-path@7.2.0", "", { "dependencies": { "p-locate": "^6.0.0" } }, ""],
 
-    "@netlify/zip-it-and-ship-it/minimatch": ["minimatch@9.0.5", "", { "dependencies": { "brace-expansion": "^2.0.1" } }, ""],
-
     "@netlify/zip-it-and-ship-it/path-exists": ["path-exists@5.0.0", "", {}, ""],
-
-    "@netlify/zip-it-and-ship-it/semver": ["semver@7.7.2", "", { "bin": "bin/semver.js" }, ""],
 
     "@netlify/zip-it-and-ship-it/zod": ["zod@3.25.76", "", {}, ""],
 
@@ -2182,10 +2176,6 @@
     "@tanstack/start-plugin-core/zod": ["zod@3.25.76", "", {}, ""],
 
     "@typescript-eslint/eslint-plugin/ignore": ["ignore@7.0.5", "", {}, ""],
-
-    "@typescript-eslint/typescript-estree/minimatch": ["minimatch@9.0.5", "", { "dependencies": { "brace-expansion": "^2.0.1" } }, ""],
-
-    "@typescript-eslint/typescript-estree/semver": ["semver@7.7.2", "", { "bin": "bin/semver.js" }, ""],
 
     "@vercel/nft/estree-walker": ["estree-walker@2.0.2", "", {}, ""],
 
@@ -2221,11 +2211,7 @@
 
     "eslint/minimatch": ["minimatch@3.1.2", "", { "dependencies": { "brace-expansion": "^1.1.7" } }, ""],
 
-    "eslint-compat-utils/semver": ["semver@7.7.2", "", { "bin": "bin/semver.js" }, ""],
-
     "eslint-plugin-n/globals": ["globals@15.15.0", "", {}, ""],
-
-    "eslint-plugin-n/semver": ["semver@7.7.2", "", { "bin": "bin/semver.js" }, ""],
 
     "eslint-plugin-react/minimatch": ["minimatch@3.1.2", "", { "dependencies": { "brace-expansion": "^1.1.7" } }, ""],
 
@@ -2239,13 +2225,9 @@
 
     "form-data/mime-types": ["mime-types@2.1.35", "", { "dependencies": { "mime-db": "1.52.0" } }, ""],
 
-    "glob/minimatch": ["minimatch@9.0.5", "", { "dependencies": { "brace-expansion": "^2.0.1" } }, ""],
-
     "globby/ignore": ["ignore@7.0.5", "", {}, ""],
 
     "hosted-git-info/lru-cache": ["lru-cache@10.4.3", "", {}, ""],
-
-    "http-errors/statuses": ["statuses@2.0.1", "", {}, ""],
 
     "is-inside-container/is-docker": ["is-docker@3.0.0", "", { "bin": "cli.js" }, ""],
 
@@ -2277,13 +2259,9 @@
 
     "nitropack/ohash": ["ohash@2.0.11", "", {}, ""],
 
-    "nitropack/semver": ["semver@7.7.2", "", { "bin": "bin/semver.js" }, ""],
-
     "nitropack/unenv": ["unenv@2.0.0-rc.19", "", { "dependencies": { "defu": "^6.1.4", "exsolve": "^1.0.7", "ohash": "^2.0.11", "pathe": "^2.0.3", "ufo": "^1.6.1" } }, ""],
 
     "node-fetch/whatwg-url": ["whatwg-url@5.0.0", "", { "dependencies": { "tr46": "~0.0.3", "webidl-conversions": "^3.0.0" } }, ""],
-
-    "normalize-package-data/semver": ["semver@7.7.2", "", { "bin": "bin/semver.js" }, ""],
 
     "npm-run-path/path-key": ["path-key@4.0.0", "", {}, ""],
 
@@ -2331,8 +2309,6 @@
 
     "vitest/vite": ["vite@6.3.5", "", { "dependencies": { "esbuild": "^0.25.0", "fdir": "^6.4.4", "picomatch": "^4.0.2", "postcss": "^8.5.3", "rollup": "^4.34.9", "tinyglobby": "^0.2.13" }, "peerDependencies": { "@types/node": "^18.0.0 || ^20.0.0 || >=22.0.0", "jiti": ">=1.21.0", "less": "*", "lightningcss": "^1.21.0", "sass": "*", "sass-embedded": "*", "stylus": "*", "sugarss": "*", "terser": "^5.16.0", "tsx": "^4.8.1", "yaml": "^2.4.2" }, "optionalPeers": ["less", "sass", "sass-embedded", "stylus", "sugarss", "yaml"], "bin": "bin/vite.js" }, ""],
 
-    "vue-eslint-parser/semver": ["semver@7.7.2", "", { "bin": "bin/semver.js" }, ""],
-
     "winston/is-stream": ["is-stream@2.0.1", "", {}, ""],
 
     "winston/readable-stream": ["readable-stream@3.6.2", "", { "dependencies": { "inherits": "^2.0.3", "string_decoder": "^1.1.1", "util-deprecate": "^1.0.1" } }, ""],
@@ -2373,10 +2349,6 @@
 
     "@netlify/zip-it-and-ship-it/locate-path/p-locate": ["p-locate@6.0.0", "", { "dependencies": { "p-limit": "^4.0.0" } }, ""],
 
-    "@netlify/zip-it-and-ship-it/minimatch/brace-expansion": ["brace-expansion@2.0.2", "", { "dependencies": { "balanced-match": "^1.0.0" } }, ""],
-
-    "@typescript-eslint/typescript-estree/minimatch/brace-expansion": ["brace-expansion@2.0.2", "", { "dependencies": { "balanced-match": "^1.0.0" } }, ""],
-
     "c12/chokidar/readdirp": ["readdirp@4.1.2", "", {}, ""],
 
     "color/color-convert/color-name": ["color-name@1.1.3", "", {}, ""],
@@ -2386,8 +2358,6 @@
     "eslint/minimatch/brace-expansion": ["brace-expansion@1.1.12", "", { "dependencies": { "balanced-match": "^1.0.0", "concat-map": "0.0.1" } }, ""],
 
     "form-data/mime-types/mime-db": ["mime-db@1.52.0", "", {}, ""],
-
-    "glob/minimatch/brace-expansion": ["brace-expansion@2.0.2", "", { "dependencies": { "balanced-match": "^1.0.0" } }, ""],
 
     "lazystream/readable-stream/isarray": ["isarray@1.0.0", "", {}, ""],
 
@@ -2404,8 +2374,6 @@
     "node-fetch/whatwg-url/tr46": ["tr46@0.0.3", "", {}, ""],
 
     "node-fetch/whatwg-url/webidl-conversions": ["webidl-conversions@3.0.1", "", {}, ""],
-
-    "readdir-glob/minimatch/brace-expansion": ["brace-expansion@2.0.2", "", { "dependencies": { "balanced-match": "^1.0.0" } }, ""],
 
     "unstorage/chokidar/readdirp": ["readdirp@4.1.2", "", {}, ""],
 

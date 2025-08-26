@@ -217,5 +217,3 @@ export function UserProfileHeader({
     </div>
   );
 }
-
-export default UserProfileHeader;

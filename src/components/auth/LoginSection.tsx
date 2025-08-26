@@ -56,9 +56,10 @@ export function LoginSection() {
       {/* 회원가입 링크 */}
       <div className="text-center text-sm">
         <span className="text-muted-foreground">처음이신가요?</span>
-        <Link to="/signup" className="ml-2 underline">
+        {/* TODO: Add signup route when available */}
+        <span className="ml-2 underline cursor-pointer text-blue-600 hover:text-blue-800">
           회원가입
-        </Link>
+        </span>
       </div>
     </div>
   );
