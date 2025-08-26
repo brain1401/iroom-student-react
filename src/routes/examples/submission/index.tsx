@@ -1,8 +1,7 @@
-
 import { MathQuestionCard } from "@/components/exam/MathQuestionCard";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+// import { Input } from "@/components/ui/input"; // unused
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/examples/submission/")({
@@ -30,8 +29,7 @@ function RouteComponent() {
       </div>
 
       <div className="flex-1" />
-      
-      
+
       <Button className="w-[80%]">제출하기</Button>
     </div>
   );

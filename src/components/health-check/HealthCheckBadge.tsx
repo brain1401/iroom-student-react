@@ -12,7 +12,7 @@ interface HealthCheckBadgeProps {
   className?: string;
 }
 
-export default function HealthCheckBadge({
+export function HealthCheckBadge({
   status,
   text = "서버",
   className = "text-xs px-1.5 py-0.5 h-5",

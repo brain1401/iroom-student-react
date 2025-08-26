@@ -10,7 +10,7 @@ interface HealthCheckIconProps {
   className?: string;
 }
 
-export default function HealthCheckIcon({
+export function HealthCheckIcon({
   status,
   className = "text-sm",
 }: HealthCheckIconProps) {

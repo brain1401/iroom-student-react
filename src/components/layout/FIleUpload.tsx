@@ -21,7 +21,7 @@ type FileUploadProps = {
  */
 type PreviewFile = File & { preview?: string; _id: string };
 
-export default function FileUpload({ onFilesSelect }: FileUploadProps) {
+export function FileUpload({ onFilesSelect }: FileUploadProps) {
   const inputId = useId();
   const [files, setFiles] = useState<PreviewFile[]>([]);
 

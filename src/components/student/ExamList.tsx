@@ -1,4 +1,4 @@
-import ExamListItem from "./ExamListItem";
+import { ExamListItem } from "./ExamListItem";
 import { cn } from "@/lib/utils";
 
 type Exam = {
@@ -27,10 +27,20 @@ type ExamListProps = {
   renderDetails?: (exam: Exam, index: number) => React.ReactNode;
 };
 
-export default function ExamList({ items, className, onItemClick, renderDetails }: ExamListProps) {
+export function ExamList({
+  items,
+  className,
+  onItemClick,
+  renderDetails,
+}: ExamListProps) {
   return (
     <div className="w-full">
-      <div className={cn("divide-y divide-[#D7D7D7]/60 rounded-[10px] border border-[#D7D7D7] bg-[#FAFAFA]", className)}>
+      <div
+        className={cn(
+          "divide-y divide-[#D7D7D7]/60 rounded-[10px] border border-[#D7D7D7] bg-[#FAFAFA]",
+          className,
+        )}
+      >
         {items.map((item, index) => (
           <ExamListItem
             key={`${item.title}-${item.date}-${index}`}
@@ -48,5 +58,3 @@ export default function ExamList({ items, className, onItemClick, renderDetails 
     </div>
   );
 }
-
-

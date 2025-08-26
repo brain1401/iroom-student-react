@@ -2,17 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHeader } from "@/components/layout";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import {
-  ExamResultCard,
-  ExamQuestionItem,
-  MathQuestionCard,
-} from "@/components/exam";
+import { ExamQuestionItem, MathQuestionCard } from "@/components/exam";
 import type { MathQuestion, MathQuestionCardState } from "@/components/exam";
-import { Button } from "@/components/ui/button";
 
 /**
- * 시험 결과 예시 데이터
+ * 시험 결과 예시 데이터 - 현재 미사용이지만 향후 확장 가능
+ * ExamResultCard 컴포넌트에서 사용될 예정
  */
+/*
 const examResults = [
   {
     id: "1",
@@ -50,6 +47,7 @@ const examResults = [
     accuracyRate: 45,
   },
 ];
+*/
 
 /**
  * 시험 문제 항목 예시 데이터
@@ -123,6 +121,7 @@ function ComponentsPage() {
   const [questions, setQuestions] = useState<MathQuestion[]>([
     {
       id: "1",
+      questionNumber: 1,
       number: 1,
       answer: "x = 3y + 2",
       state: "completed",
@@ -130,18 +129,21 @@ function ComponentsPage() {
     },
     {
       id: "2",
+      questionNumber: 2,
       number: 2,
       state: "loading",
       createdAt: new Date(),
     },
     {
       id: "3",
+      questionNumber: 3,
       number: 3,
       state: "idle",
       createdAt: new Date(),
     },
     {
       id: "4",
+      questionNumber: 4,
       number: 4,
       answer: "2x² - 5x + 3 = 0",
       state: "error",
@@ -149,6 +151,7 @@ function ComponentsPage() {
     },
     {
       id: "5",
+      questionNumber: 5,
       number: 5,
       answer: "∫ x² dx = (x³/3) + C",
       state: "completed",
@@ -159,16 +162,25 @@ function ComponentsPage() {
   /**
    * 시험 결과 카드 클릭 핸들러
    */
+  /**
+   * 시험 결과 카드 클릭 핸들러 - 향후 확장용
+   * ExamResultCard 컴포너트에서 사용될 예정
+   */
+  /*
   const handleExamCardClick = (examId: string, title: string) => {
     alert(`${title} 상세 페이지로 이동 (ID: ${examId})`);
   };
+  */
 
   /**
-   * 시험 결과 뒤로가기 핸들러
+   * 시험 결과 뒤로가기 핸들러 - 향후 확장용
+   * ExamResultCard 컴포너트에서 사용될 예정
    */
+  /*
   const handleExamBackClick = (examId: string) => {
     alert(`${examId}번 시험 뒤로가기 클릭됨`);
   };
+  */
 
   /**
    * 문제 항목 클릭 핸들러
@@ -242,7 +254,7 @@ function ComponentsPage() {
     console.log("사진 삭제:", id);
     setQuestions((prev) =>
       prev.map((q) =>
-        q.id === id ? { ...q, state: "idle", answer: undefined } : q,
+        q.id === id ? { ...q, state: "idle" as const, answer: undefined } : q,
       ),
     );
   };
@@ -252,7 +264,7 @@ function ComponentsPage() {
    */
   const handleUploadFile = (id: string) => {
     console.log("파일 업로드:", id);
-    updateQuestionState(id, "loading");
+    updateQuestionState(id, "loading" as const);
   };
 
   /**
@@ -306,7 +318,7 @@ function ComponentsPage() {
 
         {/* 시험 결과 카드 탭 */}
         <TabsContent value="exam-results" className="space-y-6">
-        <div className="space-y-4">
+          <div className="space-y-4">
             <div className="text-center">
               <h2 className="text-2xl font-semibold text-gray-800">
                 MathQuestionCard 컴포넌트
@@ -354,7 +366,9 @@ function ComponentsPage() {
                 {questions.map((question) => (
                   <div key={question.id} className="flex justify-center">
                     <MathQuestionCard
-                      questionNumber={question.number}
+                      questionNumber={
+                        question.number ?? question.questionNumber
+                      }
                       answer={question.answer}
                       state={question.state}
                       onTakePhoto={() => console.log(question.id)}
@@ -428,7 +442,8 @@ function ComponentsPage() {
                 {examQuestions.map((question) => (
                   <ExamQuestionItem
                     key={question.id}
-                    questionNumber={question.questionNumber}
+                    questionNumber={Number(question.questionNumber)}
+                    examId="example-exam"
                     category={question.category}
                     type={question.type}
                     difficulty={question.difficulty}
@@ -453,11 +468,12 @@ function ComponentsPage() {
                     활성 상태 (풀 수 있는 문제)
                   </h4>
                   <ExamQuestionItem
-                    questionNumber="예시 1번"
+                    questionNumber={1}
                     category="미적분학"
                     type="계산"
                     difficulty="상"
                     status="active"
+                    examId="example-exam-1"
                     onClick={() => alert("활성 문제 클릭!")}
                     onNavigate={() => alert("뒤로가기")}
                   />
@@ -468,11 +484,12 @@ function ComponentsPage() {
                     완료 상태 (이미 푼 문제)
                   </h4>
                   <ExamQuestionItem
-                    questionNumber="예시 2번"
+                    questionNumber={2}
                     category="생물학 실험"
                     type="실험"
                     difficulty="중"
                     status="completed"
+                    examId="example-exam-1"
                     onClick={() => alert("완료된 문제 - 답안 확인")}
                   />
                 </div>
@@ -482,11 +499,12 @@ function ComponentsPage() {
                     잠금 상태 (아직 접근할 수 없는 문제)
                   </h4>
                   <ExamQuestionItem
-                    questionNumber="예시 3번"
+                    questionNumber={3}
                     category="고급 물리학"
                     type="논술"
                     difficulty="상"
                     status="locked"
+                    examId="example-exam-1"
                     onClick={() => alert("잠금된 문제입니다")}
                   />
                 </div>
@@ -496,9 +514,7 @@ function ComponentsPage() {
         </TabsContent>
 
         {/* 수학 문제 카드 탭 */}
-        <TabsContent value="math-cards" className="space-y-6">
-
-        </TabsContent>
+        <TabsContent value="math-cards" className="space-y-6"></TabsContent>
       </Tabs>
     </div>
   );

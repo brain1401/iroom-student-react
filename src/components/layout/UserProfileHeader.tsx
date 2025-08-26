@@ -5,13 +5,11 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogClose,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { BiBell } from "react-icons/bi";
 import { VscAccount } from "react-icons/vsc";
 import { RxHamburgerMenu } from "react-icons/rx";
-import { RiHome5Line } from "react-icons/ri";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 /**
@@ -80,7 +78,7 @@ export function UserProfileHeader({
         <Button
           type="button"
           variant="ghost"
-          onClick={() => window.location.href = "/main"}
+          onClick={() => (window.location.href = "/main")}
           className="text-[30px] font-bold leading-[1.19] text-[#000] h-auto p-0 hover:bg-transparent"
         >
           {name}
@@ -124,16 +122,6 @@ export function UserProfileHeader({
           <SheetContent
             side="right"
             className="bg-white p-4"
-            withinContainer
-            disableOverlay={false}
-            overlayClassName="bg-[rgba(0,0,0,0.8)]"
-            container={
-              typeof document !== "undefined"
-                ? (document.getElementById(
-                    "mobile-container",
-                  ))
-                : undefined
-            }
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
@@ -172,20 +160,8 @@ export function UserProfileHeader({
         <Dialog open={notificationOpen} onOpenChange={setNotificationOpen}>
           <DialogContent
             className="p-0 rounded-[10px] w-full max-w-[300px] overflow-x-hidden bg-white [&_[data-slot='dialog-close']_svg]:size-5"
-            withinContainer
-            overlayClassName="bg-transparent pointer-events-none"
-            container={
-              typeof document !== "undefined"
-                ? (document.getElementById(
-                    "mobile-container",
-                  ))
-                : undefined
-            }
             showCloseButton={false}
-            align="top"
-            offsetTop={64}
           >
-
             <DialogHeader className="px-4 pt-4">
               <DialogTitle className="text-[20px] font-bold leading-[1.19] text-[#000] text-left">
                 알림 목록

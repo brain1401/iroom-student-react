@@ -22,7 +22,7 @@ export type UserAccountPanelProps = {
 };
 
 export function UserAccountPanel({
-  name,
+  name: name,
   grade,
   school,
   phone,

@@ -47,7 +47,7 @@ type HealthCheckErrorFeedbackProps = {
 
 // 코드 간소화: 유틸리티 함수 사용으로 중복 제거
 
-export default function HealthCheckErrorFeedback({
+export function HealthCheckErrorFeedback({
   status,
   message,
   lastChecked,

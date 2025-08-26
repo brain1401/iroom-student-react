@@ -2,7 +2,7 @@ import { Camera, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import type { MathQuestionCardState } from "./type";
+import type { MathQuestionCardState } from "./types";
 
 /**
  * 수학 문제 카드 컴포넌트 프로퍼티
@@ -104,12 +104,12 @@ const BUTTON_CLASSES = "px-3 w-fit border-zinc-400 border";
 export function MathQuestionCard({
   questionNumber,
   answer,
-  state = "idle",
+  state = "empty",
   onTakePhoto,
   onRetakePhoto,
-  onDeletePhoto,
-  onUploadFile,
-  onDownloadResult,
+  onDeletePhoto: _onDeletePhoto,
+  onUploadFile: _onUploadFile,
+  onDownloadResult: _onDownloadResult,
   onClick,
   className,
   disabled = false,

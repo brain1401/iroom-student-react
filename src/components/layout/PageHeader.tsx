@@ -72,6 +72,11 @@ type PageHeaderProps = {
    */
   showBackButton?: boolean;
 
+  /**
+   * 커스텀 뒤로가기 핸들러
+   * @description 제공되면 기본 뒤로가기 대신 이 함수가 호출됨
+   */
+  onBack?: () => void;
 
   /**
    * 하단 구분선 표시 여부
@@ -92,7 +97,7 @@ type PageHeaderProps = {
 export function PageHeader({
   title,
   showBackButton = false,
-  
+  onBack,
   showDivider = true,
   className,
   children,
@@ -111,10 +116,13 @@ export function PageHeader({
    * - 서버와 클라이언트에서 일관된 렌더링 보장
    */
   const handleBack = () => {
-    console.log("click");
-    if (!showBackButton) return;
-    console.log(router.history);
-    router.history.back();
+    if (!showBackButton || !canGoBack) return;
+
+    if (onBack) {
+      onBack();
+    } else {
+      router.history.back();
+    }
   };
 
   return (

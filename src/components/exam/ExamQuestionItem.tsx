@@ -1,9 +1,9 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type { ProblemStatus } from "./type";
+import type { ProblemStatus } from "./types";
 import { ExamQuestionListIcon } from "./ExamQuestionListIcon";
-import { Link, useParams } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 
 /**
  * 시험 문제 항목 컴포넌트 프로퍼티
@@ -34,7 +34,7 @@ type ExamQuestionItemProps = {
   /** 추가 CSS 클래스 */
   className?: string;
 
-  examId:string;
+  examId: string;
 };
 
 /**
@@ -96,7 +96,7 @@ export function ExamQuestionItem({
   onNavigate,
   onClick,
   className,
-  examId
+  examId,
 }: ExamQuestionItemProps) {
   /**
    * 문제 항목 클릭 핸들러
@@ -108,9 +108,11 @@ export function ExamQuestionItem({
     }
   };
 
-  
   return (
-    <Link to={`/main/exam/$examId/$problemId`} params={{examId,problemId:questionNumber}} >
+    <Link
+      to={`/main/exam/$examId/$problemId`}
+      params={{ examId, problemId: questionNumber.toString() }}
+    >
       <div
         className={cn(
           "relative flex items-center justify-between rounded-lg border bg-white px-5 py-5 transition-all duration-200",

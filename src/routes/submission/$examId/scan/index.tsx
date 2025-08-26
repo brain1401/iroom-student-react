@@ -1,4 +1,4 @@
-import FileUpload from "@/components/layout/FIleUpload";
+import { FileUpload } from "@/components/layout/FIleUpload";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { createFileRoute, Link } from "@tanstack/react-router";

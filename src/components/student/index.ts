@@ -1,5 +1,4 @@
-export { default as ExamList } from "./ExamList";
-export { default as ExamListItem } from "./ExamListItem";
-export { default as ExamSubmit } from "./ExamSubmit";
-export { default as AnswerSubmitTabs } from "./AnswerSubmitTabs";
-
+export * from "./ExamList";
+export * from "./ExamListItem";
+export * from "./ExamSubmit";
+export * from "./AnswerSubmitTabs";

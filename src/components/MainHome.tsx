@@ -5,10 +5,9 @@ import { useEffect, useState } from "react";
 import {
   Carousel,
   CarouselContent,
-  CarouselItem
-  
+  CarouselItem,
 } from "@/components/ui/carousel";
-import type {CarouselApi} from "@/components/ui/carousel";
+import type { CarouselApi } from "@/components/ui/carousel";
 import {
   ResponsiveContainer,
   BarChart,

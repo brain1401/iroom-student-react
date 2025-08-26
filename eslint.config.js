@@ -2,6 +2,18 @@ import { tanstackConfig } from "@tanstack/eslint-config";
 import reactPlugin from "eslint-plugin-react";
 
 export default [
+  {
+    ignores: [
+      ".output/**",
+      ".nitro/**",
+      "dist/**",
+      "build/**",
+      "*.gen.ts",
+      "*.gen.js",
+      "node_modules/**",
+      "public/sw.js",
+    ],
+  },
   ...tanstackConfig,
   {
     rules: {
@@ -29,21 +41,9 @@ export default [
       "no-restricted-syntax": [
         "error",
         {
-          selector: "ClassDeclaration[superClass.name='Component']",
-          message: "React 클래스 컴포넌트 금지. 함수 컴포넌트 사용",
-        },
-        {
-          selector: "ClassDeclaration[superClass.name='PureComponent']",
-          message: "React 클래스 컴포넌트 금지. 함수 컴포넌트 사용",
-        },
-        {
-          selector: "ClassDeclaration[superClass.property.name='Component']",
-          message: "React 클래스 컴포넌트 금지. 함수 컴포넌트 사용",
-        },
-        {
-          selector:
-            "ClassDeclaration[superClass.property.name='PureComponent']",
-          message: "React 클래스 컴포넌트 금지. 함수 컴포넌트 사용",
+          selector: "ExportDefaultDeclaration",
+          message:
+            "React 컴포넌트에서 default export 금지. named export 사용하세요.",
         },
       ],
     },

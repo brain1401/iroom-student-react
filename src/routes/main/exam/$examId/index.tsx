@@ -54,9 +54,8 @@ const handleQuestionNavigate = (questionId: string) => {
 };
 
 function RouteComponent() {
-  const {examId} = Route.useParams()
+  const { examId } = Route.useParams();
   return (
-
     <div>
       <PageHeader title="가나다 시험" showBackButton={true} />
 
