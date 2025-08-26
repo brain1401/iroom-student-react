@@ -1,6 +1,9 @@
 import { cn } from "@/lib/utils";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
+import { useAtomValue } from "jotai";
+import { userDisplayInfoAtom } from "@/atoms/ui";
+import UserProfileHeader from "@/components/layout/UserProfileHeader";
 import {
   ResponsiveContainer,
   BarChart,
@@ -15,6 +18,7 @@ export const Route = createFileRoute("/exam-management/")({
 });
 
 export function ExamManagementPage() {
+  const { name, badgeLabel } = useAtomValue(userDisplayInfoAtom);
   const [activeTab, setActiveTab] = useState<"exam" | "grade">("exam");
   const [activeSubTab, setActiveSubTab] = useState<"score" | "wrong">("wrong");
   const [activeFilter, setActiveFilter] = useState<"unit" | "item" | "exam">(
@@ -52,8 +56,16 @@ export function ExamManagementPage() {
   // 오답노트 상세 페이지가 선택된 경우
   if (selectedWrongNote !== null) {
     return (
-      <div className={cn("w-full flex justify-center")}>
-        <div className={cn("w-[360px] bg-white p-4")}>
+      <div className="w-full flex justify-center">
+        <div
+          id="mobile-container"
+          className={cn(
+            "relative w-[360px] bg-white p-4 space-y-4 overflow-hidden",
+          )}
+          style={{ minHeight: 780 }}
+        >
+          <UserProfileHeader name={name} badgeLabel={badgeLabel} />
+
           {/* 상단 헤더 */}
           <div className="flex items-center justify-between mb-6">
             <button
@@ -394,8 +406,16 @@ export function ExamManagementPage() {
   }
 
   return (
-    <div className={cn("w-full flex justify-center")}>
-      <div className={cn("w-[360px] bg-white p-4")}>
+    <div className="w-full flex justify-center">
+      <div
+        id="mobile-container"
+        className={cn(
+          "relative w-[360px] bg-white p-4 space-y-4 overflow-hidden",
+        )}
+        style={{ minHeight: 780 }}
+      >
+        <UserProfileHeader name={name} badgeLabel={badgeLabel} />
+
         {/* 상단 탭 네비게이션 */}
         <div className="flex justify-center gap-6 mb-8">
           <button
@@ -439,12 +459,11 @@ export function ExamManagementPage() {
         <div className="shadow-[0px_1px_6px_0px_rgba(0,0,0,0.25)] rounded-[10px] bg-white p-4">
           {activeTab === "exam" ? (
             /* 시험 관리 탭 - 빈 내용 */
-            <div className="text-center text-gray-500 py-20">
-              시험 관리 기능이 준비 중입니다.
-            </div>
+            (<div className="text-center text-gray-500 py-20">시험 관리 기능이 준비 중입니다.
+                          </div>)
           ) : (
             /* 성적 / 리포트 탭 */
-            <>
+            (<>
               {/* 하위 탭 */}
               <div className="flex justify-center gap-6 mb-6">
                 <button
@@ -484,7 +503,7 @@ export function ExamManagementPage() {
               </div>
               {activeSubTab === "score" ? (
                 /* 시험 점수 탭 - 가나다 시험 카드들 */
-                <div className="space-y-4">
+                (<div className="space-y-4">
                   {[
                     {
                       title: "가나다 시험",
@@ -586,10 +605,10 @@ export function ExamManagementPage() {
                       </div>
                     </div>
                   ))}
-                </div>
+                </div>)
               ) : (
                 /* 오답 노트 탭 */
-                <>
+                (<>
                   {/* 시험 카드들 */}
                   <div className="space-y-4 mb-2 transition-all duration-300 ease-in-out">
                     {/* 필터 버튼들 - 첫 번째 카드 왼쪽 위에 배치 */}
@@ -642,7 +661,7 @@ export function ExamManagementPage() {
                     >
                       {activeFilter === "unit" && (
                         // 단원별 - 2개만
-                        <div className="space-y-4 transition-all duration-500 ease-in-out transform animate-in fade-in-0 slide-in-from-top-2">
+                        (<div className="space-y-4 transition-all duration-500 ease-in-out transform animate-in fade-in-0 slide-in-from-top-2">
                           {[
                             {
                               title: "가다나 시험 4번",
@@ -694,12 +713,12 @@ export function ExamManagementPage() {
                               </div>
                             </div>
                           ))}
-                        </div>
+                        </div>)
                       )}
 
                       {activeFilter === "item" && (
                         // 항목별 - 3개만
-                        <div className="space-y-4 transition-all duration-500 ease-in-out transform animate-in fade-in-0 slide-in-from-top-2">
+                        (<div className="space-y-4 transition-all duration-500 ease-in-out transform animate-in fade-in-0 slide-in-from-top-2">
                           {[
                             {
                               title: "가다나 시험 4번",
@@ -757,12 +776,12 @@ export function ExamManagementPage() {
                               </div>
                             </div>
                           ))}
-                        </div>
+                        </div>)
                       )}
 
                       {activeFilter === "exam" && (
                         // 시험별 - 4개 (기존과 동일)
-                        <div className="space-y-4 transition-all duration-500 ease-in-out transform animate-in fade-in-0 slide-in-from-top-2">
+                        (<div className="space-y-4 transition-all duration-500 ease-in-out transform animate-in fade-in-0 slide-in-from-top-2">
                           {[
                             {
                               title: "가다나 시험 4번",
@@ -827,16 +846,16 @@ export function ExamManagementPage() {
                               </div>
                             </div>
                           ))}
-                        </div>
+                        </div>)
                       )}
                     </div>
                   </div>
-                </>
+                </>)
               )}
-            </>
+            </>)
           )}
         </div>
       </div>
     </div>
-  );
+  )
 }

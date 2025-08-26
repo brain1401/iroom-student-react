@@ -1,9 +1,8 @@
-/* Critical CSS - 우선 로딩 */
-@import "tailwindcss";
-
 /* Base layout and theme variables */
 @import "./font.css";
 @import "./colors.css";
+
+@import "tailwindcss";
 
 /* Custom variants */
 @custom-variant dark (&:is(.dark *));

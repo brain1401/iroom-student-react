@@ -10,12 +10,13 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import UserProfileHeader from "@/components/layout/UserProfileHeader";
 
 export const Route = createFileRoute("/profile/")({
-  component: UserAccountPage,
+  component: ProfilePage,
 });
 
-function UserAccountPage() {
+function ProfilePage() {
   const { name, badgeLabel } = useAtomValue(userDisplayInfoAtom);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
@@ -27,8 +28,16 @@ function UserAccountPage() {
   };
 
   return (
-    <div className={cn("w-full flex justify-center")}>
-      <div className={cn("w-[360px] bg-white p-4")}>
+    <div className="w-full flex justify-center">
+      <div
+        id="mobile-container"
+        className={cn(
+          "relative w-[360px] bg-white p-4 space-y-4 overflow-hidden",
+        )}
+        style={{ minHeight: 780 }}
+      >
+        <UserProfileHeader name={name} badgeLabel={badgeLabel} />
+
         {/* 피그마 카드 (Frame 1171275910) */}
         <div
           className="relative rounded-[10px] border"
@@ -84,33 +93,33 @@ function UserAccountPage() {
         >
           로그아웃
         </button>
-      </div>
 
-      {/* 로그아웃 확인 모달 */}
-      <Dialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen}>
-        <DialogContent className="p-6 rounded-[10px] w-full max-w-[280px] bg-white">
-          <DialogHeader>
-            <DialogTitle className="text-[18px] font-bold leading-[1.19] text-[#000] text-center">
-              로그아웃 하시겠습니까?
-            </DialogTitle>
-          </DialogHeader>
-          <div className="flex gap-3 mt-6">
-            <Button
-              variant="outline"
-              className="flex-1 text-[14px] font-medium"
-              onClick={() => setLogoutDialogOpen(false)}
-            >
-              아니요
-            </Button>
-            <Button
-              className="flex-1 text-[14px] font-medium bg-[#9810FA] hover:bg-[#8A0FE8]"
-              onClick={handleLogout}
-            >
-              예
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+        {/* 로그아웃 확인 모달 */}
+        <Dialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen}>
+          <DialogContent className="p-6 rounded-[10px] w-full max-w-[280px] bg-white">
+            <DialogHeader>
+              <DialogTitle className="text-[18px] font-bold leading-[1.19] text-[#000] text-center">
+                로그아웃 하시겠습니까?
+              </DialogTitle>
+            </DialogHeader>
+            <div className="flex gap-3 mt-6">
+              <Button
+                variant="outline"
+                className="flex-1 text-[14px] font-medium"
+                onClick={() => setLogoutDialogOpen(false)}
+              >
+                아니요
+              </Button>
+              <Button
+                className="flex-1 text-[14px] font-medium bg-[#9810FA] hover:bg-[#8A0FE8]"
+                onClick={handleLogout}
+              >
+                예
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }
