@@ -14,7 +14,15 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SignupIndexRouteImport } from './routes/signup/index'
 import { Route as MainIndexRouteImport } from './routes/main/index'
 import { Route as ExamplesPokemonRouteRouteImport } from './routes/examples/pokemon/route'
+<<<<<<< Updated upstream
 import { Route as ExamplesPokemonIndexRouteImport } from './routes/examples/pokemon/index'
+=======
+import { Route as SubmissionExamIdIndexRouteImport } from './routes/submission/$examId/index'
+import { Route as MainTestIndexRouteImport } from './routes/main/test/index'
+import { Route as ExamplesPokemonIndexRouteImport } from './routes/examples/pokemon/index'
+import { Route as SubmissionExamIdTextRecongnitionIndexRouteImport } from './routes/submission/$examId/text-recongnition/index'
+import { Route as SubmissionExamIdScanIndexRouteImport } from './routes/submission/$examId/scan/index'
+>>>>>>> Stashed changes
 import { Route as ExamplesPokemonIdIndexRouteImport } from './routes/examples/pokemon/$id/index'
 
 const MainRouteRoute = MainRouteRouteImport.update({
@@ -42,11 +50,39 @@ const ExamplesPokemonRouteRoute = ExamplesPokemonRouteRouteImport.update({
   path: '/examples/pokemon',
   getParentRoute: () => rootRouteImport,
 } as any)
+<<<<<<< Updated upstream
+=======
+const SubmissionExamIdIndexRoute = SubmissionExamIdIndexRouteImport.update({
+  id: '/submission/$examId/',
+  path: '/submission/$examId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MainTestIndexRoute = MainTestIndexRouteImport.update({
+  id: '/test/',
+  path: '/test/',
+  getParentRoute: () => MainRouteRoute,
+} as any)
+>>>>>>> Stashed changes
 const ExamplesPokemonIndexRoute = ExamplesPokemonIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => ExamplesPokemonRouteRoute,
 } as any)
+<<<<<<< Updated upstream
+=======
+const SubmissionExamIdTextRecongnitionIndexRoute =
+  SubmissionExamIdTextRecongnitionIndexRouteImport.update({
+    id: '/submission/$examId/text-recongnition/',
+    path: '/submission/$examId/text-recongnition/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SubmissionExamIdScanIndexRoute =
+  SubmissionExamIdScanIndexRouteImport.update({
+    id: '/submission/$examId/scan/',
+    path: '/submission/$examId/scan/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+>>>>>>> Stashed changes
 const ExamplesPokemonIdIndexRoute = ExamplesPokemonIdIndexRouteImport.update({
   id: '/$id/',
   path: '/$id/',
@@ -60,14 +96,34 @@ export interface FileRoutesByFullPath {
   '/main/': typeof MainIndexRoute
   '/signup': typeof SignupIndexRoute
   '/examples/pokemon/': typeof ExamplesPokemonIndexRoute
+<<<<<<< Updated upstream
   '/examples/pokemon/$id': typeof ExamplesPokemonIdIndexRoute
+=======
+  '/main/test': typeof MainTestIndexRoute
+  '/submission/$examId': typeof SubmissionExamIdIndexRoute
+  '/examples/pokemon/$id': typeof ExamplesPokemonIdIndexRoute
+  '/submission/$examId/scan': typeof SubmissionExamIdScanIndexRoute
+  '/submission/$examId/text-recongnition': typeof SubmissionExamIdTextRecongnitionIndexRoute
+  '/main/test/exams/submit': typeof MainTestExamsSubmitIndexRoute
+  '/main/test/exams/submit/active': typeof MainTestExamsSubmitActiveIndexRoute
+>>>>>>> Stashed changes
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/main': typeof MainIndexRoute
   '/signup': typeof SignupIndexRoute
   '/examples/pokemon': typeof ExamplesPokemonIndexRoute
+<<<<<<< Updated upstream
   '/examples/pokemon/$id': typeof ExamplesPokemonIdIndexRoute
+=======
+  '/main/test': typeof MainTestIndexRoute
+  '/submission/$examId': typeof SubmissionExamIdIndexRoute
+  '/examples/pokemon/$id': typeof ExamplesPokemonIdIndexRoute
+  '/submission/$examId/scan': typeof SubmissionExamIdScanIndexRoute
+  '/submission/$examId/text-recongnition': typeof SubmissionExamIdTextRecongnitionIndexRoute
+  '/main/test/exams/submit': typeof MainTestExamsSubmitIndexRoute
+  '/main/test/exams/submit/active': typeof MainTestExamsSubmitActiveIndexRoute
+>>>>>>> Stashed changes
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,7 +133,17 @@ export interface FileRoutesById {
   '/main/': typeof MainIndexRoute
   '/signup/': typeof SignupIndexRoute
   '/examples/pokemon/': typeof ExamplesPokemonIndexRoute
+<<<<<<< Updated upstream
   '/examples/pokemon/$id/': typeof ExamplesPokemonIdIndexRoute
+=======
+  '/main/test/': typeof MainTestIndexRoute
+  '/submission/$examId/': typeof SubmissionExamIdIndexRoute
+  '/examples/pokemon/$id/': typeof ExamplesPokemonIdIndexRoute
+  '/submission/$examId/scan/': typeof SubmissionExamIdScanIndexRoute
+  '/submission/$examId/text-recongnition/': typeof SubmissionExamIdTextRecongnitionIndexRoute
+  '/main/test/exams/submit/': typeof MainTestExamsSubmitIndexRoute
+  '/main/test/exams/submit/active/': typeof MainTestExamsSubmitActiveIndexRoute
+>>>>>>> Stashed changes
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -88,9 +154,32 @@ export interface FileRouteTypes {
     | '/main/'
     | '/signup'
     | '/examples/pokemon/'
+<<<<<<< Updated upstream
     | '/examples/pokemon/$id'
   fileRoutesByTo: FileRoutesByTo
   to: '/' | '/main' | '/signup' | '/examples/pokemon' | '/examples/pokemon/$id'
+=======
+    | '/main/test'
+    | '/submission/$examId'
+    | '/examples/pokemon/$id'
+    | '/submission/$examId/scan'
+    | '/submission/$examId/text-recongnition'
+    | '/main/test/exams/submit'
+    | '/main/test/exams/submit/active'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/main'
+    | '/signup'
+    | '/examples/pokemon'
+    | '/main/test'
+    | '/submission/$examId'
+    | '/examples/pokemon/$id'
+    | '/submission/$examId/scan'
+    | '/submission/$examId/text-recongnition'
+    | '/main/test/exams/submit'
+    | '/main/test/exams/submit/active'
+>>>>>>> Stashed changes
   id:
     | '__root__'
     | '/'
@@ -99,7 +188,17 @@ export interface FileRouteTypes {
     | '/main/'
     | '/signup/'
     | '/examples/pokemon/'
+<<<<<<< Updated upstream
     | '/examples/pokemon/$id/'
+=======
+    | '/main/test/'
+    | '/submission/$examId/'
+    | '/examples/pokemon/$id/'
+    | '/submission/$examId/scan/'
+    | '/submission/$examId/text-recongnition/'
+    | '/main/test/exams/submit/'
+    | '/main/test/exams/submit/active/'
+>>>>>>> Stashed changes
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -107,6 +206,12 @@ export interface RootRouteChildren {
   MainRouteRoute: typeof MainRouteRouteWithChildren
   ExamplesPokemonRouteRoute: typeof ExamplesPokemonRouteRouteWithChildren
   SignupIndexRoute: typeof SignupIndexRoute
+<<<<<<< Updated upstream
+=======
+  SubmissionExamIdIndexRoute: typeof SubmissionExamIdIndexRoute
+  SubmissionExamIdScanIndexRoute: typeof SubmissionExamIdScanIndexRoute
+  SubmissionExamIdTextRecongnitionIndexRoute: typeof SubmissionExamIdTextRecongnitionIndexRoute
+>>>>>>> Stashed changes
 }
 
 declare module '@tanstack/react-router' {
@@ -146,6 +251,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExamplesPokemonRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+<<<<<<< Updated upstream
+=======
+    '/submission/$examId/': {
+      id: '/submission/$examId/'
+      path: '/submission/$examId'
+      fullPath: '/submission/$examId'
+      preLoaderRoute: typeof SubmissionExamIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/main/test/': {
+      id: '/main/test/'
+      path: '/test'
+      fullPath: '/main/test'
+      preLoaderRoute: typeof MainTestIndexRouteImport
+      parentRoute: typeof MainRouteRoute
+    }
+>>>>>>> Stashed changes
     '/examples/pokemon/': {
       id: '/examples/pokemon/'
       path: '/'
@@ -153,6 +275,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExamplesPokemonIndexRouteImport
       parentRoute: typeof ExamplesPokemonRouteRoute
     }
+<<<<<<< Updated upstream
+=======
+    '/submission/$examId/text-recongnition/': {
+      id: '/submission/$examId/text-recongnition/'
+      path: '/submission/$examId/text-recongnition'
+      fullPath: '/submission/$examId/text-recongnition'
+      preLoaderRoute: typeof SubmissionExamIdTextRecongnitionIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/submission/$examId/scan/': {
+      id: '/submission/$examId/scan/'
+      path: '/submission/$examId/scan'
+      fullPath: '/submission/$examId/scan'
+      preLoaderRoute: typeof SubmissionExamIdScanIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+>>>>>>> Stashed changes
     '/examples/pokemon/$id/': {
       id: '/examples/pokemon/$id/'
       path: '/$id'
@@ -193,6 +332,13 @@ const rootRouteChildren: RootRouteChildren = {
   MainRouteRoute: MainRouteRouteWithChildren,
   ExamplesPokemonRouteRoute: ExamplesPokemonRouteRouteWithChildren,
   SignupIndexRoute: SignupIndexRoute,
+<<<<<<< Updated upstream
+=======
+  SubmissionExamIdIndexRoute: SubmissionExamIdIndexRoute,
+  SubmissionExamIdScanIndexRoute: SubmissionExamIdScanIndexRoute,
+  SubmissionExamIdTextRecongnitionIndexRoute:
+    SubmissionExamIdTextRecongnitionIndexRoute,
+>>>>>>> Stashed changes
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
