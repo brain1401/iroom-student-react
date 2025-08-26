@@ -40,7 +40,7 @@
 ├─ TanStack Router (파일 기반)
 ├─ Jotai + TanStack Query (상태 관리)
 ├─ Tailwind CSS v4 + shadcn/ui
-├─ Vite (번들러, 포트 3012)
+├─ Vite (번들러, 포트 3011)
 └─ Vitest (테스트)
 ```
 

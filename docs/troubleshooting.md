@@ -6,17 +6,17 @@
 
 ### 포트 충돌 (Port Already in Use)
 
-**문제**: `npm run dev` 실행 시 포트 3012가 이미 사용 중
+**문제**: `npm run dev` 실행 시 포트 3011가 이미 사용 중
 
 ```
-Error: listen EADDRINUSE: address already in use :::3012
+Error: listen EADDRINUSE: address already in use :::3011
 ```
 
 **해결책**:
 
 ```bash
 # 1. 포트 사용 프로세스 확인
-netstat -ano | findstr :3012
+netstat -ano | findstr :3011
 
 # 2. 프로세스 종료 (PID 확인 후)
 taskkill /PID [PID번호] /F
@@ -324,7 +324,7 @@ pnpx shadcn@latest add button --overwrite
 **문제**: API 요청 시 CORS 에러 발생
 
 ```
-Access to fetch at 'API_URL' from origin 'localhost:3012' has been blocked by CORS policy
+Access to fetch at 'API_URL' from origin 'localhost:3011' has been blocked by CORS policy
 ```
 
 **해결책**:

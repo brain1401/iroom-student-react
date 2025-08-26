@@ -1,5 +1,6 @@
-import { MathQuestionCard } from "@/components/exam";
-import { PageHeader } from "@/components/layout";
+
+import { MathQuestionCard } from "@/components/exam/MathQuestionCard";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createFileRoute } from "@tanstack/react-router";
