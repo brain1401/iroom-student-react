@@ -16,6 +16,12 @@ const examResultsData = [
     incorrectCount: 5,
     accuracyRate: 66.67,
   },
+  {  id: 1, // 각 항목을 구분할 고유 id
+    title: "2025년 8월 모의고사",
+    correctCount: 10,
+    incorrectCount: 5,
+    accuracyRate: 66.67,
+  },
   {
     id: 2,
     title: "수학(상) 단원 평가",
@@ -29,7 +35,27 @@ const examResultsData = [
     correctCount: 25,
     incorrectCount: 5,
     accuracyRate: 83.33,
-  },
+  },  {
+    id: 1, // 각 항목을 구분할 고유 id
+  title: "2025년 8월 모의고사",
+  correctCount: 10,
+  incorrectCount: 5,
+  accuracyRate: 66.67,
+},
+{
+  id: 2,
+  title: "수학(상) 단원 평가",
+  correctCount: 8,
+  incorrectCount: 2,
+  accuracyRate: 80.0,
+},
+{
+  id: 3,
+  title: "기말고사 대비 종합 시험",
+  correctCount: 25,
+  incorrectCount: 5,
+  accuracyRate: 83.33,
+},
 ];
 
 function TestList() {
@@ -56,7 +82,10 @@ function TestList() {
           ))}
         </CardContent>
       </Card>
-      <h1 className="fixed bottom-10 right-10 font-bold text-gray-400">로그아웃</h1>
+      <div className="flex-1"> </div>
+      <div className="flex">
+      <Button variant="ghost" className="mb-10 ml-10 font-bold text-gray-400">로그아웃</Button>
+      </div>
     </div>
   );
 }
