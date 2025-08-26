@@ -142,7 +142,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         {children}
 
         {/* 개발 도구 - 라우터와 쿼리 상태 모니터링 */}
-        <TanStackDevtools
+        {/* <TanStackDevtools
           config={{
             position: "bottom-left",
           }}
@@ -153,7 +153,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             },
             TanStackQueryDevtools,
           ]}
-        />
+        /> */}
         {/* 클라이언트 사이드 스크립트 (하이드레이션, 이벤트 핸들러 등) */}
         <Scripts />
       </body>
