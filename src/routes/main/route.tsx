@@ -19,11 +19,14 @@ function MainLayout() {
   const { name, badgeLabel } = useAtomValue(userDisplayInfoAtom);
   return (
     <div className="w-full flex justify-center">
-      <div className="max-w-2xl w-full bg-white dark:bg-white p-4 space-y-6" style={{ minHeight: 780 }}>
+      <div
+        id="mobile-container"
+        className="relative w-[360px] bg-white dark:bg-white p-4 space-y-6 overflow-hidden"
+        style={{ minHeight: 780 }}
+      >
         <UserProfileHeader name={name} badgeLabel={badgeLabel} />
         <Outlet />
       </div>
     </div>
   );
 }
-
