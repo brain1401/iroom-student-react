@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as MainRouteRouteImport } from './routes/main/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TestlistIndexRouteImport } from './routes/testlist/index'
 import { Route as SignupIndexRouteImport } from './routes/signup/index'
 import { Route as MainIndexRouteImport } from './routes/main/index'
 import { Route as ExamplesPokemonRouteRouteImport } from './routes/examples/pokemon/route'
@@ -31,6 +32,11 @@ const MainRouteRoute = MainRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestlistIndexRoute = TestlistIndexRouteImport.update({
+  id: '/testlist/',
+  path: '/testlist/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupIndexRoute = SignupIndexRouteImport.update({
@@ -97,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/examples/pokemon': typeof ExamplesPokemonRouteRouteWithChildren
   '/main/': typeof MainIndexRoute
   '/signup': typeof SignupIndexRoute
+  '/testlist': typeof TestlistIndexRoute
   '/examples/auth': typeof ExamplesAuthIndexRoute
   '/examples/pokemon/': typeof ExamplesPokemonIndexRoute
   '/examples/scan': typeof ExamplesScanIndexRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/main': typeof MainIndexRoute
   '/signup': typeof SignupIndexRoute
+  '/testlist': typeof TestlistIndexRoute
   '/examples/auth': typeof ExamplesAuthIndexRoute
   '/examples/pokemon': typeof ExamplesPokemonIndexRoute
   '/examples/scan': typeof ExamplesScanIndexRoute
@@ -126,6 +134,7 @@ export interface FileRoutesById {
   '/examples/pokemon': typeof ExamplesPokemonRouteRouteWithChildren
   '/main/': typeof MainIndexRoute
   '/signup/': typeof SignupIndexRoute
+  '/testlist/': typeof TestlistIndexRoute
   '/examples/auth/': typeof ExamplesAuthIndexRoute
   '/examples/pokemon/': typeof ExamplesPokemonIndexRoute
   '/examples/scan/': typeof ExamplesScanIndexRoute
@@ -143,6 +152,7 @@ export interface FileRouteTypes {
     | '/examples/pokemon'
     | '/main/'
     | '/signup'
+    | '/testlist'
     | '/examples/auth'
     | '/examples/pokemon/'
     | '/examples/scan'
@@ -156,6 +166,7 @@ export interface FileRouteTypes {
     | '/'
     | '/main'
     | '/signup'
+    | '/testlist'
     | '/examples/auth'
     | '/examples/pokemon'
     | '/examples/scan'
@@ -171,6 +182,7 @@ export interface FileRouteTypes {
     | '/examples/pokemon'
     | '/main/'
     | '/signup/'
+    | '/testlist/'
     | '/examples/auth/'
     | '/examples/pokemon/'
     | '/examples/scan/'
@@ -186,6 +198,7 @@ export interface RootRouteChildren {
   MainRouteRoute: typeof MainRouteRouteWithChildren
   ExamplesPokemonRouteRoute: typeof ExamplesPokemonRouteRouteWithChildren
   SignupIndexRoute: typeof SignupIndexRoute
+  TestlistIndexRoute: typeof TestlistIndexRoute
   ExamplesAuthIndexRoute: typeof ExamplesAuthIndexRoute
   ExamplesScanIndexRoute: typeof ExamplesScanIndexRoute
   ExamplesSubmissionIndexRoute: typeof ExamplesSubmissionIndexRoute
@@ -205,6 +218,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/testlist/': {
+      id: '/testlist/'
+      path: '/testlist'
+      fullPath: '/testlist'
+      preLoaderRoute: typeof TestlistIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup/': {
@@ -323,6 +343,7 @@ const rootRouteChildren: RootRouteChildren = {
   MainRouteRoute: MainRouteRouteWithChildren,
   ExamplesPokemonRouteRoute: ExamplesPokemonRouteRouteWithChildren,
   SignupIndexRoute: SignupIndexRoute,
+  TestlistIndexRoute: TestlistIndexRoute,
   ExamplesAuthIndexRoute: ExamplesAuthIndexRoute,
   ExamplesScanIndexRoute: ExamplesScanIndexRoute,
   ExamplesSubmissionIndexRoute: ExamplesSubmissionIndexRoute,
