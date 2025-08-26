@@ -97,7 +97,6 @@ type PageHeaderProps = {
 export function PageHeader({
   title,
   showBackButton = false,
-  onBack,
   showDivider = true,
   className,
   children,
@@ -118,11 +117,7 @@ export function PageHeader({
   const handleBack = () => {
     if (!showBackButton || !canGoBack) return;
 
-    if (onBack) {
-      onBack();
-    } else {
-      router.history.back();
-    }
+    router.history.back();
   };
 
   // 조건부 렌더링을 위한 상수들
