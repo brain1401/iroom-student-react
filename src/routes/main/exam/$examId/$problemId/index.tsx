@@ -21,7 +21,7 @@ function RouteComponent() {
   return (
     <div>
       <PageHeader
-        title={`가나다 시험 ${problemId}`}
+        title={`가나다 시험 ${problemId}번 문제`}
         showBackButton={true}
         onBack={router.history.back}
       />
