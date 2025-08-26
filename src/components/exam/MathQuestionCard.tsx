@@ -104,7 +104,7 @@ const BUTTON_CLASSES = "px-3 w-fit border-zinc-400 border";
 export function MathQuestionCard({
   questionNumber,
   answer,
-  state = "empty",
+  state = "idle",
   onTakePhoto,
   onRetakePhoto,
   onDeletePhoto: _onDeletePhoto,

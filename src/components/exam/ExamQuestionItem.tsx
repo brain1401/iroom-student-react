@@ -1,8 +1,7 @@
 import { ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type { ProblemStatus } from "./types";
 import { ExamQuestionListIcon } from "./ExamQuestionListIcon";
+import type { ExamQuestion } from "@/routes/main/exam/$examId";
 import { Link } from "@tanstack/react-router";
 
 /**
@@ -10,31 +9,12 @@ import { Link } from "@tanstack/react-router";
  * @description Figma 디자인을 기반으로 한 시험 문제 리스트 항목의 타입 정의
  */
 type ExamQuestionItemProps = {
-  /** 문제 번호 텍스트 (예: "1번 문제") */
-  questionNumber: number;
+  question: ExamQuestion;
 
-  /** 문제 카테고리 (예: "다항식의 덧셈·뺄셈") */
-  category: string;
-
-  /** 문제 유형 (예: "계산") */
-  type: string;
-
-  /** 문제 난이도 레벨 */
-  difficulty: "상" | "중" | "하";
-
-  /** 문제 상태 (원형 인디케이터 색상 결정) */
-  status: ProblemStatus;
-
-  /** 뒤로가기 버튼 클릭 핸들러 (선택적) */
-  onNavigate?: () => void;
-
-  /** 문제 항목 클릭 핸들러 (선택적) */
-  onClick?: () => void;
+  examId: string;
 
   /** 추가 CSS 클래스 */
   className?: string;
-
-  examId: string;
 };
 
 /**
@@ -88,100 +68,68 @@ type ExamQuestionItemProps = {
  * ```
  */
 export function ExamQuestionItem({
-  questionNumber,
-  category,
-  type,
-  difficulty,
-  status,
-  onNavigate,
-  onClick,
-  className,
+  question: { id, questionNumber, category, type, difficulty, status },
   examId,
+  className,
 }: ExamQuestionItemProps) {
   /**
    * 문제 항목 클릭 핸들러
    * @description 잠긴 상태가 아닐 때만 클릭 이벤트 실행
    */
-  const handleItemClick = () => {
-    if (status !== "locked" && onClick) {
-      onClick();
-    }
-  };
+
+  const questionNumberString = `${questionNumber}번 문제`;
 
   return (
     <Link
-      to={`/main/exam/$examId/$problemId`}
+      to="/main/exam/$examId/$problemId"
       params={{ examId, problemId: questionNumber.toString() }}
+      className={cn(
+        "relative flex items-center justify-between rounded-lg border bg-white px-5 py-5 transition-all duration-200",
+        // 모바일에서 가로폭 확장 (필요 시)
+        "md:w-full md:max-w-none",
+        // 호버 및 상호작용 스타일
+        status !== "locked" && [
+          "hover:border-gray-300 hover:shadow-md",
+          "cursor-pointer hover:bg-gray-50",
+        ],
+        // 잠긴 상태 스타일링
+        status === "locked" && "cursor-not-allowed opacity-60",
+        className,
+      )}
+      // disabled={status === "locked"}
+      aria-label={`${questionNumber} ${category} ${type} 문제, 난이도 ${difficulty}`}
     >
-      <div
-        className={cn(
-          "relative flex items-center justify-between rounded-lg border bg-white px-5 py-5 transition-all duration-200",
-          // 모바일에서 가로폭 확장 (필요 시)
-          "md:w-full md:max-w-none",
-          // 호버 및 상호작용 스타일
-          status !== "locked" && [
-            "hover:border-gray-300 hover:shadow-md",
-            onClick && "cursor-pointer hover:bg-gray-50",
-          ],
-          // 잠긴 상태 스타일링
-          status === "locked" && "cursor-not-allowed opacity-60",
-          className,
-        )}
-        onClick={handleItemClick}
-        role={onClick ? "button" : undefined}
-        tabIndex={onClick && status !== "locked" ? 0 : undefined}
-        onKeyDown={(e) => {
-          if (
-            (e.key === "Enter" || e.key === " ") &&
-            onClick &&
-            status !== "locked"
-          ) {
-            e.preventDefault();
-            onClick();
-          }
-        }}
-        aria-label={`${questionNumber} ${category} ${type} 문제, 난이도 ${difficulty}`}
-      >
-        {/* 좌측 O, X 상태 아이콘 */}
-        <ExamQuestionListIcon status={status} className="size-10" />
+      {/* 좌측 O, X 상태 아이콘 */}
+      <ExamQuestionListIcon status={status} className="size-10" />
 
-        {/* 중앙 문제 정보 영역 - Figma 수평 레이아웃 */}
-        <div className="min-w-0 flex-1 px-2 md:px-3">
-          {/* 첫 번째 줄: 문제 번호 + 카테고리 (Figma 레이아웃) */}
-          <div className="mb-1 flex items-center gap-2">
-            <span className="text-xs font-bold text-black md:text-sm">
-              {questionNumber}
-            </span>
-            <span className="text-xs font-normal text-[#427BFF] md:text-sm">
-              # {category}
-            </span>
-          </div>
-
-          {/* 두 번째 줄: 유형과 난이도 (Figma 일반 텍스트) */}
-          <div className="flex items-center gap-4 text-xs font-normal text-black md:text-sm">
-            <span>유형 : {type}</span>
-            <span>난이도 : {difficulty}</span>
-          </div>
+      {/* 중앙 문제 정보 영역 - Figma 수평 레이아웃 */}
+      <div className="min-w-0 flex-1 px-2 md:px-3">
+        {/* 첫 번째 줄: 문제 번호 + 카테고리 (Figma 레이아웃) */}
+        <div className="mb-1 flex items-center gap-2">
+          <span className="text-xs font-bold text-black md:text-sm">
+            {questionNumberString}
+          </span>
+          <span className="text-xs font-normal text-[#427BFF] md:text-sm">
+            # {category}
+          </span>
         </div>
 
-        {/* 우측 네비게이션 버튼 - Figma 1.5625rem x 1.5625rem */}
-        {onNavigate && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={(e) => {
-              e.stopPropagation(); // 부모 클릭 이벤트 방지
-              onNavigate();
-            }}
-            className={cn(
-              "h-6 w-6 flex-shrink-0 rounded-md hover:bg-gray-100",
-              "md:h-[1.5625rem] md:w-[1.5625rem]",
-            )}
-            aria-label="이전 페이지로 이동"
-          >
-            <ChevronRight className="h-4 w-4 text-gray-700 md:h-5 md:w-5" />
-          </Button>
+        {/* 두 번째 줄: 유형과 난이도 (Figma 일반 텍스트) */}
+        <div className="flex items-center gap-4 text-xs font-normal text-black md:text-sm">
+          <span>유형 : {type}</span>
+          <span>난이도 : {difficulty}</span>
+        </div>
+      </div>
+
+      {/* 우측 네비게이션 버튼 - Figma 1.5625rem x 1.5625rem */}
+      <div
+        className={cn(
+          "h-6 w-6 flex-shrink-0 rounded-md hover:bg-gray-100",
+          "md:h-[1.5625rem] md:w-[1.5625rem]",
         )}
+        aria-label="이전 페이지로 이동"
+      >
+        <ChevronRight className="h-4 w-4 text-gray-700 md:h-5 md:w-5" />
       </div>
     </Link>
   );

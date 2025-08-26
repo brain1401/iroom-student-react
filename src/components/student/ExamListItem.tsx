@@ -152,9 +152,12 @@ function DefaultDetails({
       submitted,
     });
 
-    navigate({
-      to: "/main/test/exams/submit",
-    });
+    // TODO: Update to correct submission route
+    console.log("Navigate to submission for:", title);
+    // navigate({
+    //   to: "/submission/$examId",
+    //   params: { examId: examId.toString() }
+    // });
   };
 
   return (

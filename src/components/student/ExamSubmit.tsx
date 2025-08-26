@@ -59,10 +59,9 @@ export function ExamSubmitEdit({
         </div>
 
         <div className="pt-2">
-          <Button asChild className="w-full">
-            <Link to="/main/test/exams/submit/active" className="w-full">
-              {isSubmitted ? "제출 답안 보기" : "제출하기"}
-            </Link>
+          <Button className="w-full">
+            {/* TODO: Add proper navigation when routes are available */}
+            {isSubmitted ? "제출 답안 보기" : "제출하기"}
           </Button>
         </div>
       </section>

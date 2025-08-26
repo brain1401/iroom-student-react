@@ -312,5 +312,3 @@ export type SubmitAnswersPayload = {
   objective: { number: number; answer: string }[];
   subjective: { number: number; answer: string; explanation: string }[];
 };
-
-export default AnswerSubmitTabs;

@@ -172,7 +172,7 @@ async function getMockExam(examId: string): Promise<MockExam> {
 
   const defaultExam: MockExam = {
     id: examId,
-    title: "샘플 모의고사",
+    title: "행렬 1",
     description: "요청하신 모의고사를 찾을 수 없어 샘플 데이터를 제공합니다.",
     problems: [
       {

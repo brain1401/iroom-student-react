@@ -5,8 +5,6 @@ import { cn } from "@/lib/utils";
 import { ExamQuestionListIcon } from "./ExamQuestionListIcon";
 import type { ProblemStatus } from "./type";
 
-
-
 /**
  * 시험 문제 항목 컴포넌트 프로퍼티
  * @description Figma 디자인을 기반으로 한 시험 문제 리스트 항목의 타입 정의
