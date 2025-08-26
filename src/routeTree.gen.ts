@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TestlistIndexRouteImport } from './routes/testlist/index'
 import { Route as SignupIndexRouteImport } from './routes/signup/index'
 import { Route as ProfileIndexRouteImport } from './routes/profile/index'
 import { Route as MainIndexRouteImport } from './routes/main/index'
@@ -32,6 +33,11 @@ import { Route as MainTestExamsSubmitActiveIndexRouteImport } from './routes/mai
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestlistIndexRoute = TestlistIndexRouteImport.update({
+  id: '/testlist/',
+  path: '/testlist/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupIndexRoute = SignupIndexRouteImport.update({
@@ -136,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/main': typeof MainIndexRoute
   '/profile': typeof ProfileIndexRoute
   '/signup': typeof SignupIndexRoute
+  '/testlist': typeof TestlistIndexRoute
   '/examples/auth': typeof ExamplesAuthIndexRoute
   '/examples/components': typeof ExamplesComponentsIndexRoute
   '/examples/pokemon': typeof ExamplesPokemonIndexRoute
@@ -157,6 +164,7 @@ export interface FileRoutesByTo {
   '/main': typeof MainIndexRoute
   '/profile': typeof ProfileIndexRoute
   '/signup': typeof SignupIndexRoute
+  '/testlist': typeof TestlistIndexRoute
   '/examples/auth': typeof ExamplesAuthIndexRoute
   '/examples/components': typeof ExamplesComponentsIndexRoute
   '/examples/pokemon': typeof ExamplesPokemonIndexRoute
@@ -179,6 +187,7 @@ export interface FileRoutesById {
   '/main/': typeof MainIndexRoute
   '/profile/': typeof ProfileIndexRoute
   '/signup/': typeof SignupIndexRoute
+  '/testlist/': typeof TestlistIndexRoute
   '/examples/auth/': typeof ExamplesAuthIndexRoute
   '/examples/components/': typeof ExamplesComponentsIndexRoute
   '/examples/pokemon/': typeof ExamplesPokemonIndexRoute
@@ -202,6 +211,7 @@ export interface FileRouteTypes {
     | '/main'
     | '/profile'
     | '/signup'
+    | '/testlist'
     | '/examples/auth'
     | '/examples/components'
     | '/examples/pokemon'
@@ -223,6 +233,7 @@ export interface FileRouteTypes {
     | '/main'
     | '/profile'
     | '/signup'
+    | '/testlist'
     | '/examples/auth'
     | '/examples/components'
     | '/examples/pokemon'
@@ -244,6 +255,7 @@ export interface FileRouteTypes {
     | '/main/'
     | '/profile/'
     | '/signup/'
+    | '/testlist/'
     | '/examples/auth/'
     | '/examples/components/'
     | '/examples/pokemon/'
@@ -266,6 +278,7 @@ export interface RootRouteChildren {
   MainIndexRoute: typeof MainIndexRoute
   ProfileIndexRoute: typeof ProfileIndexRoute
   SignupIndexRoute: typeof SignupIndexRoute
+  TestlistIndexRoute: typeof TestlistIndexRoute
   ExamplesAuthIndexRoute: typeof ExamplesAuthIndexRoute
   ExamplesComponentsIndexRoute: typeof ExamplesComponentsIndexRoute
   ExamplesPokemonIndexRoute: typeof ExamplesPokemonIndexRoute
@@ -289,6 +302,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/testlist/': {
+      id: '/testlist/'
+      path: '/testlist'
+      fullPath: '/testlist'
+      preLoaderRoute: typeof TestlistIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup/': {
@@ -426,6 +446,7 @@ const rootRouteChildren: RootRouteChildren = {
   MainIndexRoute: MainIndexRoute,
   ProfileIndexRoute: ProfileIndexRoute,
   SignupIndexRoute: SignupIndexRoute,
+  TestlistIndexRoute: TestlistIndexRoute,
   ExamplesAuthIndexRoute: ExamplesAuthIndexRoute,
   ExamplesComponentsIndexRoute: ExamplesComponentsIndexRoute,
   ExamplesPokemonIndexRoute: ExamplesPokemonIndexRoute,
