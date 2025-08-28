@@ -9,14 +9,14 @@ import { ApiError } from "./baseClient";
 /**
  * 인터셉터 설정 옵션
  */
-export interface InterceptorOptions {
+export type InterceptorOptions = {
   /** 인증 관련 인터셉터 여부 (401 처리 등) */
   isAuthClient?: boolean;
   /** 개발 환경에서 로깅 활성화 여부 */
   enableLogging?: boolean;
   /** 로그 메시지 접두사 */
   logPrefix?: string;
-}
+};
 
 /**
  * 요청 인터셉터 로직 생성 함수

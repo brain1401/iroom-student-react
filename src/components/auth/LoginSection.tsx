@@ -248,8 +248,6 @@ export function LoginSection() {
         </form>
       </Form>
 
-    
-
       {/* 필수 항목 안내 */}
       <div className="text-xs text-slate-500 text-center">
         * 표시된 항목은 필수 입력 항목입니다

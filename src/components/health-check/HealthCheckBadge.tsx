@@ -6,11 +6,11 @@ import type { HealthStatus } from "@/api/health-check/types";
  * 헬스체크 상태 배지 컴포넌트
  * @description 상태에 따른 색상의 배지를 표시하는 순수 컴포넌트
  */
-interface HealthCheckBadgeProps {
+type HealthCheckBadgeProps = {
   status: HealthStatus | "checking" | "disabled";
   text?: string;
   className?: string;
-}
+};
 
 export function HealthCheckBadge({
   status,
