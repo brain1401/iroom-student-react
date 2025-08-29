@@ -1,4 +1,5 @@
 import { getMockExamById } from "@/api/exam/api";
+import { extractApiData } from "@/api/common/types";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import {
@@ -55,7 +56,8 @@ type SubmissionFormData = z.infer<typeof submissionFormSchema>;
 export const Route = createFileRoute("/submission/$examId/")({
   component: RouteComponent,
   loader: async ({ params }) => {
-    const exam = await getMockExamById(params.examId);
+    const examResponse = await getMockExamById(params.examId);
+    const exam = extractApiData(examResponse);
     return { exam };
   },
 });
@@ -127,7 +129,7 @@ function RouteComponent() {
 
   return (
     <div className="container mx-auto flex flex-1 h-full max-w-6xl flex-col items-center space-y-6 p-4">
-      <PageHeader title={examName} showBackButton={false} />
+      <PageHeader title={examName} shouldShowBackButton={false} />
 
       {/* 응시자 정보 입력 카드 */}
       <Card className="w-full max-w-lg shadow-lg">
