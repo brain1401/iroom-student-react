@@ -12,6 +12,9 @@ import type {
   FrontendServiceInfo,
 } from "@/api/health-check/types";
 
+// Prevent potential infinite render loops by using constant reference
+const DEFAULT_SERVICES: FrontendServiceInfo[] = [];
+
 /**
  * 헬스체크 툴팁 컴포넌트
  * @description 헬스체크 상세 정보를 툴팁으로 표시하는 컴포넌트
@@ -32,13 +35,13 @@ type HealthCheckTooltipProps = {
   isRetrying?: boolean;
 };
 
-export default function HealthCheckTooltip({
+export function HealthCheckTooltip({
   children,
   message,
   lastChecked,
   responseTime,
   status = "unknown",
-  services = [],
+  services = DEFAULT_SERVICES,
   onRetry,
   isRetrying = false,
 }: HealthCheckTooltipProps) {
@@ -90,7 +93,7 @@ export default function HealthCheckTooltip({
                   <div className="space-y-1">
                     {services.map((service) => (
                       <div
-                        key={service.name}
+                        key={`${service.name}-${service.status}`}
                         className="flex items-center justify-between text-xs"
                       >
                         <span className="text-red-800 dark:text-red-200">

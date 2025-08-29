@@ -1,10 +1,14 @@
+/* Base layout and theme variables */
 @import "./font.css";
 @import "./colors.css";
 
 @import "tailwindcss";
-@import "tw-animate-css";
 
+/* Custom variants */
 @custom-variant dark (&:is(.dark *));
+
+/* Animation library - 나중 로딩 */
+@import "tw-animate-css";
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);

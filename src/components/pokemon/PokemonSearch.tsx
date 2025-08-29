@@ -7,10 +7,10 @@ import { cn } from "@/lib/utils";
 /**
  * 포켓몬 검색 컴포넌트 Props 인터페이스
  */
-interface PokemonSearchProps {
+type PokemonSearchProps = {
   /** 현재 검색 키워드 */
   keyword?: string;
-}
+};
 
 /**
  * 포켓몬 검색 폼 컴포넌트
@@ -34,7 +34,7 @@ export function PokemonSearch({ keyword = "" }: PokemonSearchProps) {
 
         // 검색 키워드로 페이지 이동 (첫 페이지로 리셋)
         navigate({
-          search: (prev) => ({
+          search: (prev: { page?: number; keyword?: string }) => ({
             ...prev,
             keyword: searchKeyword.trim() || undefined,
             page: 1,
@@ -69,7 +69,11 @@ export function PokemonSearch({ keyword = "" }: PokemonSearchProps) {
           onClick={() => {
             // 검색어 초기화 및 첫 페이지로 이동
             navigate({
-              search: (prev) => ({ ...prev, keyword: undefined, page: 1 }),
+              search: (prev: { page?: number; keyword?: string }) => ({
+                ...prev,
+                keyword: undefined,
+                page: 1,
+              }),
             });
           }}
           className="gap-2"

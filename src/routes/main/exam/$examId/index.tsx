@@ -1,14 +1,24 @@
 import { ExamQuestionItem } from "@/components/exam";
 import { PageHeader } from "@/components/layout";
 import { createFileRoute } from "@tanstack/react-router";
+import type { ProblemStatus } from "@/components/exam/types";
 
 export const Route = createFileRoute("/main/exam/$examId/")({
   component: RouteComponent,
 });
 
-const examQuestions = [
+export type ExamQuestion = {
+  id: string;
+  questionNumber: number;
+  category: string;
+  type: string;
+  difficulty: string;
+  status: ProblemStatus;
+};
+
+const examQuestions: ExamQuestion[] = [
   {
-    id: "1",
+    id: "0198e5a3-4931-768e-a519-4bade610257c",
     questionNumber: 1,
     category: "다항식의 덧셈·뺄셈",
     type: "계산",
@@ -16,7 +26,7 @@ const examQuestions = [
     status: "active" as const,
   },
   {
-    id: "2",
+    id: "233a1234-4931-768e-a519-fhgujysdf",
     questionNumber: 2,
     category: "영문법 기초",
     type: "객관식",
@@ -24,7 +34,7 @@ const examQuestions = [
     status: "completed" as const,
   },
   {
-    id: "3",
+    id: "393a1234-kfgy-sdss-dfd-2sdfsdf3asd",
     questionNumber: 3,
     category: "물리학 실험",
     type: "서술형",
@@ -32,7 +42,7 @@ const examQuestions = [
     status: "locked" as const,
   },
   {
-    id: "4",
+    id: "fg4rds-fs3g-768e-a519-gjjkdfefs",
     questionNumber: 4,
     category: "한국사 근현대",
     type: "논술",
@@ -40,7 +50,7 @@ const examQuestions = [
     status: "active" as const,
   },
   {
-    id: "5",
+    id: "555a1234-4931-768e-a519-4bade610257c",
     questionNumber: 5,
     category: "화학 반응식",
     type: "계산",
@@ -54,11 +64,10 @@ const handleQuestionNavigate = (questionId: string) => {
 };
 
 function RouteComponent() {
-  const {examId} = Route.useParams()
+  const { examId } = Route.useParams();
   return (
-
     <div>
-      <PageHeader title="가나다 시험" showBackButton={true} />
+      <PageHeader title="가나다 시험" shouldShowBackButton={true} />
 
       {/* 그래프 공간 */}
 
@@ -69,13 +78,8 @@ function RouteComponent() {
           {examQuestions.map((question) => (
             <ExamQuestionItem
               key={question.id}
-              questionNumber={question.questionNumber}
-              category={question.category}
-              type={question.type}
-              difficulty={question.difficulty}
-              status={question.status}
+              question={question}
               examId={examId}
-              onNavigate={() => handleQuestionNavigate(question.id)}
             />
           ))}
         </div>

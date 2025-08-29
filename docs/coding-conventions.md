@@ -475,12 +475,106 @@ if (filtered.length === 0) {
 {isLoading ? <Spinner /> : isError ? <Error /> : <Content />}
 ```
 
-## 🚨 에러 처리 규칙
+## 🚀 API 호출 규칙 (필수)
 
-### API 에러 처리
+### 기본 원칙
+
+- **fetch 사용 절대 금지** → `src/api/client/index.ts`의 클라이언트만 사용
+- **백엔드 API는 ApiResponse<T> 래퍼 사용** → `src/api/common/types.ts` 참고
+
+### API 클라이언트 선택
 
 ```typescript
-// ✅ 통일된 에러 클래스 사용
+// ✅ 외부 API (포켓몬 등)
+import { baseApiClient } from "@/api/client";
+const pokemonData = await baseApiClient.get("/api/pokemon/1");
+
+// ✅ 백엔드 API (인증 + ApiResponse<T>)
+import { authApiClient } from "@/api/client";
+import { extractApiData, type ApiResponse } from "@/api/common/types";
+
+// 방법 1: extractApiData 유틸리티 (권장)
+const response = await authApiClient.get<ApiResponse<UserData>>("/api/user");
+const userData = extractApiData(response.data);
+
+// 방법 2: 수동 처리
+const response = await authApiClient.get<ApiResponse<UserData>>("/api/user");
+if (response.data.result === "SUCCESS") {
+  const userData = response.data.data;
+} else {
+  throw new Error(response.data.message);
+}
+```
+
+### 백엔드 ApiResponse 구조
+
+```typescript
+// 백엔드 표준 응답 구조 (Java와 정확히 일치)
+type ApiResponse<T> = {
+  result: "SUCCESS" | "ERROR";  // 응답 상태
+  message: string;              // 응답 메시지 (필수)
+  data: T;                      // 실제 데이터
+};
+
+// 성공 응답 예시
+{
+  "result": "SUCCESS",
+  "message": "사용자 정보 조회 성공",
+  "data": { "id": 1, "name": "홍길동" }
+}
+
+// 실패 응답 예시
+{
+  "result": "ERROR",
+  "message": "인증이 필요합니다",
+  "data": null
+}
+```
+
+## 🚨 API 에러 처리 규칙
+
+### 백엔드 API 에러 처리 (ApiResponse)
+
+```typescript
+// ✅ extractApiData 사용 (가장 권장)
+import {
+  extractApiData,
+  isErrorResponse,
+  type ApiResponse,
+} from "@/api/common/types";
+
+try {
+  const response = await authApiClient.get<ApiResponse<UserData>>("/api/user");
+  const userData = extractApiData(response.data); // 자동 에러 throw
+} catch (error) {
+  if (error instanceof ApiError) {
+    console.error("API 에러:", error.message);
+    // 백엔드 메시지를 UI에 표시
+    showErrorToast(error.message);
+  }
+}
+
+// ✅ 타입 가드 사용
+const response = await authApiClient.get<ApiResponse<UserData>>("/api/user");
+
+if (isErrorResponse(response.data)) {
+  // 에러 처리 (타입: { result: "ERROR", message: string, data: unknown })
+  throw new Error(response.data.message);
+} else {
+  // 성공 처리 (타입: { result: "SUCCESS", message: string, data: UserData })
+  const userData = response.data.data;
+}
+
+// ✅ 수동 처리 (권장하지 않음)
+if (response.data.result === "ERROR") {
+  throw new ApiError(response.data.message, response.status, response.data);
+}
+```
+
+### 일반 API 에러 처리
+
+```typescript
+// ✅ 통일된 에러 클래스 (기존 유지)
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -493,7 +587,7 @@ export class ApiError extends Error {
   }
 }
 
-// ✅ 에러 처리 유틸리티
+// ✅ 에러 처리 유틸리티 (ApiResponse 지원)
 export function getErrorMessage(error: unknown): string {
   if (error instanceof ApiError) {
     return error.message;
@@ -502,6 +596,13 @@ export function getErrorMessage(error: unknown): string {
     return error.message;
   }
   return "알 수 없는 오류가 발생했습니다";
+}
+
+// ✅ 백엔드 에러 메시지 추출
+export function getApiErrorMessage(apiResponse: ApiResponse<unknown>): string {
+  return apiResponse.result === "ERROR"
+    ? apiResponse.message
+    : "처리 중 오류가 발생했습니다";
 }
 ```
 

@@ -7,6 +7,7 @@ import type {
   FrontendServiceInfo,
   ServiceHealthInfo,
 } from "./types";
+import { extractApiData } from "@/api/common/types";
 
 /**
  * 백엔드 서버의 기본 URL을 환경 변수에서 가져오기
@@ -227,12 +228,8 @@ export async function fetchHealthCheck(options?: {
 
     const responseTime = Date.now() - startTime;
 
-    // API 응답이 실패인 경우 에러 처리
-    if (backendResponse.result === "FAILURE") {
-      throw new Error(
-        backendResponse.message || "서버에서 헬스체크 실패를 반환했습니다",
-      );
-    }
+    // ApiResponse 유틸리티를 사용하여 데이터 추출 (에러 시 자동으로 throw)
+    const _healthCheckData = extractApiData(backendResponse);
 
     // 백엔드 응답을 프론트엔드 형식으로 변환
     return transformBackendResponse(backendResponse, responseTime);

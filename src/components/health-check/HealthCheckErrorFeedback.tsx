@@ -47,7 +47,7 @@ type HealthCheckErrorFeedbackProps = {
 
 // 코드 간소화: 유틸리티 함수 사용으로 중복 제거
 
-export default function HealthCheckErrorFeedback({
+export function HealthCheckErrorFeedback({
   status,
   message,
   lastChecked,
@@ -114,9 +114,9 @@ export default function HealthCheckErrorFeedback({
             💡 해결 방법:
           </div>
           <ul className="text-xs space-y-1 ml-4">
-            {errorDetails.suggestions.map((suggestion, index) => (
+            {errorDetails.suggestions.map((suggestion, _index) => (
               <li
-                key={index}
+                key={`suggestion-${suggestion.replace(/[^a-zA-Z0-9]/g, '-').slice(0, 30)}`}
                 className="relative before:content-['•'] before:absolute before:-left-3 before:text-current/70"
               >
                 {suggestion}

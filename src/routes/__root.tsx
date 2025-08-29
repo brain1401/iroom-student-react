@@ -4,17 +4,15 @@ import {
   createRootRouteWithContext,
   Outlet,
 } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { TanStackDevtools } from "@tanstack/react-devtools";
+// import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+// import { TanStackDevtools } from "@tanstack/react-devtools";
 
-import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
+// import { TanstackQueryDevtools } from "../integrations/tanstack-query/devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import appCss from "@/css/root.css?url";
-import NavigationBar from "@/components/layout/NavigationBar";
 import { useAtomValue } from "jotai";
 import { mainBgExtraCombinedClassAtom } from "@/atoms/ui";
 import { cn } from "@/lib/utils";
-import UserProfileHeader from "@/components/layout/UserProfileHeader";
 
 /**
  * 라우터 컨텍스트 타입 정의
@@ -57,7 +55,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: "이룸 클래스",
       },
     ],
-    // 스타일시트와 폰트 로딩을 위한 링크 설정
+    // 폰트 로딩 최적화 설정
     links: [
       {
         rel: "stylesheet",
@@ -102,17 +100,15 @@ function RootComponent() {
    */
   const extra = useAtomValue(mainBgExtraCombinedClassAtom);
   return (
-    <>
-      <main
-        className={cn(
-          "flex flex-1 bg-background-400 dark:bg-background-900",
-          extra,
-        )}
-      >
-        {/* 하위 라우트가 렌더링되는 위치 */}
-        <Outlet />
-      </main>
-    </>
+    <main
+      className={cn(
+        "flex flex-1 bg-background-400 dark:bg-background-900",
+        extra,
+      )}
+    >
+      {/* 하위 라우트가 렌더링되는 위치 */}
+      <Outlet />
+    </main>
   );
 }
 
@@ -133,17 +129,17 @@ function RootComponent() {
  */
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko" className="h-full" suppressHydrationWarning>
+    <html lang="ko" suppressHydrationWarning>
       <head>
         {/* RouteOptions.head에서 설정된 메타데이터와 링크를 렌더링 */}
         <HeadContent />
       </head>
-      <body className="h-full w-full flex flex-col font-noto-sans-kr">
+      <body className="font-noto-sans-kr h-dvh">
         {/* 메인 애플리케이션 콘텐츠 */}
         {children}
 
         {/* 개발 도구 - 라우터와 쿼리 상태 모니터링 */}
-        <TanStackDevtools
+        {/* <TanStackDevtools
           config={{
             position: "bottom-left",
           }}
@@ -152,9 +148,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               name: "Tanstack Router",
               render: <TanStackRouterDevtoolsPanel />,
             },
-            TanStackQueryDevtools,
+            TanstackQueryDevtools,
           ]}
-        />
+        /> */}
         {/* 클라이언트 사이드 스크립트 (하이드레이션, 이벤트 핸들러 등) */}
         <Scripts />
       </body>

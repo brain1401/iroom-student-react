@@ -22,7 +22,7 @@ export type UserAccountPanelProps = {
 };
 
 export function UserAccountPanel({
-  name,
+  name: name,
   grade,
   school,
   phone,
@@ -51,5 +51,3 @@ function Row({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
-
-export default UserAccountPanel;

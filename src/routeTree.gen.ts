@@ -9,34 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ProfileRouteRouteImport } from './routes/profile/route'
 import { Route as MainRouteRouteImport } from './routes/main/route'
-import { Route as ExamManagementRouteRouteImport } from './routes/exam-management/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as SignupIndexRouteImport } from './routes/signup/index'
-import { Route as ProfileIndexRouteImport } from './routes/profile/index'
 import { Route as MainIndexRouteImport } from './routes/main/index'
-import { Route as ExamManagementIndexRouteImport } from './routes/exam-management/index'
-import { Route as ExamplesPokemonRouteRouteImport } from './routes/examples/pokemon/route'
+import { Route as SubmissionExamIdRouteRouteImport } from './routes/submission/$examId/route'
+import { Route as SubmissionExamIdIndexRouteImport } from './routes/submission/$examId/index'
 import { Route as ExamplesPokemonIndexRouteImport } from './routes/examples/pokemon/index'
-import { Route as ExamplesComponentsIndexRouteImport } from './routes/examples/components/index'
+import { Route as SubmissionExamIdTextRecongnitionIndexRouteImport } from './routes/submission/$examId/text-recongnition/index'
+import { Route as SubmissionExamIdScanIndexRouteImport } from './routes/submission/$examId/scan/index'
 import { Route as MainExamExamIdIndexRouteImport } from './routes/main/exam/$examId/index'
 import { Route as ExamplesPokemonIdIndexRouteImport } from './routes/examples/pokemon/$id/index'
 import { Route as MainExamExamIdProblemIdIndexRouteImport } from './routes/main/exam/$examId/$problemId/index'
 
-const ProfileRouteRoute = ProfileRouteRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const MainRouteRoute = MainRouteRouteImport.update({
   id: '/main',
   path: '/main',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ExamManagementRouteRoute = ExamManagementRouteRouteImport.update({
-  id: '/exam-management',
-  path: '/exam-management',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -44,50 +31,47 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SignupIndexRoute = SignupIndexRouteImport.update({
-  id: '/signup/',
-  path: '/signup/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileIndexRoute = ProfileIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => ProfileRouteRoute,
-} as any)
 const MainIndexRoute = MainIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => MainRouteRoute,
 } as any)
-const ExamManagementIndexRoute = ExamManagementIndexRouteImport.update({
+const SubmissionExamIdRouteRoute = SubmissionExamIdRouteRouteImport.update({
+  id: '/submission/$examId',
+  path: '/submission/$examId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SubmissionExamIdIndexRoute = SubmissionExamIdIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => ExamManagementRouteRoute,
-} as any)
-const ExamplesPokemonRouteRoute = ExamplesPokemonRouteRouteImport.update({
-  id: '/examples/pokemon',
-  path: '/examples/pokemon',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => SubmissionExamIdRouteRoute,
 } as any)
 const ExamplesPokemonIndexRoute = ExamplesPokemonIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => ExamplesPokemonRouteRoute,
-} as any)
-const ExamplesComponentsIndexRoute = ExamplesComponentsIndexRouteImport.update({
-  id: '/examples/components/',
-  path: '/examples/components/',
+  id: '/examples/pokemon/',
+  path: '/examples/pokemon/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SubmissionExamIdTextRecongnitionIndexRoute =
+  SubmissionExamIdTextRecongnitionIndexRouteImport.update({
+    id: '/text-recongnition/',
+    path: '/text-recongnition/',
+    getParentRoute: () => SubmissionExamIdRouteRoute,
+  } as any)
+const SubmissionExamIdScanIndexRoute =
+  SubmissionExamIdScanIndexRouteImport.update({
+    id: '/scan/',
+    path: '/scan/',
+    getParentRoute: () => SubmissionExamIdRouteRoute,
+  } as any)
 const MainExamExamIdIndexRoute = MainExamExamIdIndexRouteImport.update({
   id: '/exam/$examId/',
   path: '/exam/$examId/',
   getParentRoute: () => MainRouteRoute,
 } as any)
 const ExamplesPokemonIdIndexRoute = ExamplesPokemonIdIndexRouteImport.update({
-  id: '/$id/',
-  path: '/$id/',
-  getParentRoute: () => ExamplesPokemonRouteRoute,
+  id: '/examples/pokemon/$id/',
+  path: '/examples/pokemon/$id/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const MainExamExamIdProblemIdIndexRoute =
   MainExamExamIdProblemIdIndexRouteImport.update({
@@ -98,127 +82,97 @@ const MainExamExamIdProblemIdIndexRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/exam-management': typeof ExamManagementRouteRouteWithChildren
   '/main': typeof MainRouteRouteWithChildren
-  '/profile': typeof ProfileRouteRouteWithChildren
-  '/examples/pokemon': typeof ExamplesPokemonRouteRouteWithChildren
-  '/exam-management/': typeof ExamManagementIndexRoute
+  '/submission/$examId': typeof SubmissionExamIdRouteRouteWithChildren
   '/main/': typeof MainIndexRoute
-  '/profile/': typeof ProfileIndexRoute
-  '/signup': typeof SignupIndexRoute
-  '/examples/components': typeof ExamplesComponentsIndexRoute
-  '/examples/pokemon/': typeof ExamplesPokemonIndexRoute
+  '/examples/pokemon': typeof ExamplesPokemonIndexRoute
+  '/submission/$examId/': typeof SubmissionExamIdIndexRoute
   '/examples/pokemon/$id': typeof ExamplesPokemonIdIndexRoute
   '/main/exam/$examId': typeof MainExamExamIdIndexRoute
+  '/submission/$examId/scan': typeof SubmissionExamIdScanIndexRoute
+  '/submission/$examId/text-recongnition': typeof SubmissionExamIdTextRecongnitionIndexRoute
   '/main/exam/$examId/$problemId': typeof MainExamExamIdProblemIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/exam-management': typeof ExamManagementIndexRoute
   '/main': typeof MainIndexRoute
-  '/profile': typeof ProfileIndexRoute
-  '/signup': typeof SignupIndexRoute
-  '/examples/components': typeof ExamplesComponentsIndexRoute
   '/examples/pokemon': typeof ExamplesPokemonIndexRoute
+  '/submission/$examId': typeof SubmissionExamIdIndexRoute
   '/examples/pokemon/$id': typeof ExamplesPokemonIdIndexRoute
   '/main/exam/$examId': typeof MainExamExamIdIndexRoute
+  '/submission/$examId/scan': typeof SubmissionExamIdScanIndexRoute
+  '/submission/$examId/text-recongnition': typeof SubmissionExamIdTextRecongnitionIndexRoute
   '/main/exam/$examId/$problemId': typeof MainExamExamIdProblemIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/exam-management': typeof ExamManagementRouteRouteWithChildren
   '/main': typeof MainRouteRouteWithChildren
-  '/profile': typeof ProfileRouteRouteWithChildren
-  '/examples/pokemon': typeof ExamplesPokemonRouteRouteWithChildren
-  '/exam-management/': typeof ExamManagementIndexRoute
+  '/submission/$examId': typeof SubmissionExamIdRouteRouteWithChildren
   '/main/': typeof MainIndexRoute
-  '/profile/': typeof ProfileIndexRoute
-  '/signup/': typeof SignupIndexRoute
-  '/examples/components/': typeof ExamplesComponentsIndexRoute
   '/examples/pokemon/': typeof ExamplesPokemonIndexRoute
+  '/submission/$examId/': typeof SubmissionExamIdIndexRoute
   '/examples/pokemon/$id/': typeof ExamplesPokemonIdIndexRoute
   '/main/exam/$examId/': typeof MainExamExamIdIndexRoute
+  '/submission/$examId/scan/': typeof SubmissionExamIdScanIndexRoute
+  '/submission/$examId/text-recongnition/': typeof SubmissionExamIdTextRecongnitionIndexRoute
   '/main/exam/$examId/$problemId/': typeof MainExamExamIdProblemIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/exam-management'
     | '/main'
-    | '/profile'
-    | '/examples/pokemon'
-    | '/exam-management/'
+    | '/submission/$examId'
     | '/main/'
-    | '/profile/'
-    | '/signup'
-    | '/examples/components'
-    | '/examples/pokemon/'
+    | '/examples/pokemon'
+    | '/submission/$examId/'
     | '/examples/pokemon/$id'
     | '/main/exam/$examId'
+    | '/submission/$examId/scan'
+    | '/submission/$examId/text-recongnition'
     | '/main/exam/$examId/$problemId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/exam-management'
     | '/main'
-    | '/profile'
-    | '/signup'
-    | '/examples/components'
     | '/examples/pokemon'
+    | '/submission/$examId'
     | '/examples/pokemon/$id'
     | '/main/exam/$examId'
+    | '/submission/$examId/scan'
+    | '/submission/$examId/text-recongnition'
     | '/main/exam/$examId/$problemId'
   id:
     | '__root__'
     | '/'
-    | '/exam-management'
     | '/main'
-    | '/profile'
-    | '/examples/pokemon'
-    | '/exam-management/'
+    | '/submission/$examId'
     | '/main/'
-    | '/profile/'
-    | '/signup/'
-    | '/examples/components/'
     | '/examples/pokemon/'
+    | '/submission/$examId/'
     | '/examples/pokemon/$id/'
     | '/main/exam/$examId/'
+    | '/submission/$examId/scan/'
+    | '/submission/$examId/text-recongnition/'
     | '/main/exam/$examId/$problemId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ExamManagementRouteRoute: typeof ExamManagementRouteRouteWithChildren
   MainRouteRoute: typeof MainRouteRouteWithChildren
-  ProfileRouteRoute: typeof ProfileRouteRouteWithChildren
-  ExamplesPokemonRouteRoute: typeof ExamplesPokemonRouteRouteWithChildren
-  SignupIndexRoute: typeof SignupIndexRoute
-  ExamplesComponentsIndexRoute: typeof ExamplesComponentsIndexRoute
+  SubmissionExamIdRouteRoute: typeof SubmissionExamIdRouteRouteWithChildren
+  ExamplesPokemonIndexRoute: typeof ExamplesPokemonIndexRoute
+  ExamplesPokemonIdIndexRoute: typeof ExamplesPokemonIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/main': {
       id: '/main'
       path: '/main'
       fullPath: '/main'
       preLoaderRoute: typeof MainRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/exam-management': {
-      id: '/exam-management'
-      path: '/exam-management'
-      fullPath: '/exam-management'
-      preLoaderRoute: typeof ExamManagementRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -228,20 +182,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/signup/': {
-      id: '/signup/'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile/': {
-      id: '/profile/'
-      path: '/'
-      fullPath: '/profile/'
-      preLoaderRoute: typeof ProfileIndexRouteImport
-      parentRoute: typeof ProfileRouteRoute
-    }
     '/main/': {
       id: '/main/'
       path: '/'
@@ -249,33 +189,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainIndexRouteImport
       parentRoute: typeof MainRouteRoute
     }
-    '/exam-management/': {
-      id: '/exam-management/'
-      path: '/'
-      fullPath: '/exam-management/'
-      preLoaderRoute: typeof ExamManagementIndexRouteImport
-      parentRoute: typeof ExamManagementRouteRoute
-    }
-    '/examples/pokemon': {
-      id: '/examples/pokemon'
-      path: '/examples/pokemon'
-      fullPath: '/examples/pokemon'
-      preLoaderRoute: typeof ExamplesPokemonRouteRouteImport
+    '/submission/$examId': {
+      id: '/submission/$examId'
+      path: '/submission/$examId'
+      fullPath: '/submission/$examId'
+      preLoaderRoute: typeof SubmissionExamIdRouteRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/submission/$examId/': {
+      id: '/submission/$examId/'
+      path: '/'
+      fullPath: '/submission/$examId/'
+      preLoaderRoute: typeof SubmissionExamIdIndexRouteImport
+      parentRoute: typeof SubmissionExamIdRouteRoute
     }
     '/examples/pokemon/': {
       id: '/examples/pokemon/'
-      path: '/'
-      fullPath: '/examples/pokemon/'
+      path: '/examples/pokemon'
+      fullPath: '/examples/pokemon'
       preLoaderRoute: typeof ExamplesPokemonIndexRouteImport
-      parentRoute: typeof ExamplesPokemonRouteRoute
-    }
-    '/examples/components/': {
-      id: '/examples/components/'
-      path: '/examples/components'
-      fullPath: '/examples/components'
-      preLoaderRoute: typeof ExamplesComponentsIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/submission/$examId/text-recongnition/': {
+      id: '/submission/$examId/text-recongnition/'
+      path: '/text-recongnition'
+      fullPath: '/submission/$examId/text-recongnition'
+      preLoaderRoute: typeof SubmissionExamIdTextRecongnitionIndexRouteImport
+      parentRoute: typeof SubmissionExamIdRouteRoute
+    }
+    '/submission/$examId/scan/': {
+      id: '/submission/$examId/scan/'
+      path: '/scan'
+      fullPath: '/submission/$examId/scan'
+      preLoaderRoute: typeof SubmissionExamIdScanIndexRouteImport
+      parentRoute: typeof SubmissionExamIdRouteRoute
     }
     '/main/exam/$examId/': {
       id: '/main/exam/$examId/'
@@ -286,10 +233,10 @@ declare module '@tanstack/react-router' {
     }
     '/examples/pokemon/$id/': {
       id: '/examples/pokemon/$id/'
-      path: '/$id'
+      path: '/examples/pokemon/$id'
       fullPath: '/examples/pokemon/$id'
       preLoaderRoute: typeof ExamplesPokemonIdIndexRouteImport
-      parentRoute: typeof ExamplesPokemonRouteRoute
+      parentRoute: typeof rootRouteImport
     }
     '/main/exam/$examId/$problemId/': {
       id: '/main/exam/$examId/$problemId/'
@@ -300,17 +247,6 @@ declare module '@tanstack/react-router' {
     }
   }
 }
-
-interface ExamManagementRouteRouteChildren {
-  ExamManagementIndexRoute: typeof ExamManagementIndexRoute
-}
-
-const ExamManagementRouteRouteChildren: ExamManagementRouteRouteChildren = {
-  ExamManagementIndexRoute: ExamManagementIndexRoute,
-}
-
-const ExamManagementRouteRouteWithChildren =
-  ExamManagementRouteRoute._addFileChildren(ExamManagementRouteRouteChildren)
 
 interface MainRouteRouteChildren {
   MainIndexRoute: typeof MainIndexRoute
@@ -328,39 +264,30 @@ const MainRouteRouteWithChildren = MainRouteRoute._addFileChildren(
   MainRouteRouteChildren,
 )
 
-interface ProfileRouteRouteChildren {
-  ProfileIndexRoute: typeof ProfileIndexRoute
+interface SubmissionExamIdRouteRouteChildren {
+  SubmissionExamIdIndexRoute: typeof SubmissionExamIdIndexRoute
+  SubmissionExamIdScanIndexRoute: typeof SubmissionExamIdScanIndexRoute
+  SubmissionExamIdTextRecongnitionIndexRoute: typeof SubmissionExamIdTextRecongnitionIndexRoute
 }
 
-const ProfileRouteRouteChildren: ProfileRouteRouteChildren = {
-  ProfileIndexRoute: ProfileIndexRoute,
+const SubmissionExamIdRouteRouteChildren: SubmissionExamIdRouteRouteChildren = {
+  SubmissionExamIdIndexRoute: SubmissionExamIdIndexRoute,
+  SubmissionExamIdScanIndexRoute: SubmissionExamIdScanIndexRoute,
+  SubmissionExamIdTextRecongnitionIndexRoute:
+    SubmissionExamIdTextRecongnitionIndexRoute,
 }
 
-const ProfileRouteRouteWithChildren = ProfileRouteRoute._addFileChildren(
-  ProfileRouteRouteChildren,
-)
-
-interface ExamplesPokemonRouteRouteChildren {
-  ExamplesPokemonIndexRoute: typeof ExamplesPokemonIndexRoute
-  ExamplesPokemonIdIndexRoute: typeof ExamplesPokemonIdIndexRoute
-}
-
-const ExamplesPokemonRouteRouteChildren: ExamplesPokemonRouteRouteChildren = {
-  ExamplesPokemonIndexRoute: ExamplesPokemonIndexRoute,
-  ExamplesPokemonIdIndexRoute: ExamplesPokemonIdIndexRoute,
-}
-
-const ExamplesPokemonRouteRouteWithChildren =
-  ExamplesPokemonRouteRoute._addFileChildren(ExamplesPokemonRouteRouteChildren)
+const SubmissionExamIdRouteRouteWithChildren =
+  SubmissionExamIdRouteRoute._addFileChildren(
+    SubmissionExamIdRouteRouteChildren,
+  )
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ExamManagementRouteRoute: ExamManagementRouteRouteWithChildren,
   MainRouteRoute: MainRouteRouteWithChildren,
-  ProfileRouteRoute: ProfileRouteRouteWithChildren,
-  ExamplesPokemonRouteRoute: ExamplesPokemonRouteRouteWithChildren,
-  SignupIndexRoute: SignupIndexRoute,
-  ExamplesComponentsIndexRoute: ExamplesComponentsIndexRoute,
+  SubmissionExamIdRouteRoute: SubmissionExamIdRouteRouteWithChildren,
+  ExamplesPokemonIndexRoute: ExamplesPokemonIndexRoute,
+  ExamplesPokemonIdIndexRoute: ExamplesPokemonIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
