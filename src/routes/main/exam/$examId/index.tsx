@@ -67,7 +67,7 @@ function RouteComponent() {
   const { examId } = Route.useParams();
   return (
     <div>
-      <PageHeader title="가나다 시험" showBackButton={true} />
+      <PageHeader title="가나다 시험" shouldShowBackButton={true} />
 
       {/* 그래프 공간 */}
 

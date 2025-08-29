@@ -44,16 +44,16 @@ export function AnswerSubmitTabs(props: AnswerSubmitTabsProps) {
     [subjectiveCount],
   );
 
-  function handleResetObjective() {
+  function HandleResetObjective() {
     setObjectiveAnswers({});
   }
 
-  function handleResetSubjective() {
+  function HandleResetSubjective() {
     setSubjectiveAnswers({});
     setSubjectiveExplanations({});
   }
 
-  function handleSubmitAll() {
+  function HandleSubmitAll() {
     const result: SubmitAnswersPayload = {
       objective: allObjectiveNumbers.map((num) => ({
         number: num,
@@ -68,14 +68,14 @@ export function AnswerSubmitTabs(props: AnswerSubmitTabsProps) {
     onSubmit?.(result);
   }
 
-  function isPastDeadline(value?: string) {
+  function IsPastDeadline(value?: string) {
     if (!value) return false;
     const ms = new Date(value).getTime();
     if (!Number.isFinite(ms)) return false;
     return ms < Date.now();
   }
 
-  const deadlinePassed = isPastDeadline(deadline);
+  const deadlinePassed = IsPastDeadline(deadline);
   const finalButtonLabel = deadlinePassed
     ? "제출 마감"
     : isSubmitted
@@ -156,11 +156,11 @@ export function AnswerSubmitTabs(props: AnswerSubmitTabsProps) {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={handleResetObjective}
+                onClick={HandleResetObjective}
               >
                 전체 초기화
               </Button>
-              <Button size="sm" onClick={handleSubmitAll}>
+              <Button size="sm" onClick={HandleSubmitAll}>
                 임시 저장
               </Button>
             </div>
@@ -243,11 +243,11 @@ export function AnswerSubmitTabs(props: AnswerSubmitTabsProps) {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={handleResetSubjective}
+                onClick={HandleResetSubjective}
               >
                 전체 초기화
               </Button>
-              <Button size="sm" onClick={handleSubmitAll}>
+              <Button size="sm" onClick={HandleSubmitAll}>
                 임시 저장
               </Button>
             </div>
@@ -262,7 +262,7 @@ export function AnswerSubmitTabs(props: AnswerSubmitTabsProps) {
           disabled={deadlinePassed}
           onClick={() => {
             if (deadlinePassed) return;
-            handleSubmitAll();
+            HandleSubmitAll();
           }}
         >
           {finalButtonLabel}

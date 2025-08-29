@@ -6,7 +6,7 @@ type Submit = {
   teacher: string;
   deadline: string;
   content: string;
-  submitted: boolean;
+  isSubmitted: boolean;
 };
 
 export const submitAtom = atom<Submit>({
@@ -15,5 +15,5 @@ export const submitAtom = atom<Submit>({
   teacher: "",
   deadline: "",
   content: "",
-  submitted: false,
+  isSubmitted: false,
 });

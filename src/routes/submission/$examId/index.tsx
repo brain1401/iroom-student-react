@@ -1,4 +1,5 @@
 import { getMockExamById } from "@/api/exam/api";
+import { extractApiData } from "@/api/common/types";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import {
@@ -55,15 +56,21 @@ type SubmissionFormData = z.infer<typeof submissionFormSchema>;
 export const Route = createFileRoute("/submission/$examId/")({
   component: RouteComponent,
   loader: async ({ params }) => {
-    const exam = await getMockExamById(params.examId);
-    return { exam };
+    try {
+      const examResponse = await getMockExamById(params.examId);
+      const exam = extractApiData(examResponse);
+      return { exam };
+    } catch (error) {
+      console.error("모의고사 조회 실패:", error);
+      return { exam: null, error: error as Error };
+    }
   },
 });
 
 function RouteComponent() {
-  const { exam } = Route.useLoaderData();
+  const { exam, error } = Route.useLoaderData();
   const { examId } = Route.useParams();
-  const examName = exam.title;
+  const examName = exam?.title;
   const navigate = useNavigate();
 
   /** 폼 제출 중 로딩 상태 */
@@ -125,9 +132,19 @@ function RouteComponent() {
   const isFormValid = form.formState.isValid;
   const hasErrors = Object.keys(form.formState.errors).length > 0;
 
+  if (error || !examName) {
+    return (
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>해당하는 모의고사가 없습니다.</CardTitle>
+        </CardHeader>
+      </Card>
+    );
+  }
+
   return (
-    <div className="container mx-auto flex flex-1 h-full max-w-6xl flex-col items-center space-y-6 p-4">
-      <PageHeader title={examName} showBackButton={false} />
+    <>
+      <PageHeader title={examName} shouldShowBackButton={false} />
 
       {/* 응시자 정보 입력 카드 */}
       <Card className="w-full max-w-lg shadow-lg">
@@ -289,6 +306,6 @@ function RouteComponent() {
         {isSubmitting && "정보를 저장하고 있습니다"}
         {isFormValid && !hasErrors && "모든 정보가 올바르게 입력되었습니다"}
       </div>
-    </div>
+    </>
   );
 }

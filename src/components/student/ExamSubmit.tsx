@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Link } from "@tanstack/react-router";
 import { MdQrCodeScanner } from "react-icons/md";
 
 type ExamSubmitEditProps = {

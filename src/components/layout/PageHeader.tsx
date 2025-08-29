@@ -70,7 +70,7 @@ type PageHeaderProps = {
    * @description false일 경우 뒤로가기 버튼이 렌더링되지 않음
    * @default true
    */
-  showBackButton?: boolean;
+  shouldShowBackButton?: boolean;
 
   /**
    * 커스텀 뒤로가기 핸들러
@@ -82,7 +82,7 @@ type PageHeaderProps = {
    * 하단 구분선 표시 여부
    * @default true
    */
-  showDivider?: boolean;
+  shouldShowDivider?: boolean;
 
   /** 추가 CSS 클래스 */
   className?: string;
@@ -96,8 +96,8 @@ type PageHeaderProps = {
 
 export function PageHeader({
   title,
-  showBackButton = false,
-  showDivider = true,
+  shouldShowBackButton = false,
+  shouldShowDivider = true,
   className,
   children,
 }: PageHeaderProps) {
@@ -115,23 +115,23 @@ export function PageHeader({
    * - 서버와 클라이언트에서 일관된 렌더링 보장
    */
   const handleBack = () => {
-    if (!showBackButton || !canGoBack) return;
+    if (!shouldShowBackButton || !canGoBack) return;
 
     router.history.back();
   };
 
   // 조건부 렌더링을 위한 상수들
-  const titleJustifyClass = !showBackButton
+  const titleJustifyClass = !shouldShowBackButton
     ? children
       ? "justify-start" // 우측에 children이 있으면 좌측 정렬
       : "justify-center" // children이 없으면 완전 중앙 정렬
     : "justify-center"; // 뒤로가기 버튼이 있으면 중앙 정렬 (기존과 동일)
 
-  const titlePaddingClass = showBackButton
+  const titlePaddingClass = shouldShowBackButton
     ? !children && "pr-10 md:pr-11"
     : !children && "pl-0";
 
-  const backButtonElement = showBackButton && (
+  const backButtonElement = shouldShowBackButton && (
     <Button
       variant="ghost"
       size="sm"
@@ -147,7 +147,7 @@ export function PageHeader({
     <div className="flex items-center">{children}</div>
   );
 
-  const dividerElement = showDivider && (
+  const dividerElement = shouldShowDivider && (
     <div className="absolute right-0 bottom-0 left-0 h-[2px] bg-black dark:bg-white" />
   );
 

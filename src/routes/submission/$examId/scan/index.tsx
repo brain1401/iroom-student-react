@@ -16,7 +16,7 @@ function RouteComponent() {
 
   return (
     <div className="container  mx-auto flex flex-1 h-full max-w-6xl flex-col items-center space-y-6 p-4">
-      <PageHeader title="가나다 시험" showBackButton={true} />
+      <PageHeader title="가나다 시험" shouldShowBackButton={true} />
       <FileUpload onFilesSelect={() => {}} />
 
       <Button className="w-[80%] " asChild>

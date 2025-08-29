@@ -48,7 +48,7 @@ type MathQuestionCardProps = {
   className?: string;
 
   /** 비활성화 여부 */
-  disabled?: boolean;
+  isDisabled?: boolean;
 };
 
 const BUTTON_CLASSES = "px-3 w-fit border-zinc-400 border";
@@ -112,14 +112,14 @@ export function MathQuestionCard({
   onDownloadResult,
   onClick,
   className,
-  disabled = false,
+  isDisabled = false,
 }: MathQuestionCardProps) {
   /**
    * 카드 클릭 핸들러
    * @description 비활성화 상태가 아닐 때만 클릭 이벤트 실행
    */
   const handleCardClick = () => {
-    if (!disabled && !isLoading && onClick) {
+    if (!isDisabled && !isLoading && onClick) {
       onClick();
     }
   };
@@ -142,12 +142,12 @@ export function MathQuestionCard({
         // 반응형: 모바일에서는 전체 너비 사용
         "sm:w-full sm:max-w-[20rem]",
         // 상호작용 스타일
-        !disabled && [
+        !isDisabled && [
           "transition-all duration-200",
           onClick && "cursor-pointer",
         ],
         // 비활성화 상태
-        disabled && "cursor-not-allowed opacity-60",
+        isDisabled && "cursor-not-allowed opacity-60",
         isLoading && "cursor-progress",
         // 상태별 스타일
         state === "error" && "border-red-500 bg-red-50",
@@ -156,9 +156,9 @@ export function MathQuestionCard({
       )}
       onClick={handleCardClick}
       role={onClick ? "button" : undefined}
-      tabIndex={onClick && !disabled ? 0 : undefined}
+      tabIndex={onClick && !isDisabled ? 0 : undefined}
       onKeyDown={(e) => {
-        if ((e.key === "Enter" || e.key === " ") && onClick && !disabled) {
+        if ((e.key === "Enter" || e.key === " ") && onClick && !isDisabled) {
           e.preventDefault();
           onClick();
         }
@@ -216,7 +216,7 @@ export function MathQuestionCard({
                 e.stopPropagation();
                 onTakePhoto();
               }}
-              disabled={disabled}
+              disabled={isDisabled}
               aria-label="사진 촬영"
             >
               <Camera className="h-4 w-4 text-zinc-700" />
@@ -233,7 +233,7 @@ export function MathQuestionCard({
                 e.stopPropagation();
                 onRetakePhoto();
               }}
-              disabled={disabled}
+              disabled={isDisabled}
               aria-label="재촬영"
             >
               <div>재촬영</div>
