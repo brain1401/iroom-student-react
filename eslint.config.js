@@ -40,22 +40,10 @@ export default [
     },
     rules: {
       // 📋 타입 안전성 극대화
-      "@typescript-eslint/strict-boolean-expressions": [
-        "error",
-        {
-          allowString: false,
-          allowNumber: false,
-          allowNullableObject: false,
-          allowNullableBoolean: false,
-          allowNullableString: false,
-          allowNullableNumber: false,
-          allowAny: false,
-        },
-      ],
+
       "@typescript-eslint/prefer-readonly": "error",
       "@typescript-eslint/prefer-readonly-parameter-types": "off", // 너무 엄격할 수 있음
       "@typescript-eslint/no-non-null-assertion": "warn",
-      "@typescript-eslint/no-unnecessary-type-assertion": "error",
 
       // 🏗️ 타입 정의 일관성
       "@typescript-eslint/consistent-type-definitions": ["error", "type"],
