@@ -188,3 +188,191 @@ export type MockExamApiResponse = ApiResponse<MockExam>;
  * 모의고사 ID 목록 API 응답 타입
  */
 export type MockExamIdsApiResponse = ApiResponse<string[]>;
+
+/**
+ * 수학 문제 시스템 전용 타입들
+ * @description 주관식/객관식 수학 문제를 위한 확장된 타입 시스템
+ */
+
+/**
+ * 수학 문제 타입 분류
+ * @description 수학 문제의 유형을 구분하는 타입
+ */
+export type QuestionType = "subjective" | "multiple_choice";
+
+/**
+ * 객관식 문제 선택지 타입
+ * @description 객관식 문제에서 사용하는 선택지 구조
+ */
+export type QuestionOption = {
+  /** 선택지 고유 ID */
+  id: string;
+  /** 선택지 라벨 (예: "1", "2", "3", "4", "5") */
+  label: string;
+  /** 선택지 내용 (LaTeX 수식 포함 가능: $$x^2 + y^2 = z^2$$) */
+  text: string;
+  /** 정답 여부 (백엔드 전용, 프론트엔드에서는 보통 제외) */
+  isCorrect?: boolean;
+};
+
+/**
+ * 기본 문제 공통 속성
+ * @description 모든 수학 문제가 공통으로 가지는 속성들
+ */
+export type BaseMathQuestion = {
+  /** 문제 고유 ID */
+  id: string;
+  /** 문제 제목 */
+  title: string;
+  /** 문제 설명 또는 내용 (LaTeX 수식 포함 가능: $$\frac{a}{b} = c$$) */
+  description: string;
+  /** 문제 타입 (주관식 또는 객관식) */
+  type: QuestionType;
+  /** 문제 배점 */
+  points: number;
+  /** 생성 일시 (ISO 8601 형식) */
+  createdAt: string;
+  /** 수정 일시 (ISO 8601 형식) */
+  updatedAt: string;
+  /** 이 문제가 속한 모의고사 ID */
+  examId: string;
+};
+
+/**
+ * 주관식 문제 타입
+ * @description 서술형 답안을 요구하는 수학 문제
+ */
+export type SubjectiveQuestion = BaseMathQuestion & {
+  /** 문제 타입: 주관식 */
+  type: "subjective";
+  /** 정답 (LaTeX 형식 가능: x = 3y + 2) */
+  answer: string;
+  /** 사용자가 제출한 답안 (선택적) */
+  submittedAnswer?: string;
+  /** 답안 형식 가이드 (선택적) */
+  answerFormat?: "text" | "latex" | "number";
+};
+
+/**
+ * 객관식 문제 타입
+ * @description 선택지 중 하나를 고르는 수학 문제
+ */
+export type MultipleChoiceQuestion = BaseMathQuestion & {
+  /** 문제 타입: 객관식 */
+  type: "multiple_choice";
+  /** 선택지 목록 */
+  options: QuestionOption[];
+  /** 정답 선택지 ID */
+  correctOptionId: string;
+  /** 사용자가 선택한 답안 (선택적) */
+  submittedOptionId?: string;
+};
+
+/**
+ * 수학 문제 통합 타입
+ * @description 주관식 또는 객관식 문제를 나타내는 유니온 타입
+ */
+export type MathQuestion = SubjectiveQuestion | MultipleChoiceQuestion;
+
+/**
+ * 주관식 문제 타입 가드 함수
+ * @description 문제가 주관식인지 타입 안전하게 확인
+ * @param question 확인할 문제 객체
+ * @returns 주관식 여부
+ */
+export function isSubjectiveQuestion(
+  question: MathQuestion,
+): question is SubjectiveQuestion {
+  return question.type === "subjective";
+}
+
+/**
+ * 객관식 문제 타입 가드 함수
+ * @description 문제가 객관식인지 타입 안전하게 확인
+ * @param question 확인할 문제 객체
+ * @returns 객관식 여부
+ */
+export function isMultipleChoiceQuestion(
+  question: MathQuestion,
+): question is MultipleChoiceQuestion {
+  return question.type === "multiple_choice";
+}
+
+/**
+ * 답안 제출 요청 타입
+ * @description 수학 문제 답안을 서버에 제출할 때 사용하는 타입
+ */
+export type SubmitAnswerRequest = {
+  /** 시험 ID */
+  examId: string;
+  /** 문제 ID */
+  questionId: string;
+  /** 답안 내용 (주관식: 텍스트, 객관식: 선택지 ID) */
+  answer: string;
+  /** 임시저장 여부 (기본: false) */
+  isTemporary?: boolean;
+};
+
+/**
+ * 답안 제출 응답 타입
+ * @description 답안 제출 결과를 나타내는 타입
+ */
+export type SubmitAnswerResponse = {
+  /** 제출 성공 여부 */
+  success: boolean;
+  /** 제출된 답안 ID */
+  submissionId: string;
+  /** 제출 시간 */
+  submittedAt: string;
+};
+
+/**
+ * 시험 결과 정보 타입
+ * @description 시험 완료 후 결과 정보
+ */
+export type ExamResult = {
+  /** 시험 ID */
+  examId: string;
+  /** 총점 */
+  totalScore: number;
+  /** 만점 */
+  maxScore: number;
+  /** 정답 개수 */
+  correctCount: number;
+  /** 전체 문제 개수 */
+  totalCount: number;
+  /** 시험 완료 시간 */
+  completedAt: string;
+  /** 소요 시간 (분) */
+  duration: number;
+  /** 문제별 상세 결과 */
+  questionResults: QuestionResult[];
+};
+
+/**
+ * 문제별 결과 타입
+ * @description 개별 문제의 채점 결과
+ */
+export type QuestionResult = {
+  /** 문제 ID */
+  questionId: string;
+  /** 사용자 답안 */
+  userAnswer: string;
+  /** 정답 */
+  correctAnswer: string;
+  /** 정답 여부 */
+  isCorrect: boolean;
+  /** 획득 점수 */
+  earnedPoints: number;
+  /** 문제 배점 */
+  maxPoints: number;
+};
+
+/**
+ * 수학 문제 시스템 API 응답 타입들
+ * @description 확장된 수학 문제 시스템을 위한 API 응답 타입들
+ */
+export type SubmitAnswerApiResponse = ApiResponse<SubmitAnswerResponse>;
+export type ExamResultApiResponse = ApiResponse<ExamResult>;
+export type MathQuestionListApiResponse = ApiResponse<MathQuestion[]>;
+export type MathQuestionApiResponse = ApiResponse<MathQuestion>;
