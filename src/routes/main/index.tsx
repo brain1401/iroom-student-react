@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/layout";
 import { ExamResultCard } from "@/components/student";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { createFileRoute } from "@tanstack/react-router";
 
 /**
@@ -80,7 +80,7 @@ function TestList() {
     <>
       <Card className="mt-20 mb-20 mr-8 ml-8 p-5 px-10">
         <div className="flex flex-col gap-4">
-          <PageHeader title="시험 목록" showBackButton={false} />
+          <PageHeader title="시험 목록" shouldShowBackButton={false} />
           <CardContent className="flex flex-col gap-4 px-0">
             {/* 아이템 사이 간격을 위해 gap 추가 */}
             {/* 2. map 함수를 사용해 배열의 각 요소를 컴포넌트로 변환 */}
