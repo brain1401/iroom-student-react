@@ -129,6 +129,8 @@ export default [
       "react/no-array-index-key": "error",
       "react/no-object-type-as-default-prop": "error",
       "react/no-unstable-nested-components": ["error", { allowAsProps: true }],
+      "@typescript-eslint/no-unnecessary-condition": "off",
+      "no-shadow": "off",
 
       // 📝 Props 및 컴포넌트 네이밍
       "react/boolean-prop-naming": [
