@@ -31,6 +31,7 @@ type CarouselContextProps = {
 
 const CarouselContext = React.createContext<CarouselContextProps | null>(null);
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 function useCarousel() {
   const context = React.useContext(CarouselContext);
 
@@ -107,7 +108,7 @@ function Carousel({
     <CarouselContext.Provider
       value={{
         carouselRef,
-        api: api,
+        api,
         opts,
         orientation:
           orientation || (opts?.axis === "y" ? "vertical" : "horizontal"),

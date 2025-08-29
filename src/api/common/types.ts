@@ -12,7 +12,7 @@ export type ResultStatus = "SUCCESS" | "ERROR";
 /**
  * 표준 API 응답 래퍼 타입
  * @description 백엔드 ApiResponse<T> record와 정확히 일치하는 구조
- * 
+ *
  * 백엔드 구조:
  * ```java
  * public record ApiResponse<T>(
@@ -23,20 +23,20 @@ export type ResultStatus = "SUCCESS" | "ERROR";
  * ```
  */
 export type ApiResponse<T = unknown> = {
-  /** 
+  /**
    * 응답 결과 상태
    * @description SUCCESS: 요청 성공, ERROR: 요청 오류
    */
   result: ResultStatus;
-  
-  /** 
-   * 응답 메시지 
+
+  /**
+   * 응답 메시지
    * @description 백엔드에서 필수 값으로 보장 (null 불가)
    */
   message: string;
-  
-  /** 
-   * 응답 데이터 
+
+  /**
+   * 응답 데이터
    * @description 성공 시에는 실제 데이터, 실패 시에는 null
    */
   data: T;
@@ -49,19 +49,19 @@ export type ApiResponse<T = unknown> = {
  * @returns 성공 여부
  */
 export function isSuccessResponse<T>(
-  response: ApiResponse<T>
+  response: ApiResponse<T>,
 ): response is ApiResponse<T> & { result: "SUCCESS" } {
   return response.result === "SUCCESS";
 }
 
 /**
- * 실패 응답 타입 가드 함수  
+ * 실패 응답 타입 가드 함수
  * @description API 응답이 실패인지 타입 안전하게 확인
  * @param response API 응답 객체
  * @returns 실패 여부
  */
 export function isErrorResponse<T>(
-  response: ApiResponse<T>
+  response: ApiResponse<T>,
 ): response is ApiResponse<T> & { result: "ERROR" } {
   return response.result === "ERROR";
 }
@@ -77,7 +77,7 @@ export function extractApiData<T>(response: ApiResponse<T>): T {
   if (isSuccessResponse(response)) {
     return response.data;
   }
-  
+
   throw new Error(`API 요청 실패: ${response.message}`);
 }
 

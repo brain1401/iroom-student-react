@@ -1,7 +1,7 @@
 import type { AxiosRequestConfig } from "axios";
 import { authApiClient } from "@/api/client";
-import type { 
-  MockExam, 
+import type {
+  MockExam,
   MockExamListApiResponse,
   MockExamApiResponse,
   MockExamIdsApiResponse,
@@ -32,11 +32,9 @@ const examApiClient = authApiClient.create({
  * @param config Axios 요청 설정 객체
  * @returns API 응답 데이터 (ApiResponse 래퍼에서 data 필드만 추출)
  */
-async function examApiRequest<T>(
-  config: AxiosRequestConfig,
-): Promise<T> {
+async function examApiRequest<T>(config: AxiosRequestConfig): Promise<T> {
   const response = await examApiClient.request<ApiResponse<T>>(config);
-  
+
   // ApiResponse<T> 형태의 응답에서 data 필드만 추출
   return extractApiData(response.data);
 }
@@ -46,7 +44,7 @@ async function examApiRequest<T>(
  * @description 백엔드 API: GET /api/exam/list
  * @returns 모의고사 목록 배열
  * @throws {Error} API 요청 실패 또는 인증 오류 시
- * 
+ *
  * @example
  * ```typescript
  * try {
@@ -70,7 +68,7 @@ export async function getAllMockExams(): Promise<MockExam[]> {
  * @param examId 조회할 모의고사 ID
  * @returns 모의고사 상세 정보
  * @throws {Error} API 요청 실패, 인증 오류, 또는 모의고사를 찾을 수 없는 경우
- * 
+ *
  * @example
  * ```typescript
  * try {
@@ -93,7 +91,7 @@ export async function getMockExamById(examId: string): Promise<MockExam> {
  * @description 백엔드 API: GET /api/exam/ids
  * @returns 모의고사 ID 문자열 배열
  * @throws {Error} API 요청 실패 또는 인증 오류 시
- * 
+ *
  * @example
  * ```typescript
  * try {

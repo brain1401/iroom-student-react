@@ -18,9 +18,9 @@ function isApiResponse(data: unknown): data is ApiResponse<unknown> {
   if (typeof data !== "object" || data === null) {
     return false;
   }
-  
+
   const obj = data as Record<string, unknown>;
-  
+
   // ApiResponse의 필수 필드 확인: result, message, data
   return (
     typeof obj.result === "string" &&
@@ -110,7 +110,7 @@ export function createResponseInterceptor(options: InterceptorOptions = {}) {
             responseData,
           );
         }
-        
+
         // SUCCESS인 경우 그대로 반환 (extractApiData는 개별 API에서 처리)
         return response;
       }

@@ -100,8 +100,7 @@ function RootComponent() {
    */
   const extra = useAtomValue(mainBgExtraCombinedClassAtom);
   return (
-    <>
-      <main
+    <main
         className={cn(
           "flex flex-1 bg-background-400 dark:bg-background-900",
           extra,
@@ -110,7 +109,6 @@ function RootComponent() {
         {/* 하위 라우트가 렌더링되는 위치 */}
         <Outlet />
       </main>
-    </>
   );
 }
 
