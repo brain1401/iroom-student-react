@@ -1,7 +1,5 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { Check, X, ChevronLeft } from "lucide-react";
-import { cva } from "class-variance-authority";
-import type { VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
@@ -80,7 +78,7 @@ export const ExamResultCard = React.memo<ExamResultCardProps>(
      * 뒤로가기 버튼 클릭 핸들러
      * 이벤트 전파 방지로 카드 클릭과 분리
      */
-    const handleBackClick = (event: React.MouseEvent) => {};
+    const handleBackClick = (_event: React.MouseEvent) => {};
 
     return (
       <Link

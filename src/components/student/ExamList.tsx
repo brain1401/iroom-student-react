@@ -43,10 +43,10 @@ export function ExamList({
       >
         {items.map((item, index) => (
           <ExamListItem
-            key={`${item.title}-${item.date}-${index}`}
+            key={`${item.title}-${item.date}-${item.range || "no-range"}`}
             title={item.title}
             date={item.date}
-            submitted={item.submitted}
+            isSubmitted={item.submitted}
             range={item.range}
             teacher={item.teacher}
             deadline={item.deadline}

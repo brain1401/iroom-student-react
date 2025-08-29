@@ -15,7 +15,7 @@ type ExamListItemProps = {
   /** 시험 날짜 텍스트 (예: 25.08.11) */
   date: string;
   /** 제출 여부 */
-  submitted: boolean;
+  isSubmitted: boolean;
   /** 시험 범위 */
   range: string;
   /** 담당 선생님 */
@@ -33,7 +33,7 @@ type ExamListItemProps = {
 export function ExamListItem({
   title,
   date,
-  submitted,
+  isSubmitted,
   range,
   teacher,
   deadline,
@@ -48,7 +48,7 @@ export function ExamListItem({
           "grid grid-cols-[auto_1fr_auto_auto] items-center gap-3 px-4 py-4",
         )}
       >
-        <StatusBadge submitted={submitted} />
+        <StatusBadge isSubmitted={isSubmitted} />
 
         <button
           type="button"
@@ -87,7 +87,7 @@ export function ExamListItem({
         {children ?? (
           <DefaultDetails
             title={title}
-            submitted={submitted}
+            isSubmitted={isSubmitted}
             range={range}
             teacher={teacher}
             deadline={deadline}
@@ -98,8 +98,8 @@ export function ExamListItem({
   );
 }
 
-function StatusBadge({ submitted }: { submitted: boolean }) {
-  if (submitted) {
+function StatusBadge({ isSubmitted }: { isSubmitted: boolean }) {
+  if (isSubmitted) {
     return (
       <span
         className={cn(
@@ -125,7 +125,7 @@ function StatusBadge({ submitted }: { submitted: boolean }) {
 
 type DefaultDetailsProps = {
   title: string;
-  submitted: boolean;
+  isSubmitted: boolean;
   range: string;
   teacher: string;
   deadline: string;
@@ -133,13 +133,12 @@ type DefaultDetailsProps = {
 
 function DefaultDetails({
   title,
-  submitted,
+  isSubmitted,
   range,
   teacher,
   deadline,
 }: DefaultDetailsProps) {
   const navigate = useNavigate();
-
   const [_submit, setSubmit] = useAtom(submitAtom);
 
   const handleClick = () => {
@@ -149,7 +148,7 @@ function DefaultDetails({
       content: "",
       teacher,
       deadline,
-      submitted,
+      isSubmitted: !isSubmitted,
     });
 
     // TODO: Update to correct submission route
@@ -169,7 +168,7 @@ function DefaultDetails({
           </div>
         </div>
         <div className="text-[16px] text-[#4E4D4D]">{deadline}</div>
-        <StatusBadge submitted={submitted} />
+        <StatusBadge isSubmitted={isSubmitted} />
       </div>
       <div className="mt-3 grid grid-cols-[72px_1fr] gap-y-2 text-[14px]">
         <div className="text-[#999]">시험 명</div>
@@ -182,23 +181,23 @@ function DefaultDetails({
         <div className="text-[#4E4D4D]">{deadline}</div>
       </div>
       <div className="mt-4">
-        <SubmitButton submitted={submitted} onClick={handleClick} />
+        <SubmitButton isSubmitted={isSubmitted} onClick={handleClick} />
       </div>
     </div>
   );
 }
 
 function SubmitButton({
-  submitted,
+  isSubmitted,
   onClick,
 }: {
-  submitted: boolean;
+  isSubmitted: boolean;
   onClick: () => void;
 }) {
   const base =
     "inline-flex h-10 w-full items-center justify-center rounded-md text-sm font-medium";
   const primary = "bg-[#155DFC] text-white hover:bg-[#155DFC]/90";
-  const label = submitted ? "제출 수정" : "제출하기";
+  const label = isSubmitted ? "제출 수정" : "제출하기";
 
   return (
     <Button onClick={onClick} className={cn(base, primary)}>
