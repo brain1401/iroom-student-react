@@ -222,11 +222,76 @@ export function Component({
 }
 ```
 
-### 스타일링 규칙 (cn() 함수 필수)
+### shadcn/ui 컴포넌트 사용 규칙 (필수)
+shadcn/ui는 이 프로젝트의 **핵심 UI 시스템**입니다. 모든 UI 컴포넌트는 shadcn/ui를 기반으로 작성해야 합니다.
+
+```bash
+# shadcn/ui 컴포넌트 설치 (필수 사용)
+pnpx shadcn@latest add button card input label
+pnpx shadcn@latest add dialog alert-dialog sheet
+pnpx shadcn@latest add dropdown-menu select checkbox
+pnpx shadcn@latest add table pagination badge
+pnpx shadcn@latest add [컴포넌트명] --overwrite  # 기존 컴포넌트 재설치
+```
+
+#### shadcn/ui 컴포넌트 사용 패턴
+```typescript
+// ✅ 올바른 shadcn/ui 사용법
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+// ✅ variant 시스템 적극 활용
+<Button variant="outline" size="lg">큰 아웃라인 버튼</Button>
+<Button variant="destructive" size="sm">작은 위험 버튼</Button>
+<Alert variant="destructive">에러 메시지</Alert>
+<Badge variant="secondary">보조 배지</Badge>
+
+// ✅ asChild 패턴 (매우 중요)
+<Button variant="ghost" asChild>
+  <Link to="/examples/pokemon">포켓몬 목록</Link>
+</Button>
+
+// ❌ 잘못된 중첩 구조 (절대 금지)
+<Button variant="ghost">
+  <Link to="/examples/pokemon">포켓몬 목록</Link>
+</Button>
+```
+
+#### shadcn/ui + cn() 함수 조합 (필수)
 ```typescript
 import { cn } from "@/lib/utils";
 
-// 조건부 스타일링
+// ✅ cn() 함수로 shadcn/ui 컴포넌트 스타일 확장
+<Button
+  variant="outline"
+  className={cn(
+    "border-2 transition-all duration-200", // 기본 확장 스타일
+    isLoading && "opacity-50 cursor-not-allowed", // 조건부 스타일
+    hasError && "border-red-500 text-red-500", // 에러 상태
+    className // 외부에서 전달받은 추가 클래스
+  )}
+>
+  버튼 텍스트
+</Button>
+
+// ✅ Card 컴포넌트 조합
+<Card className={cn("transition-shadow hover:shadow-lg", className)}>
+  <CardHeader>
+    <CardTitle>제목</CardTitle>
+  </CardHeader>
+  <CardContent>
+    내용
+  </CardContent>
+</Card>
+```
+
+### 스타일링 규칙 (cn() 함수 + shadcn/ui 필수)
+```typescript
+import { cn } from "@/lib/utils";
+
+// ✅ shadcn/ui + 조건부 스타일링
 <div className={cn(
   "base-styles",                    // 기본 스타일
   isActive && "active-styles",      // 조건부 스타일
@@ -234,10 +299,7 @@ import { cn } from "@/lib/utils";
   className                         // 외부 전달 클래스
 )} />
 
-// shadcn/ui variant 활용
-<Button variant="ghost" size="sm">버튼</Button>
-
-// 반응형 디자인 (모바일 우선)
+// ✅ 반응형 디자인 (모바일 우선)
 <div className={cn(
   "flex flex-col space-y-4 p-4",        // 모바일 기본
   "md:flex-row md:space-y-0 md:space-x-4", // 태블릿 이상
@@ -249,34 +311,54 @@ import { cn } from "@/lib/utils";
 
 ### 필수 명령어
 ```bash
-# 개발 서버 (포트 3012)
+# 개발 서버 (포트 3011)
 npm run dev
 
 # 빌드 및 분석
 npm run build
 npm run build -- --analyze
 
-# 품질 체크 (코딩 완료 후 필수)
-npm run check  # Prettier + ESLint 통합
+# 품질 체크 및 코드 포맷팅 (코딩 완료 후 필수)
+npm run lint           # ESLint 실행
+npm run lint:fix       # ESLint 자동 수정 + Prettier 포맷팅
+npm run format         # Prettier 포맷팅만 실행
+npm run format:check   # Prettier 포맷 체크만 실행
+npm run type-check     # TypeScript 타입 체크
 
-# 개별 도구들
-npm run lint
-npm run format
+# 테스트
 npm run test
 
-# shadcn/ui 컴포넌트
+# shadcn/ui 컴포넌트 (필수 사용)
 pnpx shadcn@latest add [컴포넌트명]
-pnpx shadcn@latest add [컴포넌트명] --overwrite
+pnpx shadcn@latest add [컴포넌트명] --overwrite  # 기존 컴포넌트 재설치
 ```
 
-### 코딩 완료 후 필수 체크리스트
-- [ ] `npm run check` 실행 및 통과
-- [ ] 타입 에러 완전 해결
-- [ ] 모든 주석이 한국어 명사형으로 작성됨
+### 코딩 완료 후 필수 체크리스트 (ESLint 자동 실행 필수)
+
+**⚠️ 모든 작업 완료 후 반드시 다음 명령어를 순서대로 실행:**
+
+```bash
+# 1. ESLint + Prettier 자동 수정 (필수)
+npm run lint:fix
+
+# 2. TypeScript 타입 체크 (필수)
+npm run type-check
+
+# 3. 테스트 실행 (해당하는 경우)
+npm run test
+```
+
+**코드 품질 체크리스트:**
+- [ ] **`npm run lint:fix` 실행 및 모든 에러 해결 (절대 필수)**
+- [ ] **`npm run type-check` 실행 및 타입 에러 완전 해결**
+- [ ] 모든 주석이 한국어 명사형으로 작성됨 (존댓말 금지)
 - [ ] `fetch` 대신 API 클라이언트 사용 확인
 - [ ] `interface` 대신 `type` 사용 확인
-- [ ] `cn()` 함수로 className 조합 확인
-- [ ] 함수 컴포넌트만 사용 확인
+- [ ] shadcn/ui 컴포넌트 사용 및 `cn()` 함수로 className 조합 확인
+- [ ] 함수 컴포넌트만 사용 확인 (클래스 컴포넌트 금지)
+- [ ] asChild 패턴 올바르게 사용 확인
+
+**⚠️ 중요: ESLint 에러가 남아있으면 작업 완료로 간주하지 않습니다.**
 
 ### 성능 최적화 규칙
 ```typescript
