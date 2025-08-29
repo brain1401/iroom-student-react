@@ -1,53 +1,29 @@
 /**
  * 헬스체크 관련 타입 정의
+ * @description 백엔드 ApiResponse와 일치하는 헬스체크 전용 타입들
  */
+
+// 공통 API 타입 import
+import type {
+  HealthCheckApiResponse,
+  HealthCheckData,
+  ServiceHealthInfo,
+} from "@/api/common/types";
 
 /**
  * 헬스체크 상태 타입
+ * @description 프론트엔드에서 사용하는 사용자 친화적 상태 값
  */
 export type HealthStatus = "healthy" | "unhealthy" | "unknown";
 
 /**
- * 개별 서비스 상태 정보 타입
- * @description 각 서비스(database, application, aiServer 등)의 상태 정보
- */
-export type ServiceHealthInfo = {
-  /** 서비스 상태 */
-  status: "UP" | "DOWN" | "OUT_OF_SERVICE" | "UNKNOWN";
-  /** 서비스 상태 메시지 */
-  message: string;
-  /** 서비스 응답 시간 (밀리초) */
-  responseTimeMs: number;
-};
-
-/**
  * 백엔드 서버 원본 응답 타입
- * @description 실제 백엔드에서 반환하는 응답 형식
+ * @description 실제 백엔드에서 반환하는 ApiResponse<HealthCheckData> 형식
  */
-export type BackendHealthCheckResponse = {
-  /** API 호출 결과 */
-  result: "SUCCESS" | "FAILURE";
-  /** 응답 메시지 */
-  message: string;
-  /** 실제 헬스체크 데이터 */
-  data: {
-    /** 서버 상태 (Spring Boot Actuator 형식) */
-    status: "UP" | "DOWN" | "OUT_OF_SERVICE" | "UNKNOWN";
-    /** 응답 시간 */
-    timestamp: string;
-    /** 전체 상태 메시지 */
-    message: string;
-    /** 각 서비스별 상세 상태 정보 */
-    services: {
-      /** 데이터베이스 서비스 상태 */
-      database: ServiceHealthInfo;
-      /** Spring Boot 애플리케이션 상태 */
-      application: ServiceHealthInfo;
-      /** AI 서버 상태 */
-      aiServer: ServiceHealthInfo;
-    };
-  };
-};
+export type BackendHealthCheckResponse = HealthCheckApiResponse;
+
+// 공통 타입에서 export된 것들을 재export (기존 코드 호환성)
+export type { ServiceHealthInfo, HealthCheckData };
 
 /**
  * 프론트엔드용 서비스 상태 정보 타입

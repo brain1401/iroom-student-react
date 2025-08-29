@@ -5,6 +5,30 @@ import type {
 } from "axios";
 import { isAxiosError } from "axios";
 import { ApiError } from "./baseClient";
+import type { ApiResponse } from "@/api/common/types";
+import { isErrorResponse } from "@/api/common/types";
+
+/**
+ * 응답 데이터가 ApiResponse<T> 형태인지 확인하는 타입 가드 함수
+ * @description 백엔드 API와 외부 API를 구별하기 위한 유틸리티
+ * @param data 응답 데이터
+ * @returns ApiResponse 형태 여부
+ */
+function isApiResponse(data: unknown): data is ApiResponse<unknown> {
+  if (typeof data !== "object" || data === null) {
+    return false;
+  }
+  
+  const obj = data as Record<string, unknown>;
+  
+  // ApiResponse의 필수 필드 확인: result, message, data
+  return (
+    typeof obj.result === "string" &&
+    (obj.result === "SUCCESS" || obj.result === "ERROR") &&
+    typeof obj.message === "string" &&
+    obj.data !== undefined
+  );
+}
 
 /**
  * 인터셉터 설정 옵션
@@ -74,6 +98,24 @@ export function createResponseInterceptor(options: InterceptorOptions = {}) {
           `✅ [${clientType} ${logPrefix}] ${response.config.method?.toUpperCase()} ${response.config.url} - ${response.status}`,
         );
       }
+
+      // ApiResponse<T> 형태인지 확인 후 처리
+      const responseData = response.data;
+      if (isApiResponse(responseData)) {
+        // ApiResponse의 result가 ERROR인 경우 에러 throw
+        if (isErrorResponse(responseData)) {
+          throw new ApiError(
+            `API 요청 실패: ${responseData.message}`,
+            response.status,
+            responseData,
+          );
+        }
+        
+        // SUCCESS인 경우 그대로 반환 (extractApiData는 개별 API에서 처리)
+        return response;
+      }
+
+      // ApiResponse가 아닌 일반 응답 (pokemon API 등)은 그대로 반환
       return response;
     },
     onRejected: (error: unknown) => {
