@@ -190,9 +190,9 @@ export function UserProfileHeader({
                   text: "공지 사항입니다~ 공지 사항입니다~ 공지 사항입니다~\n공지 사항입니다~ 공지 사항입니다~ 공지 사항입니다~",
                   highlight: false,
                 },
-              ].map((item, idx) => (
+              ].map((item, _idx) => (
                 <div
-                  key={idx}
+                  key={`notification-${item.date}-${item.text.replace(/[^a-zA-Z0-9]/g, '-').slice(0, 20)}`}
                   className={cn(
                     "border-y border-[#D7D7D7] px-4 py-4! first:pt-0 first:border-t-0 cursor-pointer select-none transition-colors duration-150 hover:bg-[#F5F5F5] hover:border-[#CFCFCF]",
                   )}
