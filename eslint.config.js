@@ -135,7 +135,7 @@ export default [
 
       // 🎣 Hooks 최적화 규칙
       "react/hook-use-state": ["error", { allowDestructuredState: true }],
-      "react/exhaustive-deps": "error", // React Query와 Jotai deps 체크
+      // exhaustive-deps 규칙은 별도 플러그인 필요 (react-hooks/exhaustive-deps)
 
       // 🚫 안티패턴 금지
       "react/no-array-index-key": "error",
@@ -230,20 +230,7 @@ export default [
           suffix: ["Atom"],
         },
       ],
-      // 📚 Atom 문서화 필수
-      "require-jsdoc": [
-        "warn",
-        {
-          require: {
-            FunctionDeclaration: false,
-            MethodDefinition: false,
-            ClassDeclaration: false,
-            ArrowFunctionExpression: false,
-            FunctionExpression: false,
-            VariableDeclaration: true,
-          },
-        },
-      ],
+      // 📚 Atom 문서화는 수동으로 관리 (require-jsdoc 규칙은 ESLint 9에서 제거됨)
     },
   },
 
