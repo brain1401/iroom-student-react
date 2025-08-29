@@ -137,17 +137,71 @@ graph LR
     D --> F[HTTP Request]
     E --> F
     F --> G[Interceptors]
-    G --> H[Server]
+    G --> H{Response Type?}
+    H -->|External API| I[Direct Response]
+    H -->|Backend API| J[ApiResponse<T>]
+    J --> K[extractApiData]
+    K --> L[Data or Error]
+    I --> M[Component]
+    L --> M
 ```
 
 ### 클라이언트 분리 전략
 
 ```typescript
-// 기본 API 클라이언트 (인증 불필요)
+// 기본 API 클라이언트 (외부 API용 - 인증 불필요)
 export const baseApiClient = createBaseApiClient();
 
-// 인증용 API 클라이언트 (httpOnly 쿠키 포함)
+// 인증용 API 클라이언트 (백엔드 API용 - httpOnly 쿠키 포함)
 export const authApiClient = createAuthApiClient();
+```
+
+### 백엔드 ApiResponse 표준화
+
+모든 백엔드 API는 일관된 응답 구조를 따릅니다:
+
+```typescript
+// 백엔드 표준 응답 구조
+type ApiResponse<T> = {
+  result: "SUCCESS" | "ERROR";  // 응답 상태
+  message: string;              // 응답 메시지 (필수, null 불가)
+  data: T;                      // 실제 데이터 (성공 시)
+};
+
+// 성공 응답 예시
+{
+  "result": "SUCCESS",
+  "message": "사용자 정보 조회 성공",
+  "data": {
+    "id": 1,
+    "name": "홍길동",
+    "email": "hong@example.com"
+  }
+}
+
+// 실패 응답 예시
+{
+  "result": "ERROR",
+  "message": "인증이 필요합니다",
+  "data": null
+}
+```
+
+### 응답 처리 유틸리티
+
+```typescript
+// 안전한 데이터 추출
+import { extractApiData } from "@/api/common/types";
+
+// 자동 에러 처리
+const userData = extractApiData(apiResponse); // 실패 시 자동 throw
+
+// 타입 가드 사용
+if (isSuccessResponse(apiResponse)) {
+  const data = apiResponse.data; // 타입 안전
+} else {
+  console.error(apiResponse.message);
+}
 ```
 
 ### 인터셉터 시스템
@@ -159,9 +213,18 @@ requestInterceptor: (config) => {
   return config;
 }
 
-// 응답 인터셉터: 에러 처리, 로깅
+// 응답 인터셉터: ApiResponse 자동 처리
 responseInterceptor: {
-  onSuccess: (response) => response,
+  onSuccess: (response) => {
+    // ApiResponse<T> 구조 자동 감지
+    if (isApiResponse(response.data)) {
+      // result: "ERROR" 시 자동 에러 throw
+      if (response.data.result === "ERROR") {
+        throw new ApiError(response.data.message, response.status, response.data);
+      }
+    }
+    return response; // SUCCESS 또는 외부 API 응답
+  },
   onError: (error) => {
     if (error.status === 401) {
       // 인증 실패 처리
@@ -171,10 +234,26 @@ responseInterceptor: {
 }
 ```
 
+### 자동 응답 처리 플로우
+
+```mermaid
+graph TD
+    A[HTTP Response] --> B{ApiResponse?}
+    B -->|Yes| C{result: SUCCESS?}
+    B -->|No| D[외부 API - 직접 반환]
+    C -->|Yes| E[성공 응답 반환]
+    C -->|No| F[ApiError throw]
+    E --> G[컴포넌트에서 data 사용]
+    F --> H[에러 핸들러 실행]
+    D --> G
+```
+
 ### 도메인별 API 구조
 
+#### 외부 API (포켓몬)
+
 ```typescript
-// api/pokemon/api.ts
+// api/pokemon/api.ts - 외부 API (baseApiClient)
 export async function fetchPokemonList(
   params: ListParams,
 ): Promise<PokemonListResponse> {
@@ -183,13 +262,47 @@ export async function fetchPokemonList(
     url: buildPokemonListUrl(params),
   });
 }
+```
 
-// api/pokemon/query.ts
-export const pokemonListQueryOptions = (filters: ListFilters) => ({
-  queryKey: pokemonKeys.list(filters),
-  queryFn: () => fetchPokemonList(filters),
+#### 백엔드 API (모의고사)
+
+```typescript
+// api/exam/api.ts - 백엔드 API (authApiClient + ApiResponse)
+import { extractApiData, type ApiResponse } from "@/api/common/types";
+
+export async function getAllMockExams(): Promise<MockExam[]> {
+  const response = await examApiClient.request<ApiResponse<MockExam[]>>({
+    method: "GET",
+    url: "/api/exam/list",
+  });
+
+  // ApiResponse<T>에서 데이터 자동 추출 (에러 시 자동 throw)
+  return extractApiData(response.data);
+}
+
+// api/exam/query.ts
+export const examListQueryOptions = () => ({
+  queryKey: examKeys.list(),
+  queryFn: getAllMockExams, // ApiResponse 처리 자동화됨
   staleTime: 5 * 60 * 1000, // 5분
 });
+```
+
+#### API 레이어 분리
+
+```typescript
+// src/api/ 구조
+├── common/
+│   └── types.ts          # ApiResponse<T> 공통 타입
+├── client/               # HTTP 클라이언트
+│   ├── baseClient.ts     # 외부 API용
+│   └── authClient.ts     # 백엔드 API용
+├── pokemon/              # 외부 API 도메인
+│   ├── api.ts            # 직접 응답 처리
+│   └── types.ts          # Pokemon 타입
+└── exam/                 # 백엔드 API 도메인
+    ├── api.ts            # ApiResponse 처리
+    └── types.ts          # MockExam 타입 (common에서 import)
 ```
 
 ## 🧠 상태 관리 아키텍처
