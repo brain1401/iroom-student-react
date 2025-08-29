@@ -3,12 +3,18 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/examples/submission/")({
+export const Route = createFileRoute("/submission/$examId/text-recongnition/")({
   component: RouteComponent,
 });
 
+type Question = {
+  id: number;
+  questionNumber: number;
+  state: "completed" | "error" | "idle" | "loading";
+};
+
 // 1. 각 문제의 상태를 담은 데이터 배열 생성
-const questionsData = [
+const questionsData: Question[] = [
   { id: 1, questionNumber: 1, state: "completed" },
   { id: 2, questionNumber: 2, state: "completed" },
   { id: 3, questionNumber: 3, state: "completed" },
@@ -40,7 +46,7 @@ function RouteComponent() {
       </div>
 
       <div className="flex-1" />
-      
+
       <Button className="w-[80%]">제출하기</Button>
     </div>
   );

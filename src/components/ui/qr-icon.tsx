@@ -24,7 +24,12 @@ export type QrIconProps = {
   alt?: string;
 } & React.ComponentPropsWithoutRef<"div">;
 
-export function QrIcon({ size = 24, className, alt = "큐알 아이콘", ...props }: QrIconProps) {
+export function QrIcon({
+  size = 24,
+  className,
+  alt = "큐알 아이콘",
+  ...props
+}: QrIconProps) {
   return (
     <div
       role="img"
@@ -45,7 +50,3 @@ export function QrIcon({ size = 24, className, alt = "큐알 아이콘", ...prop
     </div>
   );
 }
-
-export default QrIcon;
-
-

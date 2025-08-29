@@ -7,13 +7,12 @@ import {
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 
-import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
+import { TanstackQueryDevtools } from "../integrations/tanstack-query/devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import appCss from "@/css/root.css?url";
 import { useAtomValue } from "jotai";
 import { mainBgExtraCombinedClassAtom } from "@/atoms/ui";
 import { cn } from "@/lib/utils";
-
 
 /**
  * 라우터 컨텍스트 타입 정의
@@ -56,7 +55,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: "이룸 클래스",
       },
     ],
-    // 스타일시트와 폰트 로딩을 위한 링크 설정
+    // 폰트 로딩 최적화 설정
     links: [
       {
         rel: "stylesheet",
@@ -101,8 +100,7 @@ function RootComponent() {
    */
   const extra = useAtomValue(mainBgExtraCombinedClassAtom);
   return (
-    <>
-      <main
+    <main
         className={cn(
           "flex flex-1 bg-background-400 dark:bg-background-900",
           extra,
@@ -111,7 +109,6 @@ function RootComponent() {
         {/* 하위 라우트가 렌더링되는 위치 */}
         <Outlet />
       </main>
-    </>
   );
 }
 
@@ -151,7 +148,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               name: "Tanstack Router",
               render: <TanStackRouterDevtoolsPanel />,
             },
-            TanStackQueryDevtools,
+            TanstackQueryDevtools,
           ]}
         /> */}
         {/* 클라이언트 사이드 스크립트 (하이드레이션, 이벤트 핸들러 등) */}

@@ -15,6 +15,7 @@ import {
   getPokemonImageUrl,
   extractPokemonId,
 } from "@/utils/pokemon";
+import type { NamedAPIResource } from "@/api/pokemon/types";
 import {
   getErrorMessage,
   getErrorSeverity,
@@ -53,9 +54,9 @@ export const Route = createFileRoute("/examples/pokemon/")({
 
     const preloadImages = data.results
       .slice(0, Math.min(12, limit))
-      .map((p) => extractPokemonId(p.url))
-      .filter((id): id is string => Boolean(id))
-      .map((id) => getPokemonImageUrl(id));
+      .map((p: NamedAPIResource) => extractPokemonId(p.url))
+      .filter((id: string): id is string => Boolean(id))
+      .map((id: string) => getPokemonImageUrl(id));
 
     return { preloadImages };
   },

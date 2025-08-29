@@ -1,7 +1,7 @@
 import { useEffect, useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import QrIcon from "../ui/qr-icon";
+import { QrIcon } from "../ui/qr-icon";
 import { useDropzone } from "react-dropzone";
 import { Input } from "../ui/input";
 import { X } from "lucide-react";
@@ -21,7 +21,7 @@ type FileUploadProps = {
  */
 type PreviewFile = File & { preview?: string; _id: string };
 
-export default function FileUpload({ onFilesSelect }: FileUploadProps) {
+export function FileUpload({ onFilesSelect }: FileUploadProps) {
   const inputId = useId();
   const [files, setFiles] = useState<PreviewFile[]>([]);
 

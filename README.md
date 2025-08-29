@@ -38,12 +38,80 @@ const response = await fetch("/api/data");
 
 // ✅ 필수: API 클라이언트 사용
 import { baseApiClient, authApiClient } from "@/api/client";
+import { extractApiData, type ApiResponse } from "@/api/common/types";
 
-// 인증 불필요한 공개 API
+// 외부 API (포켓몬 등) - baseApiClient 사용
 const pokemonData = await baseApiClient.get("/api/v2/pokemon/25");
 
-// 인증 필요한 API (httpOnly 쿠키 포함)
-const userData = await authApiClient.get("/api/user/profile");
+// 백엔드 API (모의고사 등) - authApiClient + ApiResponse<T>
+const response =
+  await authApiClient.get<ApiResponse<UserData>>("/api/user/profile");
+const userData = extractApiData(response.data); // 자동 에러 처리
+```
+
+#### 백엔드 API 응답 구조 (중요!)
+
+백엔드의 모든 API는 일관된 **ApiResponse<T>** 구조를 사용합니다:
+
+```typescript
+// 백엔드 표준 응답 구조 (Java와 정확히 일치)
+type ApiResponse<T> = {
+  result: "SUCCESS" | "ERROR";  // 응답 상태
+  message: string;              // 응답 메시지 (필수)
+  data: T;                      // 실제 데이터
+};
+
+// 성공 응답 예시
+{
+  "result": "SUCCESS",
+  "message": "데이터 조회 성공",
+  "data": { "id": 1, "name": "사용자명" }
+}
+
+// 실패 응답 예시
+{
+  "result": "ERROR",
+  "message": "인증이 필요합니다",
+  "data": null
+}
+```
+
+#### 올바른 백엔드 API 사용법
+
+```typescript
+import { authApiClient } from "@/api/client";
+import {
+  extractApiData,
+  isErrorResponse,
+  type ApiResponse,
+} from "@/api/common/types";
+
+// 방법 1: extractApiData 사용 (가장 권장)
+try {
+  const response =
+    await authApiClient.get<ApiResponse<ExamData>>("/api/exam/list");
+  const examData = extractApiData(response.data); // 실패 시 자동 throw
+  // 성공 처리
+} catch (error) {
+  console.error("API 에러:", error.message);
+  // 에러 처리 (백엔드 메시지 포함)
+}
+
+// 방법 2: 타입 가드 사용
+const response =
+  await authApiClient.get<ApiResponse<ExamData>>("/api/exam/list");
+if (isErrorResponse(response.data)) {
+  throw new Error(response.data.message);
+} else {
+  const examData = response.data.data;
+}
+
+// 방법 3: 직접 처리 (권장하지 않음)
+if (response.data.result === "SUCCESS") {
+  const examData = response.data.data;
+} else {
+  throw new Error(response.data.message);
+}
 ```
 
 ### 2. 주석 작성 규칙

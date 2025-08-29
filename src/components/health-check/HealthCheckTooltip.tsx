@@ -32,7 +32,7 @@ type HealthCheckTooltipProps = {
   isRetrying?: boolean;
 };
 
-export default function HealthCheckTooltip({
+export function HealthCheckTooltip({
   children,
   message,
   lastChecked,

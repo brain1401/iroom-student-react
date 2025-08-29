@@ -22,7 +22,7 @@ export function PokemonListPagination({ page }: { page: number }) {
             ) : (
               <Link
                 to="."
-                search={(prev) => ({
+                search={(prev: { page?: number; keyword?: string }) => ({
                   ...prev,
                   page: Math.max(1, page - 1),
                 })}
@@ -41,7 +41,13 @@ export function PokemonListPagination({ page }: { page: number }) {
           </div>
 
           <Button asChild className="gap-2">
-            <Link to="." search={(prev) => ({ ...prev, page: page + 1 })}>
+            <Link
+              to="."
+              search={(prev: { page?: number; keyword?: string }) => ({
+                ...prev,
+                page: page + 1,
+              })}
+            >
               다음
               <ChevronRight className="w-4 h-4" />
             </Link>

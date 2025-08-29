@@ -1,6 +1,10 @@
 import { cn } from "@/lib/utils";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Link, useNavigate } from "@tanstack/react-router";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { useNavigate } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { submitAtom } from "@/atoms/submit";
 import { Button } from "../ui/button";
@@ -26,7 +30,7 @@ type ExamListItemProps = {
   children?: React.ReactNode;
 };
 
-export default function ExamListItem({
+export function ExamListItem({
   title,
   date,
   submitted,
@@ -37,16 +41,24 @@ export default function ExamListItem({
   onClick,
   children,
 }: ExamListItemProps) {
-
-
-
   return (
     <Collapsible className={cn("w-full", className)}>
-      <div className={cn("grid grid-cols-[auto_1fr_auto_auto] items-center gap-3 px-4 py-4")}> 
+      <div
+        className={cn(
+          "grid grid-cols-[auto_1fr_auto_auto] items-center gap-3 px-4 py-4",
+        )}
+      >
         <StatusBadge submitted={submitted} />
 
-        <button type="button" onClick={onClick} className="min-w-0 text-left" aria-label={`${title} 열기`}>
-          <div className="truncate text-[16px] font-medium text-[#000] sm:text-[17px]">{title}</div>
+        <button
+          type="button"
+          onClick={onClick}
+          className="min-w-0 text-left"
+          aria-label={`${title} 열기`}
+        >
+          <div className="truncate text-[16px] font-medium text-[#000] sm:text-[17px]">
+            {title}
+          </div>
         </button>
 
         <div className="text-[14px] text-[#4E4D4D] sm:text-[15px]">{date}</div>
@@ -57,7 +69,14 @@ export default function ExamListItem({
             className="group inline-flex h-8 w-8 items-center justify-center rounded-[6px] border border-[#D7D7D7] bg-white"
             aria-label="상세정보 토글"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 text-[#4E4D4D] transition-transform duration-200 group-data-[state=open]:rotate-180">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="h-4 w-4 text-[#4E4D4D] transition-transform duration-200 group-data-[state=open]:rotate-180"
+            >
               <path d="M6 9l6 6 6-6" />
             </svg>
           </button>
@@ -66,7 +85,13 @@ export default function ExamListItem({
 
       <CollapsibleContent className="px-4 pb-4">
         {children ?? (
-          <DefaultDetails title={title} submitted={submitted} range={range} teacher={teacher} deadline={deadline} />
+          <DefaultDetails
+            title={title}
+            submitted={submitted}
+            range={range}
+            teacher={teacher}
+            deadline={deadline}
+          />
         )}
       </CollapsibleContent>
     </Collapsible>
@@ -76,10 +101,26 @@ export default function ExamListItem({
 function StatusBadge({ submitted }: { submitted: boolean }) {
   if (submitted) {
     return (
-      <span className={cn("inline-flex h-6 items-center rounded-[5px] border px-2 text-[12px] font-semibold", "border-[#155DFC] bg-[#155DFC] text-white")}>제출</span>
+      <span
+        className={cn(
+          "inline-flex h-6 items-center rounded-[5px] border px-2 text-[12px] font-semibold",
+          "border-[#155DFC] bg-[#155DFC] text-white",
+        )}
+      >
+        제출
+      </span>
     );
   }
-  return <span className={cn("inline-flex h-6 items-center rounded-[5px] border px-2 text-[12px] font-semibold", "border-[#FF6A71] text-[#FF6A71]")}>미제출</span>;
+  return (
+    <span
+      className={cn(
+        "inline-flex h-6 items-center rounded-[5px] border px-2 text-[12px] font-semibold",
+        "border-[#FF6A71] text-[#FF6A71]",
+      )}
+    >
+      미제출
+    </span>
+  );
 }
 
 type DefaultDetailsProps = {
@@ -90,10 +131,16 @@ type DefaultDetailsProps = {
   deadline: string;
 };
 
-function DefaultDetails({ title, submitted, range, teacher, deadline }: DefaultDetailsProps) {
+function DefaultDetails({
+  title,
+  submitted,
+  range,
+  teacher,
+  deadline,
+}: DefaultDetailsProps) {
   const navigate = useNavigate();
 
-  const [submit, setSubmit] = useAtom(submitAtom);
+  const [_submit, setSubmit] = useAtom(submitAtom);
 
   const handleClick = () => {
     setSubmit({
@@ -105,16 +152,21 @@ function DefaultDetails({ title, submitted, range, teacher, deadline }: DefaultD
       submitted,
     });
 
-    navigate({
-      to: "/main/test/exams/submit",
-    });
+    // TODO: Update to correct submission route
+    console.log("Navigate to submission for:", title);
+    // navigate({
+    //   to: "/submission/$examId",
+    //   params: { examId: examId.toString() }
+    // });
   };
 
   return (
     <div className="rounded-[10px] border border-[#D7D7D7] bg-white p-4 shadow-sm">
       <div className="grid grid-cols-[1fr_auto_auto] items-center gap-3">
         <div className="min-w-0 text-[16px] font-medium text-[#4E4D4D]">
-          <div className="truncate" title={title}>{title}</div>
+          <div className="truncate" title={title}>
+            {title}
+          </div>
         </div>
         <div className="text-[16px] text-[#4E4D4D]">{deadline}</div>
         <StatusBadge submitted={submitted} />
@@ -136,8 +188,15 @@ function DefaultDetails({ title, submitted, range, teacher, deadline }: DefaultD
   );
 }
 
-function SubmitButton({ submitted, onClick }: { submitted: boolean, onClick: () => void }) {
-  const base = "inline-flex h-10 w-full items-center justify-center rounded-md text-sm font-medium";
+function SubmitButton({
+  submitted,
+  onClick,
+}: {
+  submitted: boolean;
+  onClick: () => void;
+}) {
+  const base =
+    "inline-flex h-10 w-full items-center justify-center rounded-md text-sm font-medium";
   const primary = "bg-[#155DFC] text-white hover:bg-[#155DFC]/90";
   const label = submitted ? "제출 수정" : "제출하기";
 
@@ -147,5 +206,3 @@ function SubmitButton({ submitted, onClick }: { submitted: boolean, onClick: () 
     </Button>
   );
 }
-
-
