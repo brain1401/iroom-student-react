@@ -15,14 +15,57 @@ TanStack Start (React 19 + SSR) + Vite 기반 현대적 React 프로젝트
 - **fetch 사용 절대 금지** → `src/api/client/index.ts`의 클라이언트만 사용
 - 인증 필요: `authApiClient` (httpOnly 쿠키 포함)
 - 일반 호출: `baseApiClient`
+- **백엔드 API는 ApiResponse<T> 래퍼 사용** → `src/api/common/types.ts` 참고
 
 ```typescript
 // ❌ 절대 금지
 const response = await fetch("/api/data");
 
-// ✅ 필수
-import { baseApiClient, authApiClient } from "@/api/client";
-const data = await baseApiClient.get("/api/pokemon");
+// ✅ 필수 - 외부 API (포켓몬 등)
+import { baseApiClient } from "@/api/client";
+const pokemonData = await baseApiClient.get("/api/pokemon");
+
+// ✅ 필수 - 백엔드 API (ApiResponse<T> 래퍼)
+import { authApiClient } from "@/api/client";
+import { extractApiData, type ApiResponse } from "@/api/common/types";
+
+// 방법 1: extractApiData 유틸리티 사용 (권장)
+const response = await authApiClient.get<ApiResponse<UserData>>("/api/user/profile");
+const userData = extractApiData(response.data);
+
+// 방법 2: 직접 처리
+const response = await authApiClient.get<ApiResponse<UserData>>("/api/user/profile");
+if (response.data.result === "SUCCESS") {
+  const userData = response.data.data;
+} else {
+  throw new Error(response.data.message);
+}
+```
+
+#### 백엔드 ApiResponse 구조
+백엔드의 모든 API는 일관된 응답 구조를 사용합니다:
+
+```typescript
+// 백엔드 응답 구조 (Java ApiResponse<T>와 정확히 일치)
+type ApiResponse<T> = {
+  result: "SUCCESS" | "ERROR";  // 응답 상태
+  message: string;              // 응답 메시지 (필수)
+  data: T;                      // 실제 데이터
+};
+
+// 성공 응답 예시
+{
+  "result": "SUCCESS",
+  "message": "데이터 조회 성공",
+  "data": { "id": 1, "name": "사용자명" }
+}
+
+// 실패 응답 예시
+{
+  "result": "ERROR", 
+  "message": "인증이 필요합니다",
+  "data": null
+}
 ```
 
 ### 2. 타입 정의 규칙
@@ -83,8 +126,24 @@ interface ComponentProps { ... }
 ### API 클라이언트 시스템
 ```typescript
 // src/api/client/index.ts에서 제공
-- baseApiClient: 기본 API 호출용
-- authApiClient: 인증 필요 API 호출용 (httpOnly 쿠키)
+- baseApiClient: 외부 API 호출용 (포켓몬 API 등)
+- authApiClient: 백엔드 API 호출용 (httpOnly 쿠키 + ApiResponse<T>)
+
+// src/api/common/types.ts에서 제공
+- ApiResponse<T>: 백엔드 표준 응답 구조
+- extractApiData(response): 안전한 데이터 추출
+- isSuccessResponse(response): 성공 응답 타입 가드
+- isErrorResponse(response): 실패 응답 타입 가드
+```
+
+#### 응답 처리 자동화
+API 클라이언트의 응답 인터셉터가 ApiResponse 구조를 자동으로 처리합니다:
+
+```typescript
+// 인터셉터가 자동으로 처리
+- result: "ERROR" → 자동으로 ApiError throw
+- result: "SUCCESS" → 정상 응답 반환
+- 외부 API → 기존 방식대로 처리
 ```
 
 ### 상태 관리 패턴 (Jotai + React Query)
@@ -240,6 +299,41 @@ useEffect(() => {
 ```
 
 ## 자주 발생하는 문제 해결법
+
+### API 호출 및 응답 처리 에러
+```typescript
+// ❌ fetch 사용 또는 잘못된 응답 처리
+const response = await fetch("/api/data");
+const data = await response.json();
+
+// ✅ 올바른 백엔드 API 호출
+import { authApiClient } from "@/api/client";
+import { extractApiData, type ApiResponse } from "@/api/common/types";
+
+try {
+  const response = await authApiClient.get<ApiResponse<UserData>>("/api/user");
+  const userData = extractApiData(response.data);
+  // 성공 처리
+} catch (error) {
+  if (error instanceof ApiError) {
+    console.error("API 에러:", error.message);
+  }
+  // 에러 처리
+}
+```
+
+### ApiResponse 타입 불일치 에러
+```typescript
+// ❌ 잘못된 result 값 체크
+if (response.result === "FAILURE") { // 백엔드는 "ERROR" 사용
+
+// ✅ 올바른 result 값 체크
+if (response.result === "ERROR") {
+if (isErrorResponse(response)) { // 타입 가드 사용 (권장)
+
+// ✅ extractApiData 사용 (가장 권장)
+const data = extractApiData(response); // 자동으로 에러 throw
+```
 
 ### TypeScript 컴파일 에러
 ```typescript
