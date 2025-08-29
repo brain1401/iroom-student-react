@@ -33,7 +33,7 @@ const questionsData: Question[] = [
 function RouteComponent() {
   return (
     <div className="container mx-auto flex h-full max-w-6xl flex-1 flex-col items-center space-y-6 overflow-y-scroll p-4">
-      <PageHeader title="가나다 시험" showBackButton={true} />
+      <PageHeader title="가나다 시험" shouldShowBackButton={true} />
       <div className="flex w-full flex-col gap-4">
         {/* 2. map 함수로 배열을 순회하며 MathQuestionCard 렌더링 */}
         {questionsData.map((question) => (
