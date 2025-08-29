@@ -4,10 +4,10 @@ import {
   createRootRouteWithContext,
   Outlet,
 } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { TanStackDevtools } from "@tanstack/react-devtools";
+// import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+// import { TanStackDevtools } from "@tanstack/react-devtools";
 
-import { TanstackQueryDevtools } from "../integrations/tanstack-query/devtools";
+// import { TanstackQueryDevtools } from "../integrations/tanstack-query/devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import appCss from "@/css/root.css?url";
 import { useAtomValue } from "jotai";
@@ -101,14 +101,14 @@ function RootComponent() {
   const extra = useAtomValue(mainBgExtraCombinedClassAtom);
   return (
     <main
-        className={cn(
-          "flex flex-1 bg-background-400 dark:bg-background-900",
-          extra,
-        )}
-      >
-        {/* 하위 라우트가 렌더링되는 위치 */}
-        <Outlet />
-      </main>
+      className={cn(
+        "flex flex-1 bg-background-400 dark:bg-background-900",
+        extra,
+      )}
+    >
+      {/* 하위 라우트가 렌더링되는 위치 */}
+      <Outlet />
+    </main>
   );
 }
 
