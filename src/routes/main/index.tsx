@@ -1,8 +1,9 @@
 import { PageHeader } from "@/components/layout";
-import { ExamResultCard } from "@/components/student";
+import { ExamResultCard, RecentSubmission } from "@/components/student";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { createFileRoute } from "@tanstack/react-router";
+import type { RecentSubmission as RecentSubmissionType } from "@/api/student/types";
 
 /**
  * 메인 홈 라우트
@@ -75,40 +76,83 @@ const examResultsData: ExamResult[] = [
   },
 ];
 
+// RecentSubmission 타입에 맞는 가데이터 생성
+const recentSubmissionData: RecentSubmissionType[] = [
+  {
+    examId: "exam-2025-08-mock-1",
+    examTitle: "2025년 8월 모의고사",
+    totalQuestions: 15,
+    chapterName: "수학(상) - 다항식",
+    submittedAt: "2025-01-15T10:30:00Z",
+    examType: "mock",
+  },
+  {
+    examId: "exam-math-chapter-1",
+    examTitle: "수학(상) 단원 평가",
+    totalQuestions: 20,
+    chapterName: "수학(상) - 방정식",
+    submittedAt: "2025-01-14T14:20:00Z",
+    examType: "chapter",
+  },
+  {
+    examId: "exam-final-comprehensive-1",
+    examTitle: "기말고사 대비 종합 시험",
+    totalQuestions: 30,
+    chapterName: "수학(상) - 전체 단원",
+    submittedAt: "2025-01-13T09:15:00Z",
+    examType: "comprehensive",
+  },
+  {
+    examId: "exam-2025-08-mock-2",
+    examTitle: "2025년 8월 모의고사",
+    totalQuestions: 15,
+    chapterName: "수학(상) - 함수",
+    submittedAt: "2025-01-12T16:45:00Z",
+    examType: "mock",
+  },
+  {
+    examId: "exam-math-chapter-2",
+    examTitle: "수학(상) 단원 평가",
+    totalQuestions: 18,
+    chapterName: "수학(상) - 도형",
+    submittedAt: "2025-01-11T11:30:00Z",
+    examType: "chapter",
+  },
+];
+
 function TestList() {
   return (
     <>
-      <Card className="mt-20 mb-20 mr-8 ml-8 p-5 px-10">
-        <div className="flex flex-col gap-4">
-          <PageHeader title="시험 목록" shouldShowBackButton={false} />
-          <CardContent className="flex flex-col gap-4 px-0">
-            {/* 아이템 사이 간격을 위해 gap 추가 */}
-            {/* 2. map 함수를 사용해 배열의 각 요소를 컴포넌트로 변환 */}
-            {examResultsData.map((result, index) => {
-              const isLastItem = index === examResultsData.length - 1;
+      {/* 최근 제출 시험 */}
+      <RecentSubmission submissions={recentSubmissionData} />
 
-              return (
-                <div
-                  className="flex flex-col gap-4"
-                  key={result.id} // React가 목록을 효율적으로 관리하기 위한 필수 key prop
-                >
-                  <ExamResultCard
-                    exam={{
-                      examId: result.id,
-                      title: result.title,
-                      correctCount: result.correctCount,
-                      incorrectCount: result.incorrectCount,
-                      accuracyRate: result.accuracyRate,
-                    }}
-                  />
-                  {!isLastItem && <div className="h-px w-full bg-zinc-400" />}
-                </div>
-              );
-            })}
-          </CardContent>
-          <div className="flex-1" />
+      {/* 시험 목록 */}
+      <div className="mt-8 mb-20 mr-8 ml-8">
+        <div className="mb-4">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+            시험 목록
+          </h2>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            응시한 시험들의 결과를 확인해보세요
+          </p>
         </div>
-      </Card>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {examResultsData.map((result) => (
+            <ExamResultCard
+              key={result.id}
+              exam={{
+                examId: result.id,
+                title: result.title,
+                correctCount: result.correctCount,
+                incorrectCount: result.incorrectCount,
+                accuracyRate: result.accuracyRate,
+              }}
+              className="p-4 hover:shadow-md transition-shadow cursor-pointer border border-gray-200 hover:border-blue-300"
+            />
+          ))}
+        </div>
+      </div>
 
       <div className="flex">
         <Button variant="ghost" className="mb-10 ml-10 font-bold text-gray-400">

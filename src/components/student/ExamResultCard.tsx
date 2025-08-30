@@ -84,77 +84,55 @@ export const ExamResultCard = React.memo<ExamResultCardProps>(
       <Link
         to="/main/exam/$examId"
         params={{ examId }}
-        className={cn("cursor-pointer", className)}
+        className={cn("cursor-pointer rounded-lg shadow-md", className)}
         aria-label={`${title} 시험 결과, ${accuracyRateText}, ${totalCountText} 중 ${correctCount}개 정답`}
         {...props}
       >
-        {/* 헤더 영역: 제목과 뒤로가기 버튼 */}
-        <div className="mb-3 flex items-start justify-between">
-          <div className="min-w-0 flex-1">
-            <h3 className="truncate text-xl leading-tight font-bold text-black">
-              {title}
-            </h3>
+        <div className="space-y-3">
+          {/* 시험 제목 */}
+          <h3 className="font-semibold text-gray-900 dark:text-white text-lg line-clamp-2">
+            {title}
+          </h3>
+
+          {/* 정답률 */}
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              정답률
+            </span>
+            <span className="font-bold text-lg text-blue-600 dark:text-blue-400">
+              {accuracyRate}%
+            </span>
           </div>
 
-          {showBackButton && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="ml-2 size-6 shrink-0 hover:bg-gray-100"
-              onClick={handleBackClick}
-              aria-label="뒤로가기"
-            >
-              <ChevronLeft className="size-4" />
-            </Button>
-          )}
-        </div>
+          {/* 정답률 시각화 그래프 */}
+          <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+            <div
+              className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${accuracyRate}%` }}
+            />
+          </div>
 
-        {/* 점수 영역: 맞은 개수, 틀린 개수, 총 문항 */}
-        <div className="mb-3 flex items-center gap-6">
-          {/* 맞은 문제 */}
-          <div className="flex items-center gap-2">
-            <div className="flex size-4 items-center justify-center rounded-full border-2 border-blue-600">
-              <Check className="size-2.5 text-blue-600" strokeWidth={3} />
+          {/* 정답/오답 수 */}
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-green-600 dark:text-green-400">
+                ✓ {correctCount}개
+              </span>
             </div>
-            <span className="text-xl font-bold text-blue-600">
-              {correctCount}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-red-600 dark:text-red-400">
+                ✗ {incorrectCount}개
+              </span>
+            </div>
           </div>
 
-          {/* 틀린 문제 */}
-          <div className="flex items-center gap-2">
-            <X className="size-[1.5rem] text-red-500" strokeWidth={3} />
-            <span className="text-xl font-bold text-red-500">
-              {incorrectCount}
-            </span>
-          </div>
-
-          {/* 총 문항 */}
-          <div className="ml-auto">
-            <span className="text-sm font-normal text-gray-500">
+          {/* 총 문항 수 */}
+          <div className="pt-2 border-t border-gray-100 dark:border-slate-700">
+            <span className="text-xs text-gray-500 dark:text-gray-400">
               {totalCountText}
             </span>
           </div>
         </div>
-
-        {/* 진행바 영역 */}
-        {showProgressBar && (
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-gray-500">
-              {accuracyRateText}
-            </p>
-            <Progress
-              value={progressPercentage}
-              className={cn(
-                "h-2 bg-red-100",
-                "[&>div]:bg-blue-600", // Indicator 색상 커스터마이징
-              )}
-              aria-label={`진행률 ${progressPercentage.toFixed(1)}%`}
-            />
-          </div>
-        )}
-        {/* 구분선 (피그마 디자인과 일치) */}
-        <div className="absolute right-4 -bottom-px left-0 h-px bg-gray-200" />
       </Link>
     );
   },
