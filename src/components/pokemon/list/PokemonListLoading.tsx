@@ -10,7 +10,11 @@ export function PokemonListLoading() {
         <p className="text-muted-foreground">로딩 중...</p>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        {Array.from({ length: 20 }, (_, i) => `skeleton-${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${i}`).map((uniqueId) => (
+        {Array.from(
+          { length: 20 },
+          (_, i) =>
+            `skeleton-${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${i}`,
+        ).map((uniqueId) => (
           <PokemonCardSkeleton key={uniqueId} />
         ))}
       </div>

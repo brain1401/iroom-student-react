@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as MainRouteRouteImport } from './routes/main/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MainIndexRouteImport } from './routes/main/index'
+import { Route as MainLayoutRouteImport } from './routes/main/_layout'
 import { Route as SubmissionExamIdRouteRouteImport } from './routes/submission/$examId/route'
 import { Route as SubmissionExamIdIndexRouteImport } from './routes/submission/$examId/index'
 import { Route as MainMypageIndexRouteImport } from './routes/main/mypage/index'
@@ -35,6 +36,10 @@ const IndexRoute = IndexRouteImport.update({
 const MainIndexRoute = MainIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => MainRouteRoute,
+} as any)
+const MainLayoutRoute = MainLayoutRouteImport.update({
+  id: '/_layout',
   getParentRoute: () => MainRouteRoute,
 } as any)
 const SubmissionExamIdRouteRoute = SubmissionExamIdRouteRouteImport.update({
@@ -88,7 +93,7 @@ const MainExamExamIdProblemIdIndexRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/main': typeof MainRouteRouteWithChildren
+  '/main': typeof MainLayoutRoute
   '/submission/$examId': typeof SubmissionExamIdRouteRouteWithChildren
   '/main/': typeof MainIndexRoute
   '/examples/pokemon': typeof ExamplesPokemonIndexRoute
@@ -117,6 +122,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/main': typeof MainRouteRouteWithChildren
   '/submission/$examId': typeof SubmissionExamIdRouteRouteWithChildren
+  '/main/_layout': typeof MainLayoutRoute
   '/main/': typeof MainIndexRoute
   '/examples/pokemon/': typeof ExamplesPokemonIndexRoute
   '/main/mypage/': typeof MainMypageIndexRoute
@@ -159,6 +165,7 @@ export interface FileRouteTypes {
     | '/'
     | '/main'
     | '/submission/$examId'
+    | '/main/_layout'
     | '/main/'
     | '/examples/pokemon/'
     | '/main/mypage/'
@@ -199,6 +206,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/main/'
       preLoaderRoute: typeof MainIndexRouteImport
+      parentRoute: typeof MainRouteRoute
+    }
+    '/main/_layout': {
+      id: '/main/_layout'
+      path: ''
+      fullPath: '/main'
+      preLoaderRoute: typeof MainLayoutRouteImport
       parentRoute: typeof MainRouteRoute
     }
     '/submission/$examId': {
@@ -268,6 +282,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface MainRouteRouteChildren {
+  MainLayoutRoute: typeof MainLayoutRoute
   MainIndexRoute: typeof MainIndexRoute
   MainMypageIndexRoute: typeof MainMypageIndexRoute
   MainExamExamIdIndexRoute: typeof MainExamExamIdIndexRoute
@@ -275,6 +290,7 @@ interface MainRouteRouteChildren {
 }
 
 const MainRouteRouteChildren: MainRouteRouteChildren = {
+  MainLayoutRoute: MainLayoutRoute,
   MainIndexRoute: MainIndexRoute,
   MainMypageIndexRoute: MainMypageIndexRoute,
   MainExamExamIdIndexRoute: MainExamExamIdIndexRoute,

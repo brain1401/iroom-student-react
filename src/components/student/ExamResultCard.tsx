@@ -4,7 +4,6 @@ import { Check, X, ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Progress } from "../ui/progress";
-import { Link } from "@tanstack/react-router";
 
 type ExamData = {
   /** 시험 아이디 */
@@ -81,9 +80,7 @@ export const ExamResultCard = React.memo<ExamResultCardProps>(
     const handleBackClick = (_event: React.MouseEvent) => {};
 
     return (
-      <Link
-        to="/main/exam/$examId"
-        params={{ examId }}
+      <div
         className={cn("cursor-pointer rounded-lg shadow-md", className)}
         aria-label={`${title} 시험 결과, ${accuracyRateText}, ${totalCountText} 중 ${correctCount}개 정답`}
         {...props}
@@ -133,7 +130,7 @@ export const ExamResultCard = React.memo<ExamResultCardProps>(
             </span>
           </div>
         </div>
-      </Link>
+      </div>
     );
   },
 );

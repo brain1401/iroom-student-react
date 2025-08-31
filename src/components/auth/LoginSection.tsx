@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { BookOpen, User, Phone, CheckCircle2, Loader2 } from "lucide-react";
+import { BookOpen, User, Phone, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useSetAtom } from "jotai";
+import { setLoginInfoAtom } from "@/atoms/auth";
 import {
   Form,
   FormControl,
@@ -19,7 +21,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 /**
  * 로그인 폼 스키마
- * @description 이름과 전화번호 필드에 대한 유효성 검사 규칙
+ * @description 이름, 생년월일, 전화번호 필드에 대한 유효성 검사 규칙
  */
 const loginFormSchema = z.object({
   /** 응시자 이름 (2-20자, 한글/영문만 허용) */
@@ -31,6 +33,22 @@ const loginFormSchema = z.object({
       /^[가-힣a-zA-Z\s]+$/,
       "이름은 한글, 영문, 공백만 입력할 수 있습니다",
     ),
+  /** 생년월일 (YYMMDD 형식, 6자리) */
+  birth: z
+    .string()
+    .length(6, "생년월일은 6자리로 입력해주세요")
+    .regex(/^\d{6}$/, "숫자만 입력해주세요")
+    .refine((value) => {
+      const year = parseInt(value.substring(0, 2));
+      const month = parseInt(value.substring(2, 4));
+      const day = parseInt(value.substring(4, 6));
+
+      // 유효한 날짜 범위 검증
+      if (month < 1 || month > 12) return false;
+      if (day < 1 || day > 31) return false;
+
+      return true;
+    }, "올바른 생년월일을 입력해주세요"),
   /** 전화번호 (010-0000-0000 형식) */
   phoneNumber: z
     .string()
@@ -50,6 +68,9 @@ export function LoginSection() {
   /** 폼 제출 중 로딩 상태 */
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  /** 로그인 정보 설정 atom */
+  const setLoginInfo = useSetAtom(setLoginInfoAtom);
+
   /**
    * React Hook Form 설정
    * @description Zod 스키마를 사용한 폼 유효성 검사 및 상태 관리
@@ -58,6 +79,7 @@ export function LoginSection() {
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
       name: "",
+      birth: "",
       phoneNumber: "010",
     },
     mode: "onChange", // 실시간 유효성 검사
@@ -65,7 +87,7 @@ export function LoginSection() {
 
   /**
    * 폼 제출 핸들러
-   * @description 유효성 검사 통과 후 메인 페이지로 이동
+   * @description 유효성 검사 통과 후 Jotai atom에 정보 저장하고 메인 페이지로 이동
    */
   const onSubmit = async (data: LoginFormData) => {
     setIsSubmitting(true);
@@ -76,6 +98,16 @@ export function LoginSection() {
 
       // 임시 지연 (실제 API 호출 시뮬레이션)
       await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Jotai atom에 로그인 정보 저장
+      const studentInfo = {
+        studentId: `2024${data.birth.substring(0, 2)}`, // 생년월일 기반 임시 ID 생성
+        name: data.name,
+        birthDate: `20${data.birth.substring(0, 2)}-${data.birth.substring(2, 4)}-${data.birth.substring(4, 6)}`,
+        phoneNumber: data.phoneNumber,
+      };
+
+      setLoginInfo(studentInfo);
 
       // 로그인 성공 후 메인 페이지로 이동
       window.location.href = "/main";
@@ -104,7 +136,7 @@ export function LoginSection() {
   const hasErrors = Object.keys(form.formState.errors).length > 0;
 
   return (
-    <div className="bg-background space-y-8 p-8 md:p-10">
+    <div className=" space-y-8 p-8 md:p-10">
       {/* 브랜딩 영역 */}
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-600/15 text-violet-600">
@@ -120,7 +152,7 @@ export function LoginSection() {
 
       {/* 안내 메시지 */}
       <Alert className="border-blue-200 bg-blue-50">
-        <CheckCircle2 className="h-4 w-4 text-blue-600" />
+        <Info className="h-4 w-4 text-blue-600" />
         <AlertDescription className="text-blue-800">
           입력하신 정보는 로그인 및 서비스 이용을 위해서만 사용됩니다
         </AlertDescription>
@@ -158,6 +190,49 @@ export function LoginSection() {
                 </FormControl>
                 <FormDescription className="text-xs text-slate-600">
                   한글 또는 영문으로 2-20자 이내 입력
+                </FormDescription>
+                <FormMessage
+                  role="alert"
+                  className="text-sm text-red-600 font-medium"
+                />
+              </FormItem>
+            )}
+          />
+
+          {/* 생년월일 입력 필드 */}
+          <FormField
+            control={form.control}
+            name="birth"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm font-semibold text-slate-800 flex items-center gap-2">
+                  생년월일 *
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="text"
+                    placeholder="YYMMDD (예: 080101)"
+                    maxLength={6}
+                    className={cn(
+                      "h-12 text-base transition-all duration-200",
+                      "focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                      form.formState.errors.birth &&
+                        "border-red-500 focus-visible:border-red-500 focus:ring-red-200",
+                      !form.formState.errors.birth &&
+                        field.value &&
+                        field.value.length === 6 &&
+                        "border-green-500 focus:ring-green-200",
+                    )}
+                    disabled={isSubmitting}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^\d]/g, "");
+                      field.onChange(value);
+                    }}
+                  />
+                </FormControl>
+                <FormDescription className="text-xs text-slate-600">
+                  생년월일 6자리를 입력해주세요 (예: 080101)
                 </FormDescription>
                 <FormMessage
                   role="alert"
@@ -214,8 +289,7 @@ export function LoginSection() {
           {/* 폼 상태 표시 */}
           {isFormValid && !hasErrors && (
             <div className="flex items-center justify-center gap-2 text-green-600 text-sm font-medium">
-              <CheckCircle2 className="w-4 h-4" />
-              모든 정보가 정확히 입력되었습니다
+              ✓ 모든 정보가 정확히 입력되었습니다
             </div>
           )}
 
@@ -232,15 +306,9 @@ export function LoginSection() {
             disabled={!isFormValid || hasErrors || isSubmitting}
           >
             {isSubmitting ? (
-              <div className="flex items-center gap-3">
-                <Loader2 className="w-5 h-5 animate-spin" />
-                로그인 중입니다...
-              </div>
+              <div className="flex items-center gap-3">로그인 중입니다...</div>
             ) : (
-              <div className="flex items-center gap-2">
-                로그인
-                <CheckCircle2 className="w-5 h-5" />
-              </div>
+              <div className="flex items-center gap-2">로그인</div>
             )}
           </Button>
         </form>

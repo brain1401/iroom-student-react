@@ -1,5 +1,6 @@
 import { ExamQuestionItem } from "@/components/exam";
 import { PageHeader } from "@/components/layout";
+import { Badge } from "@/components/ui/badge";
 import { createFileRoute } from "@tanstack/react-router";
 import type { ProblemStatus } from "@/components/exam/types";
 
@@ -128,6 +129,7 @@ const examQuestions: ExamQuestion[] = [
 const examInfo = {
   totalScore: 21, // 5+0+4+5+4 = 21점
   examTitle: "가나다 시험",
+  chapters: ["다항식", "이차방정식", "삼각함수", "미분법", "적분법"],
 };
 
 const handleQuestionNavigate = (questionId: string) => {
@@ -139,6 +141,67 @@ function RouteComponent() {
   return (
     <div>
       <PageHeader title="가나다 시험" shouldShowBackButton={true} />
+
+      {/* 시험 요약정보 카드 */}
+      <div className="px-4 mt-6">
+        <div className="bg-white rounded-lg border border-purple-500 shadow-sm p-6">
+          <div className="space-y-4">
+            {/* 시험명 */}
+            <div className="flex items-center">
+              <span className="text-sm text-gray-500 dark:text-gray-400 w-16">
+                시험명 :
+              </span>
+              <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                {examInfo.examTitle}
+              </span>
+            </div>
+
+            {/* 총 문항 수 */}
+            <div className="flex items-center">
+              <span className="text-sm text-gray-500 dark:text-gray-400 w-16">
+                총문항 :
+              </span>
+              <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                20
+              </span>
+            </div>
+
+            {/* 객관식/주관식 문항 수 */}
+            <div className="flex items-center">
+              <span className="text-sm text-gray-500 dark:text-gray-400 w-16">
+                문항구성 :
+              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-gray-900 dark:text-white">
+                  객 <span className="font-semibold">18</span>
+                </span>
+                <span className="text-gray-400">/</span>
+                <span className="text-gray-900 dark:text-white">
+                  주 <span className="font-semibold">2</span>
+                </span>
+              </div>
+            </div>
+
+            {/* 단원명 */}
+            <div className="flex items-start">
+              <span className="text-sm text-gray-500 dark:text-gray-400 w-16 mt-1">
+                단원 :
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {examInfo.chapters.map((chapter) => (
+                  <Badge
+                    key={chapter}
+                    variant="secondary"
+                    className="bg-main-100 text-main-800 border-main-200 dark:bg-main-900/20 dark:text-main-300 dark:border-main-700"
+                  >
+                    {chapter}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* 그래프 공간 */}
 

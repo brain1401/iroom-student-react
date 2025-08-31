@@ -116,7 +116,7 @@ export function HealthCheckErrorFeedback({
           <ul className="text-xs space-y-1 ml-4">
             {errorDetails.suggestions.map((suggestion, _index) => (
               <li
-                key={`suggestion-${suggestion.replace(/[^a-zA-Z0-9]/g, '-').slice(0, 30)}`}
+                key={`suggestion-${suggestion.replace(/[^a-zA-Z0-9]/g, "-").slice(0, 30)}`}
                 className="relative before:content-['•'] before:absolute before:-left-3 before:text-current/70"
               >
                 {suggestion}

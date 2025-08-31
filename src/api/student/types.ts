@@ -33,8 +33,6 @@ export type StudentProfile = {
   studentNumber?: string;
 };
 
-
-
 /**
  * 최근 제출 시험 정보 타입
  * @description 학생이 최근에 제출한 시험의 기본 정보
@@ -64,5 +62,3 @@ export type RecentSubmissionListResponse = {
   /** 전체 제출 시험 수 */
   totalCount: number;
 };
-
-

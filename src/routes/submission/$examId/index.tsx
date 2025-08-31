@@ -139,13 +139,7 @@ function RouteComponent() {
   // 디버깅용 폼 상태 확인
   const currentGrade = form.getValues("grade");
   const currentBirth = form.getValues("birth");
-  const isButtonDisabled =
-    !isFormValid ||
-    hasErrors ||
-    isSubmitting ||
-    !currentGrade ||
-    !currentBirth ||
-    currentBirth?.length !== 6;
+  const isButtonDisabled = !isFormValid || hasErrors || isSubmitting;
 
   console.log("폼 상태:", {
     isFormValid,
