@@ -14,7 +14,7 @@ function RouteComponent() {
   // 로그인된 학생 정보가 없으면 기본값 사용
   const student = loggedInStudent || {
     studentId: "2024001",
-    name: "김체리",
+    name: import.meta.env.VITE_DEFAULT_USER_NAME || "김체리",
     birthDate: "2006-03-15",
     phoneNumber: "010-1234-5678",
   };

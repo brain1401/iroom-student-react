@@ -2,8 +2,8 @@ import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-import { ExamQuestionListIcon } from "./ExamQuestionListIcon";
-import type { ProblemStatus } from "./type";
+import { ExamQuestionListIcon } from "@/components/shared";
+import type { ProblemStatus } from "@/components/shared/types";
 
 /**
  * 시험 문제 항목 컴포넌트 프로퍼티
@@ -85,7 +85,7 @@ type ExamQuestionItemProps = {
  * ))}
  * ```
  */
-export function ExamQuestionItem({
+export function ExamQuestionListItem({
   questionNumber,
   category,
   type,

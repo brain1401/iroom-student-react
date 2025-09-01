@@ -2,7 +2,7 @@ import { ExamQuestionItem } from "@/components/exam";
 import { PageHeader } from "@/components/layout";
 import { Badge } from "@/components/ui/badge";
 import { createFileRoute } from "@tanstack/react-router";
-import type { ProblemStatus } from "@/components/exam/types";
+import type { ProblemStatus } from "@/components/shared/types";
 
 export const Route = createFileRoute("/main/exam/$examId/")({
   component: RouteComponent,

@@ -1,4 +1,4 @@
-import { MathQuestionCard } from "@/components/exam/MathQuestionCard";
+import { MathQuestionCard } from "@/components/shared";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { createFileRoute } from "@tanstack/react-router";

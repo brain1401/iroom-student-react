@@ -4,12 +4,13 @@
 
 // 컴포넌트 exports
 export { ExamQuestionItem } from "./ExamQuestionItem";
-export { MathQuestionCard } from "./MathQuestionCard";
-export { ExamQuestionListIcon } from "./ExamQuestionListIcon";
 
-// 타입 exports
+// 공유 컴포넌트 re-exports
+export { MathQuestionCard, ExamQuestionListIcon } from "@/components/shared";
+
+// 공유 타입 re-exports
 export type {
   ProblemStatus,
   MathQuestionCardState,
   MathQuestion,
-} from "./types";
+} from "@/components/shared/types";

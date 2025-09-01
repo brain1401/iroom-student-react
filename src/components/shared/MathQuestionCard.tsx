@@ -2,7 +2,7 @@ import { Camera, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import type { MathQuestionCardState } from "./type";
+import type { MathQuestionCardState } from "./types";
 
 /**
  * 수학 문제 카드 컴포넌트 프로퍼티
@@ -137,10 +137,10 @@ export function MathQuestionCard({
   return (
     <Card
       className={cn(
-        // 피그마 디자인 크기: 310px × 85px
-        "relative h-[5.35rem] w-[20rem] overflow-hidden border border-black py-0",
-        // 반응형: 모바일에서는 전체 너비 사용
-        "sm:w-full sm:max-w-[20rem]",
+        // 피그마 디자인 크기: 310px × 85px - 반응형으로 개선
+        "relative h-[5.35rem] w-full overflow-hidden border border-black py-0",
+        // 반응형: 모바일에서는 전체 너비 사용, 데스크톱에서는 최대 너비 제한
+        "sm:max-w-[20rem]",
         // 상호작용 스타일
         !isDisabled && [
           "transition-all duration-200",

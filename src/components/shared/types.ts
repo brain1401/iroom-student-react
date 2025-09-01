@@ -1,3 +1,12 @@
+/**
+ * 공통 컴포넌트 타입 정의
+ * @description exam과 student 영역에서 공통으로 사용하는 타입들
+ */
+
+/**
+ * 문제 상태 타입
+ * @description 시험 문제의 진행 상태를 나타내는 타입
+ */
 export type ProblemStatus = "active" | "completed" | "locked";
 
 /**

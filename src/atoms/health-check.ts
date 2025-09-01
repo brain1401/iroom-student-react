@@ -25,9 +25,15 @@ export type {
  * @description 사용자가 헬스체크 표시를 끄고 켤 수 있도록 하는 설정
  * localStorage에 저장되어 브라우저 재시작 후에도 설정 유지
  */
+/**
+ * 헬스체크 활성화 여부를 관리하는 atom
+ * @description 사용자가 헬스체크 표시를 끄고 켤 수 있도록 하는 설정
+ * localStorage에 저장되어 브라우저 재시작 후에도 설정 유지
+ * 환경 변수 VITE_ENABLE_HEALTH_CHECK로 기본값 설정 가능
+ */
 export const healthCheckEnabledAtom = atomWithStorage(
   "health-check-enabled",
-  true, // 기본값: 활성화
+  import.meta.env.VITE_ENABLE_HEALTH_CHECK !== "false", // 기본값: 활성화 (환경 변수로 제어)
 );
 
 /**
@@ -41,9 +47,21 @@ export const healthCheckEnabledAtom = atomWithStorage(
  * - 60000 (1분): 느린 모니터링
  * - 0: 자동 새로고침 비활성화
  */
+/**
+ * 헬스체크 자동 새로고침 간격을 관리하는 atom
+ * @description 헬스체크 요청 간격을 사용자가 설정할 수 있도록 관리
+ * localStorage에 저장되어 설정이 영구적으로 보존됨
+ * 환경 변수 VITE_HEALTH_CHECK_INTERVAL로 기본값 설정 가능
+ *
+ * 간격 옵션:
+ * - 10000 (10초): 빠른 모니터링
+ * - 30000 (30초): 기본값
+ * - 60000 (1분): 느린 모니터링
+ * - 0: 자동 새로고침 비활성화
+ */
 export const healthCheckIntervalAtom = atomWithStorage(
   "health-check-interval",
-  30000, // 기본값: 30초
+  Number(import.meta.env.VITE_HEALTH_CHECK_INTERVAL) || 30000, // 기본값: 30초 (환경 변수로 제어)
 );
 
 /**

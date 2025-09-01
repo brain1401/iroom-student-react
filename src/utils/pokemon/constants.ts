@@ -7,7 +7,12 @@
  * 포켓몬 목록 조회 시 기본 페이지 크기
  * @description 한 번에 가져올 포켓몬 개수의 기본값
  */
-export const pokemonDefaultLimit = 20;
+/**
+ * 포켓몬 목록 조회 시 기본 페이지 크기
+ * @description 한 번에 가져올 포켓몬 개수의 기본값 (환경 변수에서 설정 가능)
+ */
+export const pokemonDefaultLimit =
+  Number(import.meta.env.VITE_POKEMON_DEFAULT_LIMIT) || 20;
 
 /**
  * 포켓몬 목록 조회 시 기본 오프셋

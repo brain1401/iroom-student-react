@@ -1,10 +1,48 @@
+import type { AxiosRequestConfig } from "axios";
 import type { ApiResponse } from "@/api/common/types";
+import { baseApiClient } from "@/api/client";
 import type {
   MockExam,
   MockExamListApiResponse,
   MockExamApiResponse,
   MockExamIdsApiResponse,
 } from "./types";
+
+/**
+ * 백엔드 서버의 기본 URL을 환경 변수에서 가져오기
+ * @description Vite 환경에서 VITE_ 접두사가 있는 환경 변수만 클라이언트에서 접근 가능
+ */
+const BACKEND_API_URL =
+  import.meta.env.VITE_BACKEND_API_URL || "http://localhost:3055";
+
+/**
+ * 모의고사 전용 API 클라이언트
+ * @description 기본 API 클라이언트를 확장하여 모의고사 API 전용으로 설정
+ */
+const examApiClient = baseApiClient.create({
+  baseURL: BACKEND_API_URL,
+  timeout: 10000, // 모의고사 데이터는 크므로 타임아웃을 길게 설정
+});
+
+/**
+ * 모의고사 API 공통 요청 함수
+ * @description 모든 모의고사 API 호출에서 공통으로 사용하는 요청 처리 함수
+ * @template T API 응답 데이터 타입
+ * @param config Axios 요청 설정 객체
+ * @returns API 응답 데이터 (ApiResponse 형식에서 data 추출)
+ */
+async function examApiRequest<T>(
+  config: AxiosRequestConfig,
+): Promise<ApiResponse<T>> {
+  // 백엔드가 준비될 때까지 Mock 데이터 시뮬레이션
+  if (import.meta.env.VITE_USE_MOCK_API !== "false") {
+    return simulateApiCall(config);
+  }
+
+  // 실제 백엔드 요청
+  const response = await examApiClient.request<ApiResponse<T>>(config);
+  return response.data;
+}
 
 /**
  * 랜덤 지연시간 생성 유틸리티
@@ -214,14 +252,20 @@ const MOCK_EXAMS: MockExam[] = [
  * @param options Mock 옵션 (지연시간, 에러율 등)
  * @returns Promise로 감싼 Mock 데이터
  */
+/**
+ * Promise 기반 Mock API 호출 시뮬레이터 (실제 API 요청 형식 기반)
+ * @description 실제 HTTP 요청 설정에 따라 적절한 Mock 데이터를 반환
+ * @param config Axios 요청 설정 (URL, method 등)
+ * @returns Promise로 감싼 Mock 데이터 (ApiResponse 형식)
+ */
 async function simulateApiCall<T>(
-  data: T,
-  options: {
-    delay?: number;
-    errorRate?: number;
-  } = {},
+  config: AxiosRequestConfig,
 ): Promise<ApiResponse<T>> {
-  const { delay = getRandomDelay(400, 1200), errorRate = 0.03 } = options;
+  const { url, method = "GET" } = config;
+
+  // 기본 지연시간과 에러율 설정
+  const delay = getRandomDelay(400, 1200);
+  const errorRate = 0.03;
 
   // 에러 시뮬레이션 (3% 확률)
   maybeThrowError(errorRate);
@@ -229,8 +273,30 @@ async function simulateApiCall<T>(
   // 네트워크 지연 시뮬레이션
   await sleep(delay);
 
-  // 성공적인 응답을 ApiResponse 형식으로 래핑하여 반환
-  return createMockApiResponse(data);
+  // URL에 따라 적절한 Mock 데이터 반환
+  if (url === "/api/exams" && method === "GET") {
+    return createMockApiResponse(MOCK_EXAMS as T);
+  } else if (url?.startsWith("/api/exams/") && method === "GET") {
+    // /api/exams/{examId} 형태
+    const examId = url.split("/api/exams/")[1];
+    const exam = MOCK_EXAMS.find((e) => e.id === examId);
+
+    if (!exam) {
+      throw new Error(
+        `Mock API Error: 모의고사를 찾을 수 없습니다. ID: ${examId}`,
+      );
+    }
+
+    return createMockApiResponse(exam as T);
+  } else if (url === "/api/exams/ids" && method === "GET") {
+    const examIds = MOCK_EXAMS.map((exam) => exam.id);
+    return createMockApiResponse(examIds as T);
+  }
+
+  // 지원하지 않는 엔드포인트
+  throw new Error(
+    `Mock API Error: 지원하지 않는 엔드포인트입니다. ${method} ${url}`,
+  );
 }
 
 /**
@@ -254,10 +320,35 @@ async function simulateApiCall<T>(
  * }
  * ```
  */
-export async function getAllMockExams(): Promise<MockExamListApiResponse> {
-  return simulateApiCall(MOCK_EXAMS, {
-    delay: getRandomDelay(500, 1500), // 목록 조회는 약간 더 느리게
-    errorRate: 0.02, // 목록 조회는 에러율 낮게 (2%)
+/**
+ * 모든 모의고사 목록 조회
+ * @description baseApiClient를 사용한 실제 HTTP 요청으로 모의고사 목록 조회
+ * @returns 모의고사 목록 배열
+ * @throws {Error} 네트워크 에러 또는 서버 에러 시
+ *
+ * 주요 특징:
+ * - baseApiClient 패턴 사용으로 다른 API와 일관된 구조
+ * - 환경 변수를 통한 백엔드 URL 설정
+ * - AbortSignal 지원으로 요청 취소 가능
+ * - 실제 백엔드 연동 준비 완료
+ *
+ * @example
+ * ```typescript
+ * try {
+ *   const response = await getAllMockExams();
+ *   console.log(`총 ${response.data.length}개의 모의고사`);
+ * } catch (error) {
+ *   console.error('모의고사 목록 조회 실패:', error.message);
+ * }
+ * ```
+ */
+export async function getAllMockExams(options?: {
+  signal?: AbortSignal;
+}): Promise<MockExamListApiResponse> {
+  return examApiRequest<MockExam[]>({
+    method: "GET",
+    url: "/api/exams",
+    signal: options?.signal,
   });
 }
 
@@ -284,23 +375,39 @@ export async function getAllMockExams(): Promise<MockExamListApiResponse> {
  * }
  * ```
  */
+/**
+ * 특정 모의고사 상세 조회
+ * @description baseApiClient를 사용한 실제 HTTP 요청으로 모의고사 상세 정보 조회
+ * @param examId 조회할 모의고사 ID
+ * @param options 추가 옵션
+ * @param options.signal 요청 취소를 위한 AbortSignal
+ * @returns 모의고사 상세 정보
+ * @throws {Error} 존재하지 않는 ID이거나 네트워크 에러 시
+ *
+ * 주요 특징:
+ * - baseApiClient 패턴 사용으로 다른 API와 일관된 구조
+ * - RESTful URL 패턴 (/api/exams/{examId})
+ * - 요청 취소 지원 (AbortSignal)
+ * - 404 에러 처리 포함
+ *
+ * @example
+ * ```typescript
+ * try {
+ *   const exam = await getMockExamById('exam-2025-math-final');
+ *   console.log(`${exam.data.title}: ${exam.data.problems.length}문제`);
+ * } catch (error) {
+ *   console.error('모의고사 조회 실패:', error.message);
+ * }
+ * ```
+ */
 export async function getMockExamById(
   examId: string,
+  options?: { signal?: AbortSignal },
 ): Promise<MockExamApiResponse> {
-  // 존재하는 모의고사 ID인지 확인
-  const exam = MOCK_EXAMS.find((e) => e.id === examId);
-
-  if (!exam) {
-    // 존재하지 않는 ID의 경우 즉시 에러 발생 (404 시뮬레이션)
-    await sleep(getRandomDelay(200, 400)); // 짧은 지연 후 에러
-    throw new Error(
-      `Mock API Error: 모의고사를 찾을 수 없습니다. ID: ${examId}`,
-    );
-  }
-
-  return simulateApiCall(exam, {
-    delay: getRandomDelay(300, 800), // 상세 조회는 빠르게
-    errorRate: 0.05, // 일반적인 에러율 (5%)
+  return examApiRequest<MockExam>({
+    method: "GET",
+    url: `/api/exams/${examId}`,
+    signal: options?.signal,
   });
 }
 
@@ -325,11 +432,35 @@ export async function getMockExamById(
  * }
  * ```
  */
-export async function getMockExamIds(): Promise<MockExamIdsApiResponse> {
-  const examIds = MOCK_EXAMS.map((exam) => exam.id);
-
-  return simulateApiCall(examIds, {
-    delay: getRandomDelay(200, 600), // ID 목록은 가장 빠르게
-    errorRate: 0.01, // 가장 낮은 에러율 (1%)
+/**
+ * 모의고사 ID 목록만 조회
+ * @description baseApiClient를 사용한 실제 HTTP 요청으로 모의고사 ID 목록 조회
+ * @param options 추가 옵션
+ * @param options.signal 요청 취소를 위한 AbortSignal
+ * @returns 모의고사 ID 문자열 배열
+ * @throws {Error} 네트워크 에러 시
+ *
+ * 주요 특징:
+ * - baseApiClient 패턴 사용으로 다른 API와 일관된 구조
+ * - 빠른 응답시간 (ID만 조회하므로)
+ * - 요청 취소 지원 (AbortSignal)
+ *
+ * @example
+ * ```typescript
+ * try {
+ *   const response = await getMockExamIds();
+ *   console.log('사용 가능한 모의고사 ID:', response.data);
+ * } catch (error) {
+ *   console.error('모의고사 ID 목록 조회 실패:', error.message);
+ * }
+ * ```
+ */
+export async function getMockExamIds(options?: {
+  signal?: AbortSignal;
+}): Promise<MockExamIdsApiResponse> {
+  return examApiRequest<string[]>({
+    method: "GET",
+    url: "/api/exams/ids",
+    signal: options?.signal,
   });
 }

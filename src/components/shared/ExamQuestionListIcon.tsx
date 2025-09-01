@@ -10,6 +10,15 @@ type Props = {
 
 const ICON_CLASSNAME = "h-full w-full";
 
+/**
+ * 시험 문제 상태 아이콘 컴포넌트
+ * @description 문제 상태에 따라 다른 아이콘과 색상을 표시하는 컴포넌트
+ *
+ * 상태별 아이콘:
+ * - active: 빨간색 원 (진행 중인 문제)
+ * - completed: 초록색 원 (정답 처리된 문제)
+ * - locked: 회색 X (오답 처리된 문제)
+ */
 export function ExamQuestionListIcon({
   status,
   className,
