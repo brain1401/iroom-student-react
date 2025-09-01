@@ -9,10 +9,11 @@ export const Route = createFileRoute("/submission/$examId/scan/")({
   component: RouteComponent,
 });
 
+// 이전 페이지에서 넘어온 사용자가 보게 될 페이지의 주소
 function RouteComponent() {
   const { examId } = useParams({ from: "/submission/$examId/scan/" });
 
-  /** 현재 활성 탭 상태 */
+  /** 현재 활성 탭 상태 (객관식 or 주관식) 저장  기본값은 객관식 */
   const [activeTab, setActiveTab] = useState<"objective" | "subjective">(
     "objective",
   );
@@ -28,7 +29,9 @@ function RouteComponent() {
       {/* 탭 버튼들 */}
       <div className="flex border-b border-gray-200 mb-6 w-full max-w-4xl">
         <button
+          // 객관식 탭 클릭 시 객관식 탭으로 이동
           onClick={() => setActiveTab("objective")}
+          // cn 함수를 사용하여 activeTab 값에 따라  css클래스를 동적으로 적용  기본값은 투명하고 텍스트 효과 활성화 된 경우 파란색 테두리와 파란색 텍스트
           className={cn(
             "px-6 py-3 text-sm font-medium border-b-2 transition-all duration-300 ease-in-out",
             activeTab === "objective"
@@ -62,6 +65,7 @@ function RouteComponent() {
               : "opacity-0 -translate-x-full absolute top-0 left-0 w-full pointer-events-none",
           )}
         >
+          {/* on next라는 함수를 objectiveTab에게 전달하여 주관식 탭으로 이동 */}
           <ObjectiveTab
             onNext={() => {
               setActiveTab("subjective");

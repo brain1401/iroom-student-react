@@ -68,6 +68,7 @@ function OptionSelector({
   onValueChange,
 }: OptionSelectorProps) {
   return (
+    // RadioGroup 컴포넌트를 사용하여 보기 선택 영역을 구성
     <RadioGroup
       value={selectedValue}
       onValueChange={onValueChange}
@@ -78,6 +79,7 @@ function OptionSelector({
           <RadioGroupItem
             value={option.value}
             id={`q${questionId}-${option.value}`}
+            // sr-only 클래스를 사용하여 화면 판독기에서 숨김
             className="sr-only"
           />
           <Label
@@ -113,6 +115,7 @@ type QuestionRowProps = {
   onAnswerChange: (questionId: number, value: string) => void;
 };
 
+// 문재 행(한줄) 컴포넌트
 function QuestionRow({
   questionNumber,
   selectedAnswer,
@@ -124,6 +127,7 @@ function QuestionRow({
     },
     [questionNumber, onAnswerChange],
   );
+  // onAnswerChange 핸들러를 사용하여 답안 변경 이벤트 처리
 
   return (
     <div className="flex items-center gap-4 p-3 border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150">

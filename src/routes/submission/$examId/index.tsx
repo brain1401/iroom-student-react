@@ -179,9 +179,9 @@ function RouteComponent() {
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-6 ">
           {/* 안내 메시지 */}
-          <Alert className="border-blue-200 bg-main-50">
+          <Alert className="border-purple-200 bg-main-50">
             <CheckCircle2 className="h-4 w-4 text-main-600" />
             <AlertDescription className="text-main-800">
               입력하신 정보는 시험 진행 및 결과 확인을 위해서만 사용됩니다
