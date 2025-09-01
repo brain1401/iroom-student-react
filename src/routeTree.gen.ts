@@ -12,8 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as MainRouteRouteImport } from './routes/main/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MainIndexRouteImport } from './routes/main/index'
+import { Route as MainLayoutRouteImport } from './routes/main/_layout'
 import { Route as SubmissionExamIdRouteRouteImport } from './routes/submission/$examId/route'
 import { Route as SubmissionExamIdIndexRouteImport } from './routes/submission/$examId/index'
+import { Route as MainMypageIndexRouteImport } from './routes/main/mypage/index'
 import { Route as ExamplesPokemonIndexRouteImport } from './routes/examples/pokemon/index'
 import { Route as SubmissionExamIdTextRecongnitionIndexRouteImport } from './routes/submission/$examId/text-recongnition/index'
 import { Route as SubmissionExamIdScanIndexRouteImport } from './routes/submission/$examId/scan/index'
@@ -36,6 +38,10 @@ const MainIndexRoute = MainIndexRouteImport.update({
   path: '/',
   getParentRoute: () => MainRouteRoute,
 } as any)
+const MainLayoutRoute = MainLayoutRouteImport.update({
+  id: '/_layout',
+  getParentRoute: () => MainRouteRoute,
+} as any)
 const SubmissionExamIdRouteRoute = SubmissionExamIdRouteRouteImport.update({
   id: '/submission/$examId',
   path: '/submission/$examId',
@@ -45,6 +51,11 @@ const SubmissionExamIdIndexRoute = SubmissionExamIdIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SubmissionExamIdRouteRoute,
+} as any)
+const MainMypageIndexRoute = MainMypageIndexRouteImport.update({
+  id: '/mypage/',
+  path: '/mypage/',
+  getParentRoute: () => MainRouteRoute,
 } as any)
 const ExamplesPokemonIndexRoute = ExamplesPokemonIndexRouteImport.update({
   id: '/examples/pokemon/',
@@ -82,10 +93,11 @@ const MainExamExamIdProblemIdIndexRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/main': typeof MainRouteRouteWithChildren
+  '/main': typeof MainLayoutRoute
   '/submission/$examId': typeof SubmissionExamIdRouteRouteWithChildren
   '/main/': typeof MainIndexRoute
   '/examples/pokemon': typeof ExamplesPokemonIndexRoute
+  '/main/mypage': typeof MainMypageIndexRoute
   '/submission/$examId/': typeof SubmissionExamIdIndexRoute
   '/examples/pokemon/$id': typeof ExamplesPokemonIdIndexRoute
   '/main/exam/$examId': typeof MainExamExamIdIndexRoute
@@ -97,6 +109,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/main': typeof MainIndexRoute
   '/examples/pokemon': typeof ExamplesPokemonIndexRoute
+  '/main/mypage': typeof MainMypageIndexRoute
   '/submission/$examId': typeof SubmissionExamIdIndexRoute
   '/examples/pokemon/$id': typeof ExamplesPokemonIdIndexRoute
   '/main/exam/$examId': typeof MainExamExamIdIndexRoute
@@ -109,8 +122,10 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/main': typeof MainRouteRouteWithChildren
   '/submission/$examId': typeof SubmissionExamIdRouteRouteWithChildren
+  '/main/_layout': typeof MainLayoutRoute
   '/main/': typeof MainIndexRoute
   '/examples/pokemon/': typeof ExamplesPokemonIndexRoute
+  '/main/mypage/': typeof MainMypageIndexRoute
   '/submission/$examId/': typeof SubmissionExamIdIndexRoute
   '/examples/pokemon/$id/': typeof ExamplesPokemonIdIndexRoute
   '/main/exam/$examId/': typeof MainExamExamIdIndexRoute
@@ -126,6 +141,7 @@ export interface FileRouteTypes {
     | '/submission/$examId'
     | '/main/'
     | '/examples/pokemon'
+    | '/main/mypage'
     | '/submission/$examId/'
     | '/examples/pokemon/$id'
     | '/main/exam/$examId'
@@ -137,6 +153,7 @@ export interface FileRouteTypes {
     | '/'
     | '/main'
     | '/examples/pokemon'
+    | '/main/mypage'
     | '/submission/$examId'
     | '/examples/pokemon/$id'
     | '/main/exam/$examId'
@@ -148,8 +165,10 @@ export interface FileRouteTypes {
     | '/'
     | '/main'
     | '/submission/$examId'
+    | '/main/_layout'
     | '/main/'
     | '/examples/pokemon/'
+    | '/main/mypage/'
     | '/submission/$examId/'
     | '/examples/pokemon/$id/'
     | '/main/exam/$examId/'
@@ -189,6 +208,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainIndexRouteImport
       parentRoute: typeof MainRouteRoute
     }
+    '/main/_layout': {
+      id: '/main/_layout'
+      path: ''
+      fullPath: '/main'
+      preLoaderRoute: typeof MainLayoutRouteImport
+      parentRoute: typeof MainRouteRoute
+    }
     '/submission/$examId': {
       id: '/submission/$examId'
       path: '/submission/$examId'
@@ -202,6 +228,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/submission/$examId/'
       preLoaderRoute: typeof SubmissionExamIdIndexRouteImport
       parentRoute: typeof SubmissionExamIdRouteRoute
+    }
+    '/main/mypage/': {
+      id: '/main/mypage/'
+      path: '/mypage'
+      fullPath: '/main/mypage'
+      preLoaderRoute: typeof MainMypageIndexRouteImport
+      parentRoute: typeof MainRouteRoute
     }
     '/examples/pokemon/': {
       id: '/examples/pokemon/'
@@ -249,13 +282,17 @@ declare module '@tanstack/react-router' {
 }
 
 interface MainRouteRouteChildren {
+  MainLayoutRoute: typeof MainLayoutRoute
   MainIndexRoute: typeof MainIndexRoute
+  MainMypageIndexRoute: typeof MainMypageIndexRoute
   MainExamExamIdIndexRoute: typeof MainExamExamIdIndexRoute
   MainExamExamIdProblemIdIndexRoute: typeof MainExamExamIdProblemIdIndexRoute
 }
 
 const MainRouteRouteChildren: MainRouteRouteChildren = {
+  MainLayoutRoute: MainLayoutRoute,
   MainIndexRoute: MainIndexRoute,
+  MainMypageIndexRoute: MainMypageIndexRoute,
   MainExamExamIdIndexRoute: MainExamExamIdIndexRoute,
   MainExamExamIdProblemIdIndexRoute: MainExamExamIdProblemIdIndexRoute,
 }

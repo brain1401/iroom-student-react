@@ -49,6 +49,8 @@ const submissionFormSchema = z.object({
       /^010-\d{4}-\d{4}$/,
       "전화번호는 010-0000-0000 형식으로 입력해주세요",
     ),
+  grade: z.string().min(1, "학년을 선택해주세요"),
+  birth: z.string().min(1, "생년월일을 선택해주세요"),
 });
 
 type SubmissionFormData = z.infer<typeof submissionFormSchema>;
@@ -85,6 +87,8 @@ function RouteComponent() {
     defaultValues: {
       name: "",
       phoneNumber: "010",
+      grade: "",
+      birth: "",
     },
     mode: "onChange", // 실시간 유효성 검사
   });
@@ -132,6 +136,21 @@ function RouteComponent() {
   const isFormValid = form.formState.isValid;
   const hasErrors = Object.keys(form.formState.errors).length > 0;
 
+  // 디버깅용 폼 상태 확인
+  const currentGrade = form.getValues("grade");
+  const currentBirth = form.getValues("birth");
+  const isButtonDisabled = !isFormValid || hasErrors || isSubmitting;
+
+  console.log("폼 상태:", {
+    isFormValid,
+    hasErrors,
+    isSubmitting,
+    currentGrade,
+    currentBirth,
+    birthLength: currentBirth?.length,
+    isButtonDisabled,
+  });
+
   if (error || !examName) {
     return (
       <Card className="w-full">
@@ -160,9 +179,9 @@ function RouteComponent() {
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-6 ">
           {/* 안내 메시지 */}
-          <Alert className="border-blue-200 bg-main-50">
+          <Alert className="border-purple-200 bg-main-50">
             <CheckCircle2 className="h-4 w-4 text-main-600" />
             <AlertDescription className="text-main-800">
               입력하신 정보는 시험 진행 및 결과 확인을 위해서만 사용됩니다
@@ -253,13 +272,96 @@ function RouteComponent() {
                 )}
               />
 
+              {/* 학년 선택 필드 */}
+              <FormField
+                control={form.control}
+                name="grade"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-semibold text-slate-800 flex items-center gap-2">
+                      학년 *
+                    </FormLabel>
+                    <FormControl>
+                      <select
+                        {...field}
+                        className={cn(
+                          "h-12 text-base transition-all duration-200 border border-gray-300 rounded-md px-3",
+                          "focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                          form.formState.errors.grade &&
+                            "border-red-500 focus-visible:border-red-500 focus:ring-red-200",
+                          !form.formState.errors.grade &&
+                            field.value &&
+                            "border-green-500 focus:ring-green-200",
+                        )}
+                        disabled={isSubmitting}
+                      >
+                        <option value="">학년 선택</option>
+                        <option value="1">1학년</option>
+                        <option value="2">2학년</option>
+                        <option value="3">3학년</option>
+                      </select>
+                    </FormControl>
+                    <FormMessage
+                      role="alert"
+                      className="text-sm text-red-600 font-medium"
+                    />
+                  </FormItem>
+                )}
+              />
+
+              {/* 생년월일 입력 필드 */}
+              <FormField
+                control={form.control}
+                name="birth"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-semibold text-slate-800 flex items-center gap-2">
+                      생년월일 *
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="text"
+                        placeholder="YYMMDD (예: 080101)"
+                        maxLength={6}
+                        className={cn(
+                          "h-12 text-base transition-all duration-200",
+                          "focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                          form.formState.errors.birth &&
+                            "border-red-500 focus-visible:border-red-500 focus:ring-red-200",
+                          !form.formState.errors.birth &&
+                            field.value &&
+                            field.value.length === 6 &&
+                            "border-green-500 focus:ring-green-200",
+                        )}
+                        disabled={isSubmitting}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/[^\d]/g, "");
+                          field.onChange(value);
+                        }}
+                      />
+                    </FormControl>
+                    <FormDescription className="text-xs text-slate-600">
+                      생년월일 6자리를 입력해주세요 (예: 080101)
+                    </FormDescription>
+                    <FormMessage
+                      role="alert"
+                      className="text-sm text-red-600 font-medium"
+                    />
+                  </FormItem>
+                )}
+              />
+
               {/* 폼 상태 표시 */}
-              {isFormValid && !hasErrors && (
-                <div className="flex items-center justify-center gap-2 text-green-600 text-sm font-medium">
-                  <CheckCircle2 className="w-4 h-4" />
-                  모든 정보가 정확히 입력되었습니다
-                </div>
-              )}
+              {isFormValid &&
+                !hasErrors &&
+                form.getValues("grade") &&
+                form.getValues("birth")?.length === 6 && (
+                  <div className="flex items-center justify-center gap-2 text-green-600 text-sm font-medium">
+                    <CheckCircle2 className="w-4 h-4" />
+                    모든 정보가 정확히 입력되었습니다
+                  </div>
+                )}
             </form>
           </Form>
         </CardContent>
@@ -278,7 +380,7 @@ function RouteComponent() {
               ? "bg-main-500 hover:bg-main-600 text-white"
               : "bg-gray-200 text-gray-500 cursor-not-allowed hover:bg-gray-200 hover:transform-none hover:shadow-lg",
           )}
-          disabled={!isFormValid || hasErrors || isSubmitting}
+          disabled={isButtonDisabled}
           onClick={form.handleSubmit(onSubmit)}
         >
           {isSubmitting ? (

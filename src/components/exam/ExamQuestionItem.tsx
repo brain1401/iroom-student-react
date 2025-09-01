@@ -1,8 +1,9 @@
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ExamQuestionListIcon } from "./ExamQuestionListIcon";
 import type { ExamQuestion } from "@/routes/main/exam/$examId";
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
 
 /**
  * 시험 문제 항목 컴포넌트 프로퍼티
@@ -68,10 +69,27 @@ type ExamQuestionItemProps = {
  * ```
  */
 export function ExamQuestionItem({
-  question: { id, questionNumber, category, type, difficulty, status },
+  question: {
+    id,
+    questionNumber,
+    category,
+    type,
+    difficulty,
+    status,
+    questionText,
+    studentAnswer,
+    correctAnswer,
+    isCorrect,
+    score,
+    earnedScore,
+    solution,
+    isSubjective,
+  },
   examId,
   className,
 }: ExamQuestionItemProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   /**
    * 문제 항목 클릭 핸들러
    * @description 잠긴 상태가 아닐 때만 클릭 이벤트 실행
@@ -79,6 +97,129 @@ export function ExamQuestionItem({
 
   const questionNumberString = `${questionNumber}번 문제`;
 
+  // 답안 상세 정보가 있는 경우 상세 뷰로 표시
+  if (questionText && studentAnswer !== undefined) {
+    return (
+      <div
+        className={cn(
+          "rounded-lg bg-white cursor-pointer transition-all duration-200",
+          "border border-gray-200",
+          className,
+        )}
+      >
+        {/* 기존 디자인 그대로 유지 - 클릭 가능한 영역 */}
+        <div className="p-3" onClick={() => setIsExpanded(!isExpanded)}>
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="font-semibold text-lg">문항 {questionNumber}</h4>
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-gray-600">
+                배점: {score || 0}점
+              </span>
+              <span
+                className={cn(
+                  "px-2 py-1 rounded text-sm font-medium",
+                  isCorrect
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800",
+                )}
+              >
+                {isCorrect ? "정답" : "오답"}
+              </span>
+              <div className="text-gray-500">
+                {isExpanded ? (
+                  <ChevronDown className="h-4 w-4" />
+                ) : (
+                  <ChevronRight className="h-4 w-4" />
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-3">
+            <p className="text-sm text-gray-600 mb-1">문제</p>
+            <p className="text-gray-800">{questionText}</p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm text-gray-600 mb-1">학생 답안</p>
+              <p
+                className={cn(
+                  "font-medium",
+                  isCorrect ? "text-green-700" : "text-red-700",
+                )}
+              >
+                {studentAnswer}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600 mb-1">정답</p>
+              <p className="font-medium text-blue-700">{correctAnswer}</p>
+            </div>
+          </div>
+
+          <div className="mt-3 pt-3 border-t">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">획득 점수</span>
+              <span
+                className={cn(
+                  "font-bold text-lg",
+                  isCorrect ? "text-green-600" : "text-red-600",
+                )}
+              >
+                {earnedScore || 0}점
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* 확장된 추가 정보 */}
+        <div
+          className={cn(
+            "border-t bg-gray-50 overflow-hidden transition-all duration-500 ease-out",
+            isExpanded
+              ? "max-h-[500px] opacity-100 transform translate-y-0"
+              : "max-h-0 opacity-0 transform -translate-y-2",
+          )}
+        >
+          <div className="p-4 space-y-4">
+            {/* 풀이 과정 */}
+            {solution && (
+              <div>
+                <p className="text-sm text-gray-600 mb-2 font-medium">
+                  풀이 과정
+                </p>
+                <div className="bg-white p-3 rounded-lg border">
+                  <pre className="whitespace-pre-wrap text-sm text-gray-800 font-mono">
+                    {solution}
+                  </pre>
+                </div>
+              </div>
+            )}
+
+            {/* 주관식 이미지 공간 */}
+            {isSubjective && (
+              <div>
+                <p className="text-sm text-gray-600 mb-2 font-medium">
+                  문제 이미지
+                </p>
+                <div className="bg-white p-4 rounded-lg border-2 border-dashed border-gray-300 text-center">
+                  <p className="text-gray-500">
+                    주관식 문제 이미지가 여기에 표시됩니다
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    이미지 업로드 또는 링크 추가
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 기존 문제 목록 뷰 (답안 정보가 없는 경우)
   return (
     <Link
       to="/main/exam/$examId/$problemId"

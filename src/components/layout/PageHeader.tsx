@@ -147,14 +147,12 @@ export function PageHeader({
     <div className="flex items-center">{children}</div>
   );
 
-  const dividerElement = shouldShowDivider && (
-    <div className="absolute right-0 bottom-0 left-0 h-[2px] bg-black dark:bg-white" />
-  );
+  const dividerElement = shouldShowDivider && <div />;
 
   return (
     <div
       className={cn(
-        "relative flex h-12 w-full items-center px-4 py-2 md:h-15 dark:bg-gray-900",
+        " border-b-[0.2rem] flex w-full items-center px-4 py-2 md:h-15 dark:bg-gray-900",
         className,
       )}
     >
@@ -165,7 +163,7 @@ export function PageHeader({
       <div className={cn("flex flex-1", titleJustifyClass)}>
         <h1
           className={cn(
-            "text-center text-[1.68rem]! font-bold text-black md:text-xl dark:text-white",
+            " text-center text-[1.68rem]! font-bold text-black md:text-xl dark:text-white",
             titlePaddingClass,
           )}
         >
