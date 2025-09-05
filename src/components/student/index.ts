@@ -1,18 +1,7 @@
-export * from "./ExamList";
-export * from "./ExamListItem";
-export * from "./ExamSubmit";
-export * from "./AnswerSubmitTabs";
+/**
+ * 학생 관련 컴포넌트 통합 export
+ * @description 학생 관련 UI 컴포넌트들을 통합적으로 제공
+ * @version 2025-09-05
+ */
 
-export * from "./ExamQuestionItem";
-export * from "./ExamResultCard";
-export { RecentSubmission } from "./RecentSubmission";
-
-// 공유 컴포넌트 re-exports
-export { MathQuestionCard, ExamQuestionListIcon } from "@/components/shared";
-
-// 공유 타입 re-exports
-export type {
-  ProblemStatus,
-  MathQuestionCardState,
-  MathQuestion,
-} from "@/components/shared/types";
+export { RecentExamCard } from "./RecentExamCard";

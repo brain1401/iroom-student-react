@@ -1,7 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import { extractApiData } from "@/api/common/types";
-import { getAllMockExams, getMockExamById, getMockExamIds } from "./api";
-import type { MockExam } from "./types";
+import { getAllExams, getExamById, getExamIds } from "./server-api";
+import type { ExamItem } from "@/api/common/server-types";
 
 /**
  * 모의고사 쿼리 키 관리 객체
@@ -45,9 +45,9 @@ export const examKeys = {
 export const allMockExamsQueryOptions = () => {
   return queryOptions({
     queryKey: examKeys.allMockExams(),
-    queryFn: async ({ signal: _signal }): Promise<MockExam[]> => {
-      const response = await getAllMockExams();
-      return extractApiData(response);
+    queryFn: async ({ signal: _signal }): Promise<ExamItem[]> => {
+      const response = await getAllExams({}, { signal: _signal });
+      return response.data.content;
     },
     staleTime: 10 * 60 * 1000, // 10분간 데이터를 신선하다고 간주
     gcTime: 30 * 60 * 1000, // 30분간 캐시에 보관
@@ -89,13 +89,13 @@ export const mockExamDetailQueryOptions = (examId: string) => {
 
   return queryOptions({
     queryKey: examKeys.detail(examId),
-    queryFn: async ({ signal: _signal }): Promise<MockExam> => {
+    queryFn: async ({ signal: _signal }): Promise<ExamItem> => {
       // 유효하지 않은 examId인 경우 에러 발생
       if (!isValidExamId) {
         throw new Error("모의고사 ID가 제공되지 않았습니다.");
       }
-      const response = await getMockExamById(examId);
-      return extractApiData(response);
+      const response = await getExamById(examId, { signal: _signal });
+      return response.data;
     },
     staleTime: 15 * 60 * 1000, // 15분간 데이터를 신선하다고 간주
     gcTime: 45 * 60 * 1000, // 45분간 캐시에 보관 (상세 정보는 더 오래 보관)
@@ -138,8 +138,8 @@ export const mockExamIdsQueryOptions = () => {
   return queryOptions({
     queryKey: examKeys.mockExamIds(),
     queryFn: async ({ signal: _signal }): Promise<string[]> => {
-      const response = await getMockExamIds();
-      return extractApiData(response);
+      const response = await getExamIds({ signal: _signal });
+      return response.data;
     },
     staleTime: 5 * 60 * 1000, // 5분간 데이터를 신선하다고 간주
     gcTime: 20 * 60 * 1000, // 20분간 캐시에 보관

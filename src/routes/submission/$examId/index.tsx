@@ -1,4 +1,4 @@
-import { getMockExamById } from "@/api/exam/api";
+import { getExamById } from "@/api/exam/server-api";
 import { extractApiData } from "@/api/common/types";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -59,7 +59,7 @@ export const Route = createFileRoute("/submission/$examId/")({
   component: RouteComponent,
   loader: async ({ params }) => {
     try {
-      const examResponse = await getMockExamById(params.examId);
+      const examResponse = await getExamById(params.examId);
       const exam = extractApiData(examResponse);
       return { exam };
     } catch (error) {
@@ -72,7 +72,7 @@ export const Route = createFileRoute("/submission/$examId/")({
 function RouteComponent() {
   const { exam, error } = Route.useLoaderData();
   const { examId } = Route.useParams();
-  const examName = exam?.title;
+  const examName = exam?.examName;
   const navigate = useNavigate();
 
   /** 폼 제출 중 로딩 상태 */
