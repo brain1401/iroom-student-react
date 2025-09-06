@@ -55,7 +55,7 @@ const submissionFormSchema = z.object({
 
 type SubmissionFormData = z.infer<typeof submissionFormSchema>;
 
-export const Route = createFileRoute("/submission/$examId/")({
+export const Route = createFileRoute("/submit/$examId/")({
   component: RouteComponent,
   loader: async ({ params }) => {
     try {
@@ -109,7 +109,7 @@ function RouteComponent() {
 
       // 제출 성공 후 스캔 페이지로 이동
       await navigate({
-        to: "/submission/$examId/scan",
+        to: "/submit/$examId/scan",
         params: { examId },
       });
     } catch (error) {
@@ -164,7 +164,6 @@ function RouteComponent() {
   return (
     <>
       <PageHeader title={examName} shouldShowBackButton={false} />
-
       {/* 응시자 정보 입력 카드 */}
       <Card className="w-full max-w-lg shadow-lg">
         <CardHeader className="text-center space-y-2">
@@ -366,10 +365,8 @@ function RouteComponent() {
           </Form>
         </CardContent>
       </Card>
-
       {/* 하단 여백 */}
       <div className="flex-1" />
-
       {/* 다음 버튼 */}
       <div className="w-full max-w-lg px-4">
         <Button
@@ -401,7 +398,6 @@ function RouteComponent() {
           * 표시된 항목은 필수 입력 항목입니다
         </div>
       </div>
-
       {/* 접근성을 위한 숨겨진 안내 */}
       <div className="sr-only" role="status" aria-live="polite">
         {hasErrors && "입력 정보를 확인해주세요"}

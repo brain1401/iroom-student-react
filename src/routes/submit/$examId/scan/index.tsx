@@ -5,7 +5,7 @@ import { ObjectiveTab } from "@/components/student/ObjectiveTab";
 import { SubjectiveTab } from "@/components/student/SubjectiveTab";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/submission/$examId/scan/")({
+export const Route = createFileRoute("/submit/$examId/scan/")({
   component: RouteComponent,
 });
 

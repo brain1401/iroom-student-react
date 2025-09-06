@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/submission/$examId/text-recongnition/")({
+export const Route = createFileRoute("/submit/$examId/text-recongnition/")({
   component: RouteComponent,
 });
 

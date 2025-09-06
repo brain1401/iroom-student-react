@@ -40,12 +40,25 @@ import type {
  * @returns 전체 단원 트리 구조
  */
 export async function getAllUnits(options?: {
+  /** 요청 취소를 위한 AbortSignal */
   signal?: AbortSignal;
+  /** 문제 포함 조회 여부 */
+  includeQuestions?: boolean;
 }): Promise<UnitTreeNode[]> {
   try {
+    const queryParams = new URLSearchParams();
+    
+    if (options?.includeQuestions) {
+      queryParams.append("includeQuestions", "true");
+    }
+    
+    const url = queryParams.toString() 
+      ? `/api/units?${queryParams.toString()}`
+      : "/api/units";
+
     const response = await authApiClient.request<ApiResponse<UnitTreeNode[]>>({
       method: "GET",
-      url: "/api/units",
+      url,
       signal: options?.signal,
     });
 
@@ -71,12 +84,27 @@ export async function getAllUnits(options?: {
  */
 export async function getUnitsByGrade(
   grade: number,
-  options?: { signal?: AbortSignal },
+  options?: { 
+    /** 요청 취소를 위한 AbortSignal */
+    signal?: AbortSignal;
+    /** 문제 포함 조회 여부 */
+    includeQuestions?: boolean;
+  },
 ): Promise<UnitTreeNode[]> {
   try {
+    const queryParams = new URLSearchParams();
+    
+    if (options?.includeQuestions) {
+      queryParams.append("includeQuestions", "true");
+    }
+    
+    const url = queryParams.toString() 
+      ? `/api/units/grade/${grade}?${queryParams.toString()}`
+      : `/api/units/grade/${grade}`;
+
     const response = await authApiClient.request<ApiResponse<UnitTreeNode[]>>({
       method: "GET",
-      url: `/api/units/grade/${grade}`,
+      url,
       signal: options?.signal,
     });
 

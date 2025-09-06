@@ -5,3 +5,5 @@
  */
 
 export { RecentExamCard } from "./RecentExamCard";
+export { ExamResultCard } from "./ExamResultCard";
+export { RecentSubmission } from "./RecentSubmission";

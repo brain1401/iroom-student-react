@@ -23,7 +23,7 @@ export type StudentAuthRequest = {
   /** 생년월일 (YYYY-MM-DD 형식) */
   birthDate: string;
   /** 전화번호 (하이픈 포함) */
-  phoneNumber: string;
+  phone: string;
 };
 
 /**
