@@ -23,39 +23,15 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { FileText, Plus, Save } from "lucide-react";
 import type { ExamSheetFormData } from "./types";
 import type { UnitTreeNode } from "@/api/common/server-types";
+import { extractSelectedUnits } from "@/utils/exam-management";
 
-interface ExamSheetFormCardProps {
+type ExamSheetFormCardProps = {
   /** 폼 데이터 */
   formData: ExamSheetFormData;
   /** 폼 데이터 변경 핸들러 */
   onFormDataChange: (data: ExamSheetFormData) => void;
   /** 단원 트리 데이터 (선택된 단원 정보 표시용) */
   unitsTree: UnitTreeNode[];
-}
-
-/**
- * 선택된 단원들을 평면화하여 정보 추출
- */
-function extractSelectedUnits(
-  nodes: UnitTreeNode[], 
-  selectedIds: string[]
-): UnitTreeNode[] {
-  const result: UnitTreeNode[] = [];
-  const selectedSet = new Set(selectedIds);
-
-  const traverse = (nodeList: UnitTreeNode[]) => {
-    for (const node of nodeList) {
-      if (node.type === "UNIT" && selectedSet.has(node.id)) {
-        result.push(node);
-      }
-      if (node.children) {
-        traverse(node.children);
-      }
-    }
-  };
-
-  traverse(nodes);
-  return result;
 }
 
 /**
@@ -254,7 +230,7 @@ export function ExamSheetFormCard({
           {selectedUnits.length > 0 ? (
             <div className="space-y-2">
               <div className="flex flex-wrap gap-2">
-                {selectedUnits.map((unit) => (
+                {selectedUnits.map((unit: UnitTreeNode) => (
                   <Badge key={unit.id} variant="outline" className="text-xs">
                     {unit.name}
                     {unit.grade && (

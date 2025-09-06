@@ -54,7 +54,7 @@ export type LoadingState = "idle" | "loading" | "success" | "error";
  */
 export type UnitsTreeOptions = {
   /** 문제 포함 여부 */
-  includeQuestions: boolean;
+  shouldIncludeQuestions: boolean;
   /** 학년 필터 */
   grade?: number;
   /** 로딩 스피너 표시 여부 */

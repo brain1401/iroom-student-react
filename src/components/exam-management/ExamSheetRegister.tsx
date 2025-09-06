@@ -39,7 +39,7 @@ import type { ExamSheetFormData, UnitsTreeOptions } from "./types";
 export function ExamSheetRegister() {
   // 로컬 상태 관리
   const [selectedGrade, setSelectedGrade] = useState<number>(1);
-  const [includeQuestions, setIncludeQuestions] = useState<boolean>(true);
+  const [shouldIncludeQuestions, setShouldIncludeQuestions] = useState<boolean>(true);
   const [formData, setFormData] = useState<ExamSheetFormData>({
     examName: "",
     grade: 1,
@@ -65,7 +65,7 @@ export function ExamSheetRegister() {
     isFetching: isUnitsFetching,
     refetch: refetchUnits,
   } = useQuery({
-    queryKey: ["units", "tree", { grade: selectedGrade, includeQuestions }],
+    queryKey: ["units", "tree", { grade: selectedGrade, shouldIncludeQuestions }],
     queryFn: () => {
       return selectedGrade 
         ? getUnitsByGrade(selectedGrade)
@@ -100,7 +100,7 @@ export function ExamSheetRegister() {
    * @param include 문제 포함 여부
    */
   const handleIncludeQuestionsChange = useCallback((include: boolean) => {
-    setIncludeQuestions(include);
+    setShouldIncludeQuestions(include);
   }, []);
 
   /**
@@ -170,11 +170,11 @@ export function ExamSheetRegister() {
               <div className="flex items-center space-x-2">
                 <Switch
                   id="include-questions"
-                  checked={includeQuestions}
+                  checked={shouldIncludeQuestions}
                   onCheckedChange={handleIncludeQuestionsChange}
                 />
                 <span className="text-sm text-muted-foreground">
-                  {includeQuestions ? "문제 수 표시" : "단원만 표시"}
+                  {shouldIncludeQuestions ? "문제 수 표시" : "단원만 표시"}
                 </span>
               </div>
             </div>
@@ -199,13 +199,13 @@ export function ExamSheetRegister() {
           <CardTitle className="text-lg">단원 선택</CardTitle>
           <p className="text-sm text-muted-foreground">
             시험지에 포함할 단원들을 선택하세요
-            {includeQuestions && " (문제 수 포함 조회 중)"}
+            {shouldIncludeQuestions && " (문제 수 포함 조회 중)"}
           </p>
         </CardHeader>
         <CardContent>
           {isUnitsLoading ? (
             <UnitsTreeLoadingSpinner 
-              includeQuestions={includeQuestions}
+              shouldIncludeQuestions={shouldIncludeQuestions}
               grade={selectedGrade}
             />
           ) : isUnitsError ? (
@@ -227,7 +227,7 @@ export function ExamSheetRegister() {
               data={unitsTree || []}
               selectedUnitIds={formData.unitSelection.selectedUnitIds}
               onSelectionChange={handleUnitSelectionChange}
-              includeQuestions={includeQuestions}
+              shouldIncludeQuestions={shouldIncludeQuestions}
             />
           )}
         </CardContent>

@@ -249,9 +249,9 @@ function RecentExamSection() {
         </header>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
           {/* 로딩 스켈레톤 */}
-          {Array.from({ length: 6 }).map((_, index) => (
+          {Array.from({ length: 6 }, (_, index) => `skeleton-${index}-${Date.now()}`).map((skeletonKey) => (
             <div
-              key={index}
+              key={skeletonKey}
               className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-lg h-48"
             />
           ))}

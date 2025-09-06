@@ -7,7 +7,7 @@
 import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { loggedInStudentAtom } from "./auth";
-import { recentSubmissionsQueryOptions } from "@/api/student";
+import { getRecentSubmissions } from "@/api/student";
 import type { RecentSubmissionsParams } from "@/api/student";
 import type {
   RecentSubmissionListResponse,
@@ -90,17 +90,20 @@ export const studentRecentSubmissionsParamsAtom = atom((get) => {
 export const studentRecentSubmissionsQueryAtom = atomWithQuery((get) => {
   const params = get(studentRecentSubmissionsParamsAtom);
 
-  // 로그인되지 않은 경우 비활성화된 쿼리 반환
-  if (!params) {
-    return {
-      queryKey: ["student", "recent-submissions", "disabled"],
-      queryFn: () => Promise.resolve({ recentSubmissions: [], totalCount: 0 }),
-      enabled: false,
-    };
-  }
-
-  // 활성화된 쿼리 옵션 반환
-  return recentSubmissionsQueryOptions(params);
+  return {
+    queryKey: ["student", "recent-submissions", params?.name || "disabled"],
+    queryFn: async () => {
+      if (!params) {
+        return { recentSubmissions: [], totalCount: 0 };
+      }
+      console.log(`[StudentSubmissions] 최근 제출 내역 요청:`, params.name);
+      return await getRecentSubmissions(params);
+    },
+    enabled: !!params,
+    staleTime: 2 * 60 * 1000,  // 2분간 fresh
+    gcTime: 10 * 60 * 1000,    // 10분간 캐시 유지
+    retry: 1,
+  };
 });
 
 /**
@@ -136,16 +139,26 @@ export const studentRecentSubmissionsDataAtom = atom((get) => {
   // 쿼리 결과 처리
   const { data, isPending, isError, error } = queryResult;
 
-  // data가 RecentSubmissionListResponse 타입임을 명시
-  const submissionData = data;
+  // 데이터 안전성 체크
+  if (isPending || isError || !data) {
+    return {
+      recentSubmissions: [],
+      totalCount: 0,
+      isPending,
+      isError,
+      error,
+      isEmpty: true,
+      isLoggedIn: true,
+    };
+  }
 
   return {
-    recentSubmissions: submissionData?.recentSubmissions || [],
-    totalCount: submissionData?.totalCount || 0,
+    recentSubmissions: data.recentSubmissions || [],
+    totalCount: data.totalCount || 0,
     isPending,
     isError,
     error,
-    isEmpty: !submissionData?.recentSubmissions?.length,
+    isEmpty: !data.recentSubmissions?.length,
     isLoggedIn: true,
   };
 });

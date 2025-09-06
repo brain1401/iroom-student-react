@@ -154,7 +154,7 @@ function DefaultDetails({
     // TODO: Update to correct submission route
     console.log("Navigate to submission for:", title);
     // navigate({
-    //   to: "/submission/$examId",
+    //   to: "/submit/$examId",
     //   params: { examId: examId.toString() }
     // });
   };

@@ -15,6 +15,10 @@ import type {
   CategoryDistribution,
   SubcategoryDistribution,
   UnitDetail,
+  ApiResponse,
+  QuestionData,
+  StudentAnswerSubmitRequest,
+  StudentAnswerDraftRequest,
 } from "@/api/common/server-types";
 
 /**
@@ -527,7 +531,7 @@ export function isValidExamSheetId(examSheetId: string): boolean {
 export async function getQuestionsByExamSheetId(
   examSheetId: string,
   options?: { signal?: AbortSignal },
-): Promise<import("@/api/common/server-types").ApiResponse<import("@/api/common/server-types").QuestionData[]>> {
+): Promise<ApiResponse<QuestionData[]>> {
   if (!isValidExamSheetId(examSheetId)) {
     throw new Error("유효하지 않은 시험지 ID입니다");
   }
@@ -549,9 +553,9 @@ export async function getQuestionsByExamSheetId(
  * @returns 제출 결과
  */
 export async function submitStudentAnswer(
-  request: import("@/api/common/server-types").StudentAnswerSubmitRequest,
+  request: StudentAnswerSubmitRequest,
   options?: { signal?: AbortSignal },
-): Promise<import("@/api/common/server-types").ApiResponse<boolean>> {
+): Promise<ApiResponse<boolean>> {
   if (!request.examSheetId || !request.answers || request.answers.length === 0) {
     throw new Error("유효하지 않은 제출 데이터입니다");
   }
@@ -575,9 +579,9 @@ export async function submitStudentAnswer(
  * @returns 저장 결과
  */
 export async function saveStudentAnswerDraft(
-  request: import("@/api/common/server-types").StudentAnswerDraftRequest,
+  request: StudentAnswerDraftRequest,
   options?: { signal?: AbortSignal },
-): Promise<import("@/api/common/server-types").ApiResponse<boolean>> {
+): Promise<ApiResponse<boolean>> {
   if (!request.examSheetId || !request.questionId) {
     throw new Error("유효하지 않은 저장 데이터입니다");
   }

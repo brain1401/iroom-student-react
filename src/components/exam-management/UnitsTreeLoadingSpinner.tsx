@@ -46,9 +46,9 @@ const LOADING_STEPS = [
   },
 ] as const;
 
-interface UnitsTreeLoadingSpinnerProps {
+type UnitsTreeLoadingSpinnerProps = {
   /** 문제 포함 조회 여부 */
-  includeQuestions: boolean;
+  shouldIncludeQuestions: boolean;
   /** 선택된 학년 */
   grade: number;
 }
@@ -58,7 +58,7 @@ interface UnitsTreeLoadingSpinnerProps {
  * @description 단원 트리 조회 중 사용자에게 진행 상황을 시각적으로 표시
  */
 export function UnitsTreeLoadingSpinner({ 
-  includeQuestions, 
+  shouldIncludeQuestions, 
   grade 
 }: UnitsTreeLoadingSpinnerProps) {
   const [currentStep, setCurrentStep] = useState(0);
@@ -67,11 +67,11 @@ export function UnitsTreeLoadingSpinner({
 
   // 예상 총 소요 시간 계산
   const totalDuration = LOADING_STEPS.reduce((sum, step) => sum + step.duration, 0);
-  const estimatedTime = includeQuestions ? Math.round(totalDuration / 1000) : 2;
+  const estimatedTime = shouldIncludeQuestions ? Math.round(totalDuration / 1000) : 2;
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
-    let startTime = Date.now();
+    const startTime = Date.now();
 
     const runStep = (stepIndex: number) => {
       if (stepIndex >= LOADING_STEPS.length) return;
@@ -99,7 +99,7 @@ export function UnitsTreeLoadingSpinner({
       clearTimeout(timeoutId);
       clearInterval(timeInterval);
     };
-  }, [includeQuestions, grade]);
+  }, [shouldIncludeQuestions, grade]);
 
   const currentStepData = LOADING_STEPS[currentStep] || LOADING_STEPS[0];
 
@@ -127,7 +127,7 @@ export function UnitsTreeLoadingSpinner({
           <div className="space-y-2">
             <div className="flex items-center justify-center space-x-2">
               <h3 className="text-xl font-semibold">{currentStepData.label}</h3>
-              {includeQuestions && (
+              {shouldIncludeQuestions && (
                 <Badge variant="secondary">문제 수 포함</Badge>
               )}
             </div>
@@ -166,7 +166,7 @@ export function UnitsTreeLoadingSpinner({
           </div>
 
           {/* 추가 안내 메시지 */}
-          {includeQuestions && (
+          {shouldIncludeQuestions && (
             <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
               <div className="flex items-start space-x-2">
                 <div className="flex-shrink-0 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center mt-0.5">

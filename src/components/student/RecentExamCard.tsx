@@ -22,7 +22,7 @@ type RecentExamCardProps = {
  * @param examType 시험 유형
  * @returns 한글 시험 유형
  */
-function getExamTypeLabel(examType: RecentSubmission["examType"]): string {
+function GetExamTypeLabel(examType: RecentSubmission["examType"]): string {
   const typeMap = {
     mock: "모의고사",
     chapter: "단원별",
@@ -38,7 +38,7 @@ function getExamTypeLabel(examType: RecentSubmission["examType"]): string {
  * @param examType 시험 유형
  * @returns Badge variant
  */
-function getExamTypeBadgeVariant(examType: RecentSubmission["examType"]) {
+function GetExamTypeBadgeVariant(examType: RecentSubmission["examType"]) {
   const variantMap = {
     mock: "default" as const,
     chapter: "secondary" as const,
@@ -54,7 +54,7 @@ function getExamTypeBadgeVariant(examType: RecentSubmission["examType"]) {
  * @param submittedAt ISO 날짜 문자열
  * @returns 상대적 시간 문자열
  */
-function formatSubmittedAt(submittedAt: string): string {
+function FormatSubmittedAt(submittedAt: string): string {
   const submitted = new Date(submittedAt);
   const now = new Date();
   const diffInMs = now.getTime() - submitted.getTime();
@@ -81,9 +81,9 @@ function formatSubmittedAt(submittedAt: string): string {
  * 최근 응시 시험 카드 컴포넌트
  */
 export function RecentExamCard({ submission, className }: RecentExamCardProps) {
-  const examTypeLabel = getExamTypeLabel(submission.examType);
-  const badgeVariant = getExamTypeBadgeVariant(submission.examType);
-  const submittedAtLabel = formatSubmittedAt(submission.submittedAt);
+  const examTypeLabel = GetExamTypeLabel(submission.examType);
+  const badgeVariant = GetExamTypeBadgeVariant(submission.examType);
+  const submittedAtLabel = FormatSubmittedAt(submission.submittedAt);
 
   return (
     <Link

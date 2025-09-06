@@ -4,7 +4,7 @@ import type {
   InternalAxiosRequestConfig,
 } from "axios";
 import { isAxiosError } from "axios";
-import { ApiError } from "./baseClient";
+import { ApiError } from "./apiClient";
 import type { ApiResponse } from "@/api/common/types";
 import { isErrorResponse } from "@/api/common/types";
 

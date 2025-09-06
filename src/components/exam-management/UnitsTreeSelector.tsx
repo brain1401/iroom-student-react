@@ -5,7 +5,7 @@
  * 주요 기능:
  * - 트리 구조 표시 (대분류 → 중분류 → 세부단원)
  * - 다중 선택 지원
- * - 문제 수 표시 (includeQuestions 옵션)
+ * - 문제 수 표시 (shouldIncludeQuestions 옵션)
  * - 검색 및 필터링
  * - 전체 선택/해제
  */
@@ -21,7 +21,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { ChevronRight, ChevronDown, Search, CheckSquare, Square } from "lucide-react";
 import type { UnitTreeNode } from "@/api/common/server-types";
 
-interface UnitsTreeSelectorProps {
+type UnitsTreeSelectorProps = {
   /** 단원 트리 데이터 */
   data: UnitTreeNode[];
   /** 선택된 단원 ID 배열 */
@@ -29,10 +29,10 @@ interface UnitsTreeSelectorProps {
   /** 선택 변경 핸들러 */
   onSelectionChange: (selectedIds: string[]) => void;
   /** 문제 수 표시 여부 */
-  includeQuestions: boolean;
+  shouldIncludeQuestions: boolean;
 }
 
-interface TreeNodeProps {
+type TreeNodeProps = {
   /** 노드 데이터 */
   node: UnitTreeNode;
   /** 현재 뎁스 (들여쓰기용) */
@@ -42,7 +42,7 @@ interface TreeNodeProps {
   /** 선택 토글 핸들러 */
   onToggle: (nodeId: string) => void;
   /** 문제 수 표시 여부 */
-  includeQuestions: boolean;
+  shouldIncludeQuestions: boolean;
   /** 검색어 */
   searchTerm: string;
 }
@@ -56,7 +56,7 @@ function TreeNode({
   depth, 
   selectedIds, 
   onToggle, 
-  includeQuestions, 
+  shouldIncludeQuestions, 
   searchTerm 
 }: TreeNodeProps) {
   const [isOpen, setIsOpen] = useState(depth < 2); // 처음 2단계까지 기본 열림
@@ -148,8 +148,8 @@ function TreeNode({
             {node.type === "UNIT" && "세부단원"}
           </Badge>
 
-          {/* 문제 수 배지 (includeQuestions가 true이고 실제 문제가 있을 때) */}
-          {includeQuestions && node.type === "UNIT" && (
+          {/* 문제 수 배지 (shouldIncludeQuestions가 true이고 실제 문제가 있을 때) */}
+          {shouldIncludeQuestions && node.type === "UNIT" && (
             <Badge variant="secondary" className="text-xs">
               {/* TODO: 실제 문제 수 표시 로직 추가 */}
               문제 미구현
@@ -177,7 +177,7 @@ function TreeNode({
                   depth={depth + 1}
                   selectedIds={selectedIds}
                   onToggle={onToggle}
-                  includeQuestions={includeQuestions}
+                  shouldIncludeQuestions={shouldIncludeQuestions}
                   searchTerm={searchTerm}
                 />
               ))}
@@ -196,7 +196,7 @@ export function UnitsTreeSelector({
   data, 
   selectedUnitIds, 
   onSelectionChange, 
-  includeQuestions 
+  shouldIncludeQuestions 
 }: UnitsTreeSelectorProps) {
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -301,7 +301,7 @@ export function UnitsTreeSelector({
           {selectedUnitIds.length} / {totalUnits} 선택
         </Badge>
         
-        {includeQuestions && (
+        {shouldIncludeQuestions && (
           <Badge variant="secondary">
             문제 수 표시 중
           </Badge>
@@ -331,7 +331,7 @@ export function UnitsTreeSelector({
                   depth={0}
                   selectedIds={selectedIds}
                   onToggle={handleToggle}
-                  includeQuestions={includeQuestions}
+                  shouldIncludeQuestions={shouldIncludeQuestions}
                   searchTerm={searchTerm}
                 />
               ))}

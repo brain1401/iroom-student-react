@@ -11,7 +11,7 @@ export const Route = createFileRoute("/submit/$examId/scan/")({
 
 // 이전 페이지에서 넘어온 사용자가 보게 될 페이지의 주소
 function RouteComponent() {
-  const { examId } = useParams({ from: "/submission/$examId/scan/" });
+  const { examId } = useParams({ from: "/submit/$examId/scan/" });
 
   /** 현재 활성 탭 상태 (객관식 or 주관식) 저장  기본값은 객관식 */
   const [activeTab, setActiveTab] = useState<"objective" | "subjective">(
@@ -87,7 +87,7 @@ function RouteComponent() {
           <SubjectiveTab
             onNext={() => {
               // 텍스트 인식 페이지로 이동
-              window.location.href = `/submission/${examId}/text-recongnition`;
+              window.location.href = `/submit/${examId}/text-recongnition`;
             }}
           />
         </div>
