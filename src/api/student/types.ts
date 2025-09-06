@@ -136,3 +136,170 @@ export type RecentSubmissionsParams = {
   /** 페이지 크기 (기본값: 10, 최대값: 100) */
   size?: number;
 } & StudentAuthRequest;
+
+/**
+ * 단원 정보 타입
+ * @description 시험 문제의 단원 정보
+ */
+export type UnitInfo = {
+  /** 단원 고유 식별자 */
+  unitId: string;
+  /** 단원명 */
+  unitName: string;
+  /** 단원 코드 */
+  unitCode: string;
+  /** 중분류명 */
+  subcategoryName: string;
+  /** 대분류명 */
+  categoryName: string;
+};
+
+/**
+ * 문제별 답안 및 채점 결과 타입
+ * @description API 문서의 QuestionAnswer에 해당하는 타입
+ */
+export type QuestionAnswer = {
+  /** 문제 ID */
+  questionId: string;
+  /** 문제 순서 */
+  questionOrder: number;
+  /** 문제 내용 (요약) */
+  questionSummary: string;
+  /** 문제 유형 (주관식/객관식) */
+  questionType: string;
+  /** 문제 난이도 */
+  difficulty: string;
+  /** 배점 */
+  points: number;
+  /** 학생 답안 */
+  studentAnswer: string;
+  /** 정답 */
+  correctAnswer: string;
+  /** 획득 점수 */
+  earnedScore: number;
+  /** 정답 여부 */
+  isCorrect: boolean;
+  /** 문제별 피드백 */
+  feedback: string;
+  /** 관련 단원 정보 */
+  unitInfo: UnitInfo;
+};
+
+/**
+ * 시험 상세 결과 타입
+ * @description API 문서의 ExamDetailResultDto에 해당하는 타입
+ */
+export type ExamDetailResult = {
+  /** 시험명 */
+  examName: string;
+  /** 채점 날짜 */
+  gradedAt: string;
+  /** 총 문제 문항 수 */
+  totalQuestions: number;
+  /** 객관식 문제 수 */
+  objectiveCount: number;
+  /** 주관식 문제 수 */
+  subjectiveCount: number;
+  /** 총 점수 */
+  totalScore: number;
+  /** 단원 정보 목록 */
+  units: UnitInfo[];
+  /** 문제별 질문과 답안 목록 */
+  questionAnswers: QuestionAnswer[];
+};
+
+/**
+ * 시험 상세 결과 조회 파라미터 타입
+ * @description /student/exam-detail/{examId} API 요청 파라미터
+ */
+export type ExamDetailParams = {
+  /** 시험 고유 식별자 */
+  examId: string;
+} & StudentAuthRequest;
+/**
+ * 시험 문제 정보 타입 (새 API 응답)
+ * @description /exams/{examId}/questions API의 문제 정보 구조
+ */
+export type Question = {
+  /** 문제 고유 ID */
+  questionId: string;
+  /** 문제 순서 번호 */
+  seqNo: number;
+  /** 문제 유형 ("MULTIPLE_CHOICE" | "SUBJECTIVE") */
+  questionType: "MULTIPLE_CHOICE" | "SUBJECTIVE";
+  /** 문제 내용 */
+  questionText: string;
+  /** 배점 */
+  points: number;
+  /** 난이도 */
+  difficulty: string;
+  /** 선택지 (객관식인 경우) */
+  choices: Record<string, string>;
+  /** 이미지 URL 목록 */
+  imageUrls: string[];
+  /** 이미지 포함 여부 */
+  hasImage: boolean;
+  /** 선택 방법 */
+  selectionMethod: "MANUAL" | "RANDOM";
+  /** 무작위 선택 여부 */
+  randomlySelected: boolean;
+  /** 객관식 여부 */
+  multipleChoice: boolean;
+  /** 주관식 여부 */
+  subjective: boolean;
+};
+
+/**
+ * 문제 유형별 비율 타입
+ * @description 객관식/주관식 문제 비율 정보
+ */
+export type QuestionTypeRatio = {
+  /** 객관식 비율 (0.0 ~ 1.0) */
+  multipleChoiceRatio: number;
+  /** 주관식 비율 (0.0 ~ 1.0) */
+  subjectiveRatio: number;
+};
+
+/**
+ * 시험 요약 정보 타입
+ * @description 시험 기본 정보 요약
+ */
+export type ExamSummary = {
+  /** 시험명 */
+  examName: string;
+  /** 학년 */
+  grade: number;
+  /** 총 문제 수 */
+  totalQuestions: number;
+  /** 총 배점 */
+  totalPoints: number;
+  /** 문제 구성 설명 */
+  questionComposition: string;
+};
+
+/**
+ * 시험 문제 조회 API 응답 데이터 타입
+ * @description GET /exams/{examId}/questions API 응답의 data 필드
+ */
+export type ExamQuestionsData = {
+  /** 시험 ID */
+  examId: string;
+  /** 시험명 */
+  examName: string;
+  /** 학년 */
+  grade: number;
+  /** 총 문제 수 */
+  totalQuestions: number;
+  /** 객관식 문제 수 */
+  multipleChoiceCount: number;
+  /** 주관식 문제 수 */
+  subjectiveCount: number;
+  /** 총 배점 */
+  totalPoints: number;
+  /** 문제 목록 */
+  questions: Question[];
+  /** 문제 유형별 비율 */
+  questionTypeRatio: QuestionTypeRatio;
+  /** 시험 요약 정보 */
+  examSummary: ExamSummary;
+};

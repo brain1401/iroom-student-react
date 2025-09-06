@@ -5,30 +5,10 @@
  */
 
 // 타입 정의
-export type {
-  StudentInfo,
-  StudentInfoDto,
-  StudentProfile,
-  RecentSubmission,
-  RecentSubmissionListResponse,
-  UpsertStudentResponse,
-  StudentAuthRequest,
-  RecentSubmissionsParams,
-} from "./types";
+export type * from "./types";
 
 // API 함수들
-export {
-  upsertStudent,
-  getRecentSubmissions,
-  getStudentInfo,
-} from "./api";
+export * from "./api";
 
 // React Query 옵션들
-export {
-  studentKeys,
-  studentProfileUpsertQueryOptions,
-  studentRecentSubmissionsQueryOptions,
-  studentInfoQueryOptions,
-  conditionalStudentProfileQueryOptions,
-  conditionalRecentSubmissionsQueryOptions,
-} from "./query";
+export * from "./query";
