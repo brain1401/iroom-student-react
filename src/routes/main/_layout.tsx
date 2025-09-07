@@ -50,7 +50,7 @@ function MainLayout() {
       <StudentHeader
         student={{
           studentId: "2024001",
-          name: import.meta.env.VITE_DEFAULT_USER_NAME || "김체리",
+          name: import.meta.env.VITE_DEFAULT_USER_NAME || "정보 없음",
           birthDate: "2006-03-15",
           phoneNumber: "010-1234-5678",
         }}

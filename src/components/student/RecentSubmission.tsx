@@ -85,7 +85,7 @@ export function RecentSubmission({
         <CardContent className="p-8 text-center">
           <div className="text-main-700 dark:text-gray-400">
             <div className="text-4xl mb-2">📝</div>
-            <p className="text-lg font-medium">최근 제출한 시험이 없습니다</p>
+            <p className="text-lg font-medium">정보 없음습니다</p>
             <p className="text-sm mt-1">첫 번째 시험을 응시해보세요!</p>
           </div>
         </CardContent>
