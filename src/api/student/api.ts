@@ -53,14 +53,29 @@ export async function getRecentSubmissions(
   const { page = 0, size = 10, ...authData } = params;
 
   const response = await authApiClient.post<
-    ApiResponse<RecentSubmissionListResponse>
+    ApiResponse<any>
   >("/api/student/recent-submissions", {
     ...authData,
     page,
     size,
   });
 
-  return extractApiData(response.data);
+  const data = extractApiData(response.data);
+  
+  // 디버깅: API 응답 확인
+  console.log('🔍 [Student API] Raw response data:', data);
+  
+  // 백엔드 응답 구조를 프론트엔드 타입에 맞게 변환
+  // 백엔드: { content: [], totalElements: number }
+  // 프론트엔드: { recentSubmissions: [], totalCount: number }
+  const result = {
+    recentSubmissions: data.content || [],
+    totalCount: data.totalElements || 0,
+  };
+  
+  console.log('📤 [Student API] Formatted result:', result);
+  
+  return result;
 }
 
 /**

@@ -15,8 +15,6 @@
 
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useSetAtom, useAtomValue } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
@@ -249,7 +247,10 @@ function RecentExamSection() {
         </header>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
           {/* 로딩 스켈레톤 */}
-          {Array.from({ length: 6 }, (_, index) => `skeleton-${index}-${Date.now()}`).map((skeletonKey) => (
+          {Array.from(
+            { length: 6 },
+            (_, index) => `skeleton-${index}-${Date.now()}`,
+          ).map((skeletonKey) => (
             <div
               key={skeletonKey}
               className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-lg h-48"
