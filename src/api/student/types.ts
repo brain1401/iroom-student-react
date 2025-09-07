@@ -89,29 +89,43 @@ export type StudentProfile = {
  * @description 학생이 최근에 제출한 시험의 기본 정보
  */
 export type RecentSubmission = {
-  /** 시험 고유 ID */
-  examId: string;
   /** 시험명 */
-  examTitle: string;
+  examName: string;
+  /** 제출일시 */
+  submittedAt: string;
+  /** 시험 설명 */
+  content: string;
   /** 총 문항 수 */
   totalQuestions: number;
-  /** 단원명 */
-  chapterName: string;
-  /** 제출일 */
-  submittedAt: string;
-  /** 시험 유형 */
-  examType: "mock" | "chapter" | "comprehensive" | "final";
 };
 
 /**
  * 최근 제출 시험 목록 응답 타입
- * @description 최근 제출 시험 목록 API 응답 구조
+ * @description 최근 제출 시험 목록 API 응답 구조 (페이지네이션 포함)
  */
 export type RecentSubmissionListResponse = {
   /** 최근 제출 시험 목록 */
-  recentSubmissions: RecentSubmission[];
+  content: RecentSubmission[];
+  /** 페이지 정보 */
+  pageable: PageableInfo;
+  /** 마지막 페이지 여부 */
+  last: boolean;
   /** 전체 제출 시험 수 */
-  totalCount: number;
+  totalElements: number;
+  /** 전체 페이지 수 */
+  totalPages: number;
+  /** 첫 페이지 여부 */
+  first: boolean;
+  /** 현재 페이지 크기 */
+  size: number;
+  /** 현재 페이지 번호 */
+  number: number;
+  /** 정렬 정보 */
+  sort: PageSort;
+  /** 현재 페이지 항목 수 */
+  numberOfElements: number;
+  /** 빈 페이지 여부 */
+  empty: boolean;
 };
 /**
  * 학생 3요소 인증 요청 타입
@@ -303,3 +317,92 @@ export type ExamQuestionsData = {
   /** 시험 요약 정보 */
   examSummary: ExamSummary;
 };
+
+/**
+ * 페이지 정렬 정보 타입
+ * @description 페이지네이션 정렬 상태
+ */
+export type PageSort = {
+  /** 정렬 여부 */
+  sorted: boolean;
+  /** 정렬 정보 없음 */
+  empty: boolean;
+  /** 정렬되지 않음 */
+  unsorted: boolean;
+};
+
+/**
+ * 페이지 정보 타입
+ * @description 페이지네이션 메타데이터
+ */
+export type PageableInfo = {
+  /** 페이지 번호 (0부터 시작) */
+  pageNumber: number;
+  /** 페이지 크기 */
+  pageSize: number;
+  /** 정렬 정보 */
+  sort: PageSort;
+  /** 오프셋 */
+  offset: number;
+  /** 페이징 여부 */
+  paged: boolean;
+  /** 페이징 안함 여부 */
+  unpaged: boolean;
+};
+
+/**
+ * 시험 이력 항목 타입
+ * @description 학생이 응시한 개별 시험 정보
+ */
+export type ExamHistoryItem = {
+  /** 시험 고유 ID (UUID) */
+  examId: string;
+  /** 시험명 */
+  examName: string;
+  /** 응시일시 */
+  submittedAt: string;
+  /** 총 문제 수 */
+  totalQuestions: number;
+  /** 총점 (채점 안됨 시 null) */
+  totalScore: number | null;
+};
+
+/**
+ * 시험 이력 응답 타입
+ * @description POST /api/student/exam-history API 응답 구조
+ */
+export type ExamHistoryResponse = {
+  /** 시험 이력 목록 */
+  content: ExamHistoryItem[];
+  /** 페이지 정보 */
+  pageable: PageableInfo;
+  /** 마지막 페이지 여부 */
+  last: boolean;
+  /** 전체 시험 개수 */
+  totalElements: number;
+  /** 전체 페이지 수 */
+  totalPages: number;
+  /** 첫 페이지 여부 */
+  first: boolean;
+  /** 현재 페이지 크기 */
+  size: number;
+  /** 현재 페이지 번호 */
+  number: number;
+  /** 정렬 정보 */
+  sort: PageSort;
+  /** 현재 페이지 항목 수 */
+  numberOfElements: number;
+  /** 빈 페이지 여부 */
+  empty: boolean;
+};
+
+/**
+ * 시험 이력 조회 파라미터 타입
+ * @description /api/student/exam-history API 요청 파라미터
+ */
+export type ExamHistoryParams = {
+  /** 페이지 번호 (0부터 시작, 기본값: 0) */
+  page?: number;
+  /** 페이지 크기 (기본값: 10, 최대: 100) */
+  size?: number;
+} & StudentAuthRequest;

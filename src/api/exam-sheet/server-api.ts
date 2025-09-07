@@ -26,7 +26,7 @@ import type {
  * @description 실제 백엔드 서버와 통신하는 HTTP 클라이언트
  */
 const examSheetApiClient = baseApiClient.create({
-  baseURL: import.meta.env.VITE_BACKEND_API_URL || "http://100.82.50.108:3055",
+  baseURL: import.meta.env.VITE_BACKEND_API_URL || "http://localhost:3055",
   timeout: 20000, // 문제지 데이터는 매우 상세하므로 타임아웃을 더 길게 설정
 });
 

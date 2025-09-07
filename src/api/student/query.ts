@@ -3,7 +3,7 @@
  * @description 학생 관련 API 쿼리 설정과 캐시 키 관리
  */
 
-import { upsertStudent, getRecentSubmissions, getStudentInfo, getExamDetail, getExamQuestions } from "./api";
+import { upsertStudent, getRecentSubmissions, getStudentInfo, getExamDetail, getExamQuestions, getExamHistory } from "./api";
 import type {
   StudentAuthRequest,
   RecentSubmissionsParams,
@@ -13,6 +13,8 @@ import type {
   ExamDetailParams,
   ExamDetailResult,
   ExamQuestionsData,
+  ExamHistoryParams,
+  ExamHistoryResponse,
 } from "./types";
 
 /**
@@ -276,6 +278,46 @@ export const conditionalExamQuestionsQueryOptions = (examId: string | null) => {
 
   return {
     ...examQuestionsQueryOptions(examId),
+    enabled: true,
+  };
+};
+/**
+ * 시험 이력 조회 쿼리 옵션
+ * @description /api/student/exam-history API를 호출하는 쿼리 설정
+ * 
+ * @param params 인증 정보 및 페이징 파라미터
+ * @returns TanStack Query 옵션 객체
+ */
+export const examHistoryQueryOptions = (params: ExamHistoryParams) => ({
+  queryKey: ["student", "exam-history", params],
+  queryFn: async (): Promise<ExamHistoryResponse> => {
+    console.log(`[ExamHistory] 시험 이력 조회 요청: ${params.name} (page: ${params.page || 0})`);
+    return await getExamHistory(params);
+  },
+  staleTime: 5 * 60 * 1000,  // 5분간 fresh
+  gcTime: 15 * 60 * 1000,    // 15분간 캐시 유지
+  retry: 2,                   // 2회까지 재시도
+  retryDelay: (attemptIndex: number) => Math.min(1000 * 2 ** attemptIndex, 5000),
+});
+
+/**
+ * 조건부 시험 이력 쿼리 옵션
+ * @description 로그인 상태에 따라 활성화/비활성화되는 쿼리 설정
+ * 
+ * @param params 쿼리 파라미터 (null이면 비활성화)
+ * @returns TanStack Query 옵션 객체
+ */
+export const conditionalExamHistoryQueryOptions = (params: ExamHistoryParams | null) => {
+  if (!params) {
+    return {
+      queryKey: ["student", "exam-history", "disabled"],
+      queryFn: () => Promise.resolve({} as ExamHistoryResponse),
+      enabled: false,
+    };
+  }
+
+  return {
+    ...examHistoryQueryOptions(params),
     enabled: true,
   };
 };

@@ -4,7 +4,6 @@
  * @version 2025-09-05
  */
 
-import { Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -18,43 +17,11 @@ type RecentExamCardProps = {
 };
 
 /**
- * 시험 유형을 한글로 변환하는 함수
- * @param examType 시험 유형
- * @returns 한글 시험 유형
- */
-function GetExamTypeLabel(examType: RecentSubmission["examType"]): string {
-  const typeMap = {
-    mock: "모의고사",
-    chapter: "단원별",
-    comprehensive: "종합평가",
-    final: "최종평가",
-  } as const;
-
-  return typeMap[examType] || examType;
-}
-
-/**
- * 시험 유형에 따른 배지 variant 반환
- * @param examType 시험 유형
- * @returns Badge variant
- */
-function GetExamTypeBadgeVariant(examType: RecentSubmission["examType"]) {
-  const variantMap = {
-    mock: "default" as const,
-    chapter: "secondary" as const,
-    comprehensive: "outline" as const,
-    final: "destructive" as const,
-  };
-
-  return variantMap[examType] || "secondary";
-}
-
-/**
  * 제출일을 상대적 시간으로 포맷팅
  * @param submittedAt ISO 날짜 문자열
  * @returns 상대적 시간 문자열
  */
-function FormatSubmittedAt(submittedAt: string): string {
+function formatSubmittedAt(submittedAt: string): string {
   const submitted = new Date(submittedAt);
   const now = new Date();
   const diffInMs = now.getTime() - submitted.getTime();
@@ -81,67 +48,66 @@ function FormatSubmittedAt(submittedAt: string): string {
  * 최근 응시 시험 카드 컴포넌트
  */
 export function RecentExamCard({ submission, className }: RecentExamCardProps) {
-  const examTypeLabel = GetExamTypeLabel(submission.examType);
-  const badgeVariant = GetExamTypeBadgeVariant(submission.examType);
-  const submittedAtLabel = FormatSubmittedAt(submission.submittedAt);
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString("ko-KR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   return (
-    <Link
-      to="/main/exam/$examId"
-      params={{ examId: submission.examId }}
-      className="block"
+    <Card
+      className={cn(
+        "group relative overflow-hidden transition-all duration-200",
+        "hover:shadow-lg hover:scale-[1.02]",
+        className,
+      )}
     >
-      <Card
-        className={cn(
-          "h-full transition-all duration-200",
-          "hover:shadow-lg hover:-translate-y-1",
-          "cursor-pointer group",
-          className,
-        )}
-      >
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-gray-900 dark:text-white text-sm leading-tight line-clamp-2 group-hover:text-primary transition-colors">
-                {submission.examTitle}
-              </h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                {submission.chapterName}
-              </p>
-            </div>
-            <Badge variant={badgeVariant} className="text-xs shrink-0">
-              {examTypeLabel}
-            </Badge>
+      {/* 헤더 영역 */}
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="font-semibold text-base line-clamp-2 flex-1">
+            {submission.examName}
+          </h3>
+          <Badge variant="outline" className="shrink-0">
+            {submission.totalQuestions}문제
+          </Badge>
+        </div>
+      </CardHeader>
+
+      {/* 콘텐츠 영역 */}
+      <CardContent className="space-y-3">
+        {/* 시험 설명 */}
+        <p className="text-sm text-muted-foreground line-clamp-2">
+          {submission.content}
+        </p>
+
+        {/* 응시 정보 */}
+        <div className="space-y-2 text-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">응시일</span>
+            <span className="font-medium">{formatDate(submission.submittedAt)}</span>
           </div>
-        </CardHeader>
-
-        <CardContent className="pt-0">
-          <div className="space-y-3">
-            {/* 시험 정보 */}
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600 dark:text-gray-400">문제 수</span>
-              <span className="font-medium text-gray-900 dark:text-white">
-                {submission.totalQuestions}문항
-              </span>
-            </div>
-
-            {/* 제출일 */}
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600 dark:text-gray-400">응시일</span>
-              <span className="font-medium text-gray-900 dark:text-white">
-                {submittedAtLabel}
-              </span>
-            </div>
-
-            {/* 하단 액션 영역 */}
-            <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
-              <div className="text-xs text-gray-500 dark:text-gray-400 group-hover:text-primary transition-colors">
-                결과 확인 →
-              </div>
-            </div>
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">응시시간</span>
+            <span className="font-medium">{formatTime(submission.submittedAt)}</span>
           </div>
-        </CardContent>
-      </Card>
-    </Link>
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">상대시간</span>
+            <span className="font-medium">{formatSubmittedAt(submission.submittedAt)}</span>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

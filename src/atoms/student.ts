@@ -152,15 +152,34 @@ export const studentRecentSubmissionsDataAtom = atom((get) => {
     };
   }
 
-  return {
-    recentSubmissions: data.recentSubmissions || [],
-    totalCount: data.totalCount || 0,
-    isPending,
-    isError,
-    error,
-    isEmpty: !data.recentSubmissions?.length,
-    isLoggedIn: true,
-  };
+  // RecentSubmissionListResponse 타입 체크 (content와 totalElements 필드 존재 여부)
+  const hasPageStructure = 'content' in data && 'totalElements' in data;
+  
+  if (hasPageStructure) {
+    // 새로운 페이지네이션 구조
+    const typedData = data;
+    return {
+      recentSubmissions: typedData.content || [],
+      totalCount: typedData.totalElements || 0,
+      isPending,
+      isError,
+      error,
+      isEmpty: !typedData.content?.length,
+      isLoggedIn: true,
+    };
+  } else {
+    // 이전 구조 (호환성을 위해 유지) - 실제로는 사용되지 않아야 함
+    const oldData = data as { recentSubmissions: RecentSubmission[]; totalCount: number };
+    return {
+      recentSubmissions: oldData.recentSubmissions || [],
+      totalCount: oldData.totalCount || 0,
+      isPending,
+      isError,
+      error,
+      isEmpty: !oldData.recentSubmissions?.length,
+      isLoggedIn: true,
+    };
+  }
 });
 
 /**
@@ -223,20 +242,10 @@ export const studentRecentSubmissionsStatsAtom = atom((get) => {
   if (!recentSubmissions.length) {
     return {
       totalExams: 0,
-      examTypeStats: {},
       lastSubmittedAt: null,
       averageQuestions: 0,
     };
   }
-
-  // 시험 유형별 통계
-  const examTypeStats = recentSubmissions.reduce(
-    (acc: Record<string, number>, submission: RecentSubmission) => {
-      acc[submission.examType] = (acc[submission.examType] || 0) + 1;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
 
   // 평균 문제 수 계산
   const totalQuestions = recentSubmissions.reduce(
@@ -253,7 +262,6 @@ export const studentRecentSubmissionsStatsAtom = atom((get) => {
 
   return {
     totalExams: recentSubmissions.length,
-    examTypeStats,
     lastSubmittedAt,
     averageQuestions,
   };

@@ -13,7 +13,7 @@ import type {
 /**
  * 텍스트 인식 API 엔드포인트
  * @description 백엔드 텍스트 인식 API URL
- * Swagger 문서: http://100.82.50.108:3055/api/swagger-ui/index.html#/%ED%85%8D%EC%8A%A4%ED%8A%B8%20%EC%9D%B8%EC%8B%9D%20API
+ * Swagger 문서: http://localhost:3055/api/swagger-ui/index.html#/%ED%85%8D%EC%8A%A4%ED%8A%B8%20%EC%9D%B8%EC%8B%9D%20API
  *
  * 가능한 엔드포인트들:
  * - /api/ocr/recognize
@@ -21,7 +21,7 @@ import type {
  * - /api/ocr
  * - /api/recognize
  */
-const BASE_API_URL = "http://100.82.50.108:3055";
+const BASE_API_URL = "http://localhost:3055";
 
 /**
  * 가능한 텍스트 인식 API 엔드포인트들
@@ -255,7 +255,7 @@ export async function recognizeText(
     return result;
   } catch (error: any) {
     console.error("[TextRecognition] 모든 엔드포인트 실패 - 상세 정보:", {
-      error: error,
+      error,
       message: error?.message,
       status: error?.response?.status,
       statusText: error?.response?.statusText,
@@ -439,7 +439,7 @@ export function parseAnswersByQuestion(
   console.log(`[TextRecognition] 답안 파싱 완료:`, {
     totalQuestions: questionCount,
     foundAnswers: answers.filter((a) => a).length,
-    answers: answers,
+    answers,
     originalText: text,
   });
 

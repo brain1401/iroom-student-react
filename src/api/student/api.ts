@@ -16,6 +16,8 @@ import type {
   ExamDetailParams,
   ExamDetailResult,
   ExamQuestionsData,
+  ExamHistoryParams,
+  ExamHistoryResponse,
 } from "./types";
 
 /**
@@ -53,29 +55,34 @@ export async function getRecentSubmissions(
   const { page = 0, size = 10, ...authData } = params;
 
   const response = await authApiClient.post<
-    ApiResponse<any>
+    ApiResponse<RecentSubmissionListResponse>
   >("/api/student/recent-submissions", {
     ...authData,
     page,
     size,
   });
 
-  const data = extractApiData(response.data);
-  
-  // 디버깅: API 응답 확인
-  console.log('🔍 [Student API] Raw response data:', data);
-  
-  // 백엔드 응답 구조를 프론트엔드 타입에 맞게 변환
-  // 백엔드: { content: [], totalElements: number }
-  // 프론트엔드: { recentSubmissions: [], totalCount: number }
-  const result = {
-    recentSubmissions: data.content || [],
-    totalCount: data.totalElements || 0,
-  };
-  
-  console.log('📤 [Student API] Formatted result:', result);
-  
-  return result;
+  // extractApiData가 data 필드를 반환하므로 그대로 사용
+  return extractApiData(response.data);
+}
+
+/**
+ * 학생 시험 이력 조회
+ * @description 학생이 응시한 모든 시험 이력을 페이징으로 조회합니다
+ *
+ * @param params 인증 정보 및 페이징 파라미터
+ * @returns 시험 이력 목록
+ */
+export async function getExamHistory(
+  params: ExamHistoryParams,
+): Promise<ExamHistoryResponse> {
+  const { page = 0, size = 10, ...authData } = params;
+
+  const response = await authApiClient.post<
+    ApiResponse<ExamHistoryResponse>
+  >(`/api/student/exam-history?page=${page}&size=${size}`, authData);
+
+  return extractApiData(response.data);
 }
 
 /**

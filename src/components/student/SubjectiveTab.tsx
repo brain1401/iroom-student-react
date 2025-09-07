@@ -18,7 +18,7 @@ import { useState, useCallback, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { CheckCircle, Loader2 } from "lucide-react";
+import { CheckCircle, Loader2, Camera } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type {
   ExamDetailResult,
@@ -27,8 +27,10 @@ import type {
   Question,
 } from "@/api/student/types";
 import { FileUpload } from "../layout";
-import { recognizeText, parseAnswersByQuestion } from "@/api/text-recognition";
-import type { TextRecognitionResponse } from "@/api/text-recognition";
+import { recognizeTextAsync } from "@/api/text-recognition/async-api";
+import type { AsyncResultResponse } from "@/api/text-recognition/async-api";
+// useMutation 제거 - 간단한 fetch 방식 사용
+import { Button } from "@/components/ui/button";
 
 // ============================================================================
 // 타입 정의
@@ -74,7 +76,7 @@ type TextRecognitionState = {
   /** 현재 상태 메시지 */
   message: string;
   /** 인식 결과 */
-  recognitionResult?: TextRecognitionResponse;
+  recognitionResult?: AsyncResultResponse;
   /** 에러 메시지 */
   error?: string;
 };
@@ -268,12 +270,9 @@ function CreateTextRecognitionState() {
     setRecognitionState((prev) => ({ ...prev, message }));
   }, []);
 
-  const setRecognitionResult = useCallback(
-    (result: TextRecognitionResponse) => {
-      setRecognitionState((prev) => ({ ...prev, recognitionResult: result }));
-    },
-    [],
-  );
+  const setRecognitionResult = useCallback((result: AsyncResultResponse) => {
+    setRecognitionState((prev) => ({ ...prev, recognitionResult: result }));
+  }, []);
 
   const setError = useCallback((error: string) => {
     setRecognitionState((prev) => ({ ...prev, error }));
@@ -753,6 +752,73 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
     [],
   );
 
+  // 간단한 텍스트 인식 함수
+  const handleTextRecognition = useCallback(async (file: File) => {
+    try {
+      // 상태 초기화
+      resetRecognitionState();
+      setIsRecognizing(true);
+      setProgress(0);
+      setMessage("이미지를 업로드하고 있습니다...");
+
+      // 비동기 텍스트 인식 실행
+      const result = await recognizeTextAsync(file, {
+        priority: 5,
+        useCache: true,
+        onProgress: (message, progress) => {
+          setMessage(message);
+          setProgress(progress);
+        },
+      });
+
+      // 성공 시 결과 처리
+      setRecognitionResult(result);
+
+      // 각 문제에 답안 자동 입력
+      setQuestionsState((prev) =>
+        prev.map((question) => {
+          const matchedAnswer = result.answers.find(
+            (a) =>
+              a.question_number === GetQuestionFields(question).questionOrder,
+          );
+
+          return {
+            ...question,
+            userAnswer:
+              matchedAnswer?.final_answer.extracted_text ||
+              question.userAnswer ||
+              "",
+            recognizedSolution: matchedAnswer
+              ? `${matchedAnswer.solution_process.extracted_text}
+
+최종 답: ${matchedAnswer.final_answer.extracted_text}`
+              : question.recognizedSolution,
+          };
+        }),
+      );
+
+      setMessage("답안을 자동으로 입력했습니다!");
+      setIsRecognizing(false);
+
+    } catch (error) {
+      console.error("[SubjectiveTab] 텍스트 인식 실패:", error);
+      setRecognitionError(
+        error instanceof Error
+          ? error.message
+          : "텍스트 인식 중 오류가 발생했습니다.",
+      );
+      setIsRecognizing(false);
+    }
+  }, [
+    resetRecognitionState,
+    setIsRecognizing,
+    setProgress,
+    setMessage,
+    setRecognitionResult,
+    setRecognitionError,
+    setQuestionsState,
+  ]);
+
   // 파일 업로드 핸들러
   const handleFilesSelect = useCallback(
     async (files: File[]) => {
@@ -760,77 +826,11 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
 
       console.log(`[SubjectiveTab] 파일 업로드: ${files.length}개 파일`);
 
-      // 텍스트 인식 상태 초기화
-      resetRecognitionState();
-      setIsRecognizing(true);
-      setProgress(0);
-      setMessage("이미지를 분석하고 있습니다...");
-
-      try {
-        // 첫 번째 파일만 처리 (여러 파일이면 첫 번째만)
-        const file = files[0];
-
-        setProgress(20);
-        setMessage("텍스트 인식 API에 전송 중...");
-
-        // 텍스트 인식 API 호출
-        const result = await recognizeText({
-          image: file,
-          options: {
-            language: "ko", // 한국어 설정
-            accuracy: "high", // 높은 정확도
-          },
-        });
-
-        setProgress(80);
-        setMessage("인식된 텍스트를 분석 중...");
-
-        // 인식 결과 저장
-        setRecognitionResult(result);
-
-        // 인식된 텍스트를 문제별로 파싱
-        const answers = parseAnswersByQuestion(
-          result.text,
-          questionsState.length,
-        );
-
-        setProgress(100);
-        setMessage("답안을 자동으로 입력했습니다.");
-
-        // 파싱된 답안을 각 문제에 자동 입력
-        setQuestionsState((prev) =>
-          prev.map((question, index) => ({
-            ...question,
-            userAnswer: answers[index] || question.userAnswer || "",
-            recognizedSolution: result.text, // 전체 인식 결과도 저장
-          })),
-        );
-
-        console.log(`[SubjectiveTab] 텍스트 인식 완료:`, {
-          totalText: result.text,
-          parsedAnswers: answers,
-          confidence: result.confidence,
-        });
-      } catch (error) {
-        console.error("[SubjectiveTab] 텍스트 인식 실패:", error);
-        setRecognitionError(
-          error instanceof Error
-            ? error.message
-            : "텍스트 인식 중 오류가 발생했습니다.",
-        );
-      } finally {
-        setIsRecognizing(false);
-      }
+      // 첫 번째 파일만 처리
+      const file = files[0];
+      await handleTextRecognition(file);
     },
-    [
-      questionsState.length,
-      resetRecognitionState,
-      setIsRecognizing,
-      setProgress,
-      setMessage,
-      setRecognitionResult,
-      setRecognitionError,
-    ],
+    [handleTextRecognition],
   );
 
   // 제출 확인 모달 표시
@@ -927,9 +927,35 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">주관식 답안</h2>
           <p className="text-gray-600 mb-4">
-            답안를 촬영하고 인식 된 답안을 확인하세요
+            시험지를 촬영하여 답안을 자동으로 인식합니다
           </p>
-          <FileUpload onFilesSelect={handleFilesSelect} />
+
+          {/* 시험지 촬영 버튼 */}
+          <div className="mb-4">
+            <input
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={(e) => {
+                const files = Array.from(e.target.files || []);
+                if (files.length > 0) {
+                  handleFilesSelect(files);
+                }
+                // 파일 선택 후 input 초기화
+                e.target.value = "";
+              }}
+              className="hidden"
+              id="camera-input"
+            />
+            <Button
+              onClick={() => document.getElementById("camera-input")?.click()}
+              disabled={isRecognizing}
+              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8 py-3 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Camera className="w-5 h-5 mr-2" />
+              {isRecognizing ? "인식 중..." : "시험지 촬영"}
+            </Button>
+          </div>
 
           <div className="mt-4 flex justify-center items-center gap-8 text-sm text-gray-500">
             <span>총 문제: {questionsState.length}문제</span>
@@ -1005,12 +1031,20 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
 
       {/* 텍스트 인식 모달 */}
       <TextRecognitionModal
-        isVisible={isRecognizing || !!recognitionResult || !!recognitionError}
+        isVisible={
+          isRecognizing ||
+          !!recognitionResult ||
+          !!recognitionError
+        }
         isRecognizing={isRecognizing}
         progress={progress}
         message={message}
         error={recognitionError}
         onCancel={() => {
+          if (isRecognizing) {
+            // 진행 중인 경우 인식 상태 리셋
+            setIsRecognizing(false);
+          }
           resetRecognitionState();
         }}
       />

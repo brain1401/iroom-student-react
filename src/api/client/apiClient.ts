@@ -19,8 +19,7 @@ export class ApiError extends Error {
 const createApiClient = (): AxiosInstance => {
   const client = axios.create({
     // 기본 baseURL은 백엔드 서버로 설정 (학생 정보 기반 API)
-    baseURL:
-      import.meta.env.VITE_BACKEND_API_URL || "http://100.82.50.108:3055",
+    baseURL: import.meta.env.VITE_BACKEND_API_URL || "http://localhost:3055",
     timeout: 10000, // 10초 타임아웃
     withCredentials: false, // JWT 없음, 쿠키 불필요
     headers: {
