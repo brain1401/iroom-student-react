@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { QrIcon } from "../ui/qr-icon";
 import { useDropzone } from "react-dropzone";
 import { Input } from "../ui/input";
-import { X } from "lucide-react";
+import { Scan, ScanBarcode, X } from "lucide-react";
 
 /**
  * 파일 업로드 컴포넌트 Props
@@ -90,13 +90,13 @@ export function FileUpload({ onFilesSelect }: FileUploadProps) {
         />
       </div>
 
-      <div className="flex flex-col flex-1 justify-center items-center">
+      <div className="flex flex-col flex-1 justify-center items-center p-4">
         <Button
           asChild
           type="button"
           variant="outline"
           className={cn(
-            "w-full py-[2rem] rounded-full bg-white px-6 text-base font-semibold",
+            " py-[1.5rem] mb-20 bg-white px-6 text-base font-semibold",
             "shadow-[0_8px_24px_rgba(0,0,0,0.08)] ring-1 ring-gray-200",
           )}
         >
@@ -109,7 +109,7 @@ export function FileUpload({ onFilesSelect }: FileUploadProps) {
             }}
           >
             <span className={cn("mr-2")}>
-              <QrIcon size={24} />
+              <ScanBarcode size={24} />
             </span>
             시험지 촬영
           </label>

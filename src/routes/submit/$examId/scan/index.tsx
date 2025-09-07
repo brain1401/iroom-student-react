@@ -1,10 +1,10 @@
 import { PageHeader } from "@/components/layout/PageHeader";
-import { createFileRoute, useParams } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { ObjectiveTab } from "@/components/student/ObjectiveTab";
 import { SubjectiveTab } from "@/components/student/SubjectiveTab";
 import { cn } from "@/lib/utils";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import {
   currentExamIdAtom,
   examTabStateAtom,
@@ -156,18 +156,18 @@ function RouteComponent() {
         shouldShowBackButton={true}
       />
 
-      {/* 시험 정보 요약 (개발 확인용) */}
+      {/* 시험 정보 요약 (개발 확인용)
       {process.env.NODE_ENV === "development" && (
         <div className="bg-gray-100 p-4 rounded-lg text-sm text-gray-700 w-full max-w-4xl">
           <div className="font-semibold mb-2">📊 시험 정보</div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="flex gap-4">
             <div>객관식: {tabState.tabCounts.objective}문제</div>
             <div>주관식: {tabState.tabCounts.subjective}문제</div>
             <div>총 문제: {examData.totalQuestions}문제</div>
-            <div>사용 가능한 탭: {tabState.availableTabs.join(", ")}</div>
+            
           </div>
         </div>
-      )}
+      )} */}
 
       {/* 동적 탭 버튼들 */}
       <div className="flex border-b border-gray-200 mb-6 w-full max-w-4xl">
@@ -204,52 +204,57 @@ function RouteComponent() {
 
       {/* 동적 탭 컨텐츠 - 조건부 렌더링 및 부드러운 전환 애니메이션 */}
       <div className="w-full relative">
-        {/* 객관식 탭 - 객관식 문제가 있을 때만 렌더링 */}
-        {tabState.shouldShowObjectiveTab && (
-          <div
-            className={cn(
-              "transition-all duration-500 ease-in-out",
-              currentActiveTab === "objective"
-                ? "opacity-100 translate-x-0"
-                : "opacity-0 -translate-x-full absolute top-0 left-0 w-full pointer-events-none",
+        {/* 다중 탭일 때 - 애니메이션과 함께 렌더링 */}
+        {tabState.availableTabs.length > 1 && (
+          <>
+            {/* 객관식 탭 - 객관식 문제가 있을 때만 렌더링 */}
+            {tabState.shouldShowObjectiveTab && (
+              <div
+                className={cn(
+                  "transition-all duration-500 ease-in-out",
+                  currentActiveTab === "objective"
+                    ? "opacity-100 translate-x-0"
+                    : "opacity-0 -translate-x-full absolute top-0 left-0 w-full pointer-events-none",
+                )}
+              >
+                <ObjectiveTab
+                  examDetail={examData.examDetail}
+                  onNext={() => {
+                    // 주관식 탭이 있으면 주관식으로, 없으면 텍스트 인식으로 이동
+                    if (tabState.shouldShowSubjectiveTab) {
+                      handleTabChange("subjective");
+                    } else {
+                      // 주관식이 없으면 바로 텍스트 인식 페이지로
+                      window.location.href = `/submit/${examId}/text-recongnition`;
+                    }
+                  }}
+                />
+              </div>
             )}
-          >
-            <ObjectiveTab
-              examDetail={examData.examDetail}
-              onNext={() => {
-                // 주관식 탭이 있으면 주관식으로, 없으면 텍스트 인식으로 이동
-                if (tabState.shouldShowSubjectiveTab) {
-                  handleTabChange("subjective");
-                } else {
-                  // 주관식이 없으면 바로 텍스트 인식 페이지로
-                  window.location.href = `/submit/${examId}/text-recongnition`;
-                }
-              }}
-            />
-          </div>
+
+            {/* 주관식 탭 - 주관식 문제가 있을 때만 렌더링 */}
+            {tabState.shouldShowSubjectiveTab && (
+              <div
+                className={cn(
+                  "transition-all duration-500 ease-in-out",
+                  currentActiveTab === "subjective"
+                    ? "opacity-100 translate-x-0"
+                    : "opacity-0 translate-x-full absolute top-0 left-0 w-full pointer-events-none",
+                )}
+              >
+                <SubjectiveTab
+                  examDetail={examData.examDetail}
+                  onNext={() => {
+                    // 텍스트 인식 페이지로 이동
+                    window.location.href = `/submit/${examId}/text-recongnition`;
+                  }}
+                />
+              </div>
+            )}
+          </>
         )}
 
-        {/* 주관식 탭 - 주관식 문제가 있을 때만 렌더링 */}
-        {tabState.shouldShowSubjectiveTab && (
-          <div
-            className={cn(
-              "transition-all duration-500 ease-in-out",
-              currentActiveTab === "subjective"
-                ? "opacity-100 translate-x-0"
-                : "opacity-0 translate-x-full absolute top-0 left-0 w-full pointer-events-none",
-            )}
-          >
-            <SubjectiveTab
-              examDetail={examData.examDetail}
-              onNext={() => {
-                // 텍스트 인식 페이지로 이동
-                window.location.href = `/submit/${examId}/text-recongnition`;
-              }}
-            />
-          </div>
-        )}
-
-        {/* 단일 탭일 때 애니메이션 없이 바로 표시 */}
+        {/* 단일 탭일 때 - 애니메이션 없이 바로 표시 */}
         {tabState.availableTabs.length === 1 && (
           <div>
             {tabState.shouldShowObjectiveTab &&

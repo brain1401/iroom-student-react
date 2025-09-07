@@ -18,9 +18,15 @@ import { useState, useCallback, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Camera, Image as ImageIcon, CheckCircle, Loader2 } from "lucide-react";
+import { CheckCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { ExamDetailResult, QuestionAnswer, ExamQuestionsData, Question } from "@/api/student/types";
+import type {
+  ExamDetailResult,
+  QuestionAnswer,
+  ExamQuestionsData,
+  Question,
+} from "@/api/student/types";
+import { FileUpload } from "../layout";
 
 // ============================================================================
 // 타입 정의
@@ -75,44 +81,54 @@ const DEFAULT_SCORE_PER_QUESTION = 10;
 /**
  * 시험 데이터가 신규 API 구조인지 확인
  */
-function isExamQuestionsData(examDetail: ExamDetailResult | ExamQuestionsData): examDetail is ExamQuestionsData {
-  return 'questions' in examDetail && 'multipleChoiceCount' in examDetail;
+function IsExamQuestionsData(
+  examDetail: ExamDetailResult | ExamQuestionsData,
+): examDetail is ExamQuestionsData {
+  return "questions" in examDetail && "multipleChoiceCount" in examDetail;
 }
 
 /**
  * 문제 데이터가 신규 API 구조인지 확인
  */
-function isNewQuestion(question: QuestionAnswer | Question): question is Question {
-  return 'seqNo' in question && 'questionText' in question;
+function IsNewQuestion(
+  question: QuestionAnswer | Question,
+): question is Question {
+  return "seqNo" in question && "questionText" in question;
 }
 
 /**
  * 시험 데이터에서 주관식 문제만 추출
  */
-function extractSubjectiveQuestions(examDetail: ExamDetailResult | ExamQuestionsData): (QuestionAnswer | Question)[] {
-  if (isExamQuestionsData(examDetail)) {
+function ExtractSubjectiveQuestions(
+  examDetail: ExamDetailResult | ExamQuestionsData,
+): (QuestionAnswer | Question)[] {
+  if (IsExamQuestionsData(examDetail)) {
     // 신규 API: questions 배열에서 SUBJECTIVE 필터링
-    return examDetail.questions?.filter(
-      (q) => q.questionType === "SUBJECTIVE"
-    ) || [];
+    return (
+      examDetail.questions?.filter((q) => q.questionType === "SUBJECTIVE") || []
+    );
   } else {
     // 기존 API: questionAnswers 배열에서 주관식 필터링
-    return examDetail?.questionAnswers?.filter(
-      (q) => q.questionType === "주관식" || q.questionType === "SUBJECTIVE"
-    ) || [];
+    return (
+      examDetail?.questionAnswers?.filter(
+        (q) => q.questionType === "주관식" || q.questionType === "SUBJECTIVE",
+      ) || []
+    );
   }
 }
 
 /**
  * 문제 데이터에서 공통 필드 추출 (백워드 호환성)
  */
-function getQuestionFields(question: QuestionAnswer | Question) {
-  if (isNewQuestion(question)) {
+function GetQuestionFields(question: QuestionAnswer | Question) {
+  if (IsNewQuestion(question)) {
     // 신규 API 구조
     return {
       questionId: question.questionId,
       questionOrder: question.seqNo, // seqNo → questionOrder 매핑
-      questionSummary: question.questionText.substring(0, 50) + (question.questionText.length > 50 ? '...' : ''), // questionText를 요약으로 변환
+      questionSummary:
+        question.questionText.substring(0, 50) +
+        (question.questionText.length > 50 ? "..." : ""), // questionText를 요약으로 변환
       points: question.points,
       difficulty: question.difficulty,
       unitInfo: null, // 신규 API에는 unitInfo가 없음
@@ -212,67 +228,6 @@ function CreateSubmissionCountdown(
 // ============================================================================
 
 /**
- * 문제 촬영 버튼 컴포넌트
- * @description 문제 이미지를 촬영하는 버튼
- */
-type CaptureButtonProps = {
-  /** 문제 ID */
-  questionId: string;
-  /** 촬영 핸들러 */
-  onCapture: (questionId: string) => void;
-};
-
-function CaptureButton({ questionId, onCapture }: CaptureButtonProps) {
-  return (
-    <button
-      onClick={() => onCapture(questionId)}
-      className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 hover:border-gray-400 transition-colors duration-200"
-    >
-      <Camera className="w-4 h-4" />
-      문제 촬영
-    </button>
-  );
-}
-
-/**
- * 이미지 표시 영역 컴포넌트
- * @description 촬영된 이미지 또는 플레이스홀더를 표시
- */
-type ImageDisplayProps = {
-  /** 문제 순서 */
-  questionOrder: number;
-  /** 이미지 URL */
-  imageUrl?: string;
-  /** 이미지가 없는 경우 표시할 메시지 */
-  placeholderMessage?: string;
-};
-
-function ImageDisplay({
-  questionOrder,
-  imageUrl,
-  placeholderMessage,
-}: ImageDisplayProps) {
-  if (imageUrl) {
-    return (
-      <div className="w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
-        <img
-          src={imageUrl}
-          alt={`문제 ${questionOrder}번 이미지`}
-          className="w-full h-full object-cover"
-        />
-      </div>
-    );
-  }
-
-  return (
-    <div className="w-full h-48 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-gray-500">
-      <ImageIcon className="w-12 h-12 mb-2 opacity-50" />
-      <p className="text-sm">{placeholderMessage || "이미지를 촬영해주세요"}</p>
-    </div>
-  );
-}
-
-/**
  * 답안 입력 컴포넌트
  * @description 최종 답안을 입력하는 텍스트 영역
  */
@@ -289,7 +244,7 @@ type AnswerInputProps = {
 
 function AnswerInput({
   questionId,
-  questionOrder,
+  questionOrder: _questionOrder,
   answer,
   onAnswerChange,
 }: AnswerInputProps) {
@@ -327,7 +282,7 @@ type QuestionItemProps = {
 
 function QuestionItem({
   question,
-  onCapture,
+  onCapture: _onCapture,
   onAnswerChange,
 }: QuestionItemProps) {
   return (
@@ -335,53 +290,48 @@ function QuestionItem({
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <CardTitle className="text-lg">문제 {getQuestionFields(question).questionOrder}번</CardTitle>
-            {getQuestionFields(question).questionSummary && (
-              <span className="text-sm text-gray-500 truncate max-w-xs">
-                {getQuestionFields(question).questionSummary}
-              </span>
-            )}
+            <CardTitle className="text-lg">
+              문제 {GetQuestionFields(question).questionOrder}번
+            </CardTitle>
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="secondary">주관식</Badge>
             <Badge variant="outline" className="text-blue-600 border-blue-200">
-              {getQuestionFields(question).points || DEFAULT_SCORE_PER_QUESTION}점
+              {GetQuestionFields(question).points || DEFAULT_SCORE_PER_QUESTION}
+              점
             </Badge>
-            {getQuestionFields(question).difficulty && (
+            {GetQuestionFields(question).difficulty && (
               <Badge variant="outline" className="text-gray-500">
-                {getQuestionFields(question).difficulty}
+                {GetQuestionFields(question).difficulty}
               </Badge>
             )}
           </div>
         </div>
+
+        {GetQuestionFields(question).questionSummary && (
+          <span
+            className="text-sm text-gray-500 truncate max-w-xs flex"
+            dangerouslySetInnerHTML={{
+              __html: GetQuestionFields(question).questionSummary,
+            }}
+          />
+        )}
+        {/* 문제 이미지가 있다면 여기에 추가하는 코드 만들기 */}
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* 이미지 촬영 영역 */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h4 className="font-medium text-gray-900">문제 이미지</h4>
-            <CaptureButton questionId={question.questionId} onCapture={onCapture} />
-          </div>
-          <ImageDisplay
-            questionOrder={getQuestionFields(question).questionOrder}
-            imageUrl={question.capturedImageUrl}
-            placeholderMessage="문제를 촬영해주세요"
-          />
-        </div>
-
         {/* 단원 정보 */}
-        {getQuestionFields(question).unitInfo && (
+        {GetQuestionFields(question).unitInfo && (
           <div className="space-y-2">
             <h4 className="font-medium text-gray-900">단원 정보</h4>
             <div className="flex flex-wrap gap-2">
               <Badge variant="outline" className="text-xs">
-                {getQuestionFields(question).unitInfo?.categoryName}
+                {GetQuestionFields(question).unitInfo?.categoryName}
               </Badge>
               <Badge variant="outline" className="text-xs">
-                {getQuestionFields(question).unitInfo?.subcategoryName}
+                {GetQuestionFields(question).unitInfo?.subcategoryName}
               </Badge>
               <Badge variant="outline" className="text-xs">
-                {getQuestionFields(question).unitInfo?.unitName}
+                {GetQuestionFields(question).unitInfo?.unitName}
               </Badge>
             </div>
           </div>
@@ -401,8 +351,8 @@ function QuestionItem({
 
         {/* 답안 입력 */}
         <AnswerInput
-          questionId={getQuestionFields(question).questionId}
-          questionOrder={getQuestionFields(question).questionOrder}
+          questionId={GetQuestionFields(question).questionId}
+          questionOrder={GetQuestionFields(question).questionOrder}
           answer={question.userAnswer}
           onAnswerChange={onAnswerChange}
         />
@@ -522,7 +472,6 @@ function SubmissionCompleteModal({
  * @description 주관식 문제 답안 제출 UI
  */
 
-
 /**
  * 주관식 탭 메인 컴포넌트
  * @description 주관식 문제 답안 제출 UI
@@ -536,26 +485,31 @@ type SubjectiveTabProps = {
 
 export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
   // 시험 데이터에서 주관식 문제들만 필터링 (신규/기존 API 모두 지원)
-  const subjectiveQuestions = examDetail ? extractSubjectiveQuestions(examDetail) : [];
+  const subjectiveQuestions = examDetail
+    ? ExtractSubjectiveQuestions(examDetail)
+    : [];
 
   // 주관식 문제를 SubjectiveQuestion 타입으로 변환하여 상태 초기화
   const [questionsState, setQuestionsState] = useState<SubjectiveQuestion[]>(
-    () => subjectiveQuestions.map(question => ({
-      ...question,
-      capturedImageUrl: undefined,
-      recognizedSolution: undefined,
-      userAnswer: undefined,
-    }))
+    () =>
+      subjectiveQuestions.map((question) => ({
+        ...question,
+        capturedImageUrl: undefined,
+        recognizedSolution: undefined,
+        userAnswer: undefined,
+      })),
   );
 
   // 시험 데이터가 변경되면 문제 상태 업데이트
   useEffect(() => {
-    const newSubjectiveQuestions = examDetail ? extractSubjectiveQuestions(examDetail) : [];
-    
-    setQuestionsState(prev => {
+    const newSubjectiveQuestions = examDetail
+      ? ExtractSubjectiveQuestions(examDetail)
+      : [];
+
+    setQuestionsState((prev) => {
       // 기존 사용자 입력 데이터 유지하면서 새 문제 데이터로 업데이트
-      return newSubjectiveQuestions.map(question => {
-        const existing = prev.find(p => p.questionId === question.questionId);
+      return newSubjectiveQuestions.map((question) => {
+        const existing = prev.find((p) => p.questionId === question.questionId);
         return {
           ...question,
           capturedImageUrl: existing?.capturedImageUrl,
@@ -576,7 +530,7 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
     setShowSubmissionModal,
     setRemainingTime,
     setIsSubmitting,
-    resetSubmissionState,
+    resetSubmissionState: _resetSubmissionState,
   } = CreateSubmissionState();
 
   // 카운트다운 설정
@@ -590,16 +544,16 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
   // 이미지 촬영 핸들러 (문제 ID가 string 타입으로 변경)
   const handleCapture = useCallback((questionId: string) => {
     console.log(`문제 ${questionId} 촬영`);
-    
+
     // TODO: 실제 카메라/이미지 업로드 기능 구현
     // 임시로 더미 이미지 URL 설정 (개발용)
     setQuestionsState((prev) =>
       prev.map((q) =>
         q.questionId === questionId
-          ? { 
-              ...q, 
-              capturedImageUrl: `https://via.placeholder.com/400x300?text=문제+${getQuestionFields(q).questionOrder}번+이미지`,
-              recognizedSolution: `문제 ${getQuestionFields(q).questionOrder}번의 인식된 풀이 과정입니다.\n수식: 2x + 3 = 7\n따라서 x = 2`
+          ? {
+              ...q,
+              capturedImageUrl: `https://via.placeholder.com/400x300?text=문제+${GetQuestionFields(q).questionOrder}번+이미지`,
+              recognizedSolution: `문제 ${GetQuestionFields(q).questionOrder}번의 인식된 풀이 과정입니다.\n수식: 2x + 3 = 7\n따라서 x = 2`,
             }
           : q,
       ),
@@ -683,9 +637,10 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
   const answeredCount = questionsState.filter((q) =>
     q.userAnswer?.trim(),
   ).length;
-  const completionRate = questionsState.length > 0 
-    ? (answeredCount / questionsState.length) * 100 
-    : 0;
+  const completionRate =
+    questionsState.length > 0
+      ? (answeredCount / questionsState.length) * 100
+      : 0;
 
   // 시험 데이터 로딩 중이거나 주관식 문제가 없는 경우
   if (!examDetail) {
@@ -709,14 +664,21 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
       <div className="w-full max-w-4xl mx-auto p-4">
         {/* 헤더 */}
         <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">주관식 답안</h2>
-          <p className="text-gray-600">문제를 촬영하고 답안을 입력하세요</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">주관식 답안</h2>
+          <p className="text-gray-600 mb-4">
+            답안를 촬영하고 인식 된 답안을 확인하세요
+          </p>
+          <FileUpload
+            onFilesSelect={(files: File[]) => {
+              console.log("선택된 파일들:", files);
+              // TODO: 파일 업로드 로직 구현
+            }}
+          />
+
           <div className="mt-4 flex justify-center items-center gap-8 text-sm text-gray-500">
             <span>총 문제: {questionsState.length}문제</span>
             <span>답안 완성: {answeredCount}문제</span>
-            {examDetail.examName && (
-              <span>시험: {examDetail.examName}</span>
-            )}
+            {examDetail.examName && <span>시험: {examDetail.examName}</span>}
           </div>
           <Separator className="mt-4" />
         </div>
@@ -754,7 +716,6 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
               {Math.round(completionRate)}%
             </span>
           </div>
-
           {/* 제출 버튼 */}
           <button
             onClick={handleSubmitClick}
