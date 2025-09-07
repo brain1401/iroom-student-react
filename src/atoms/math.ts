@@ -1,13 +1,27 @@
 /**
- * 수학 문제 시스템 상태 관리 (Jotai)
- * @description 수학 문제 시험, 답안, UI 상태를 관리하는 atoms
+ * 실제 서버 기반 시험 응시 시스템 상태 관리 (Jotai)
+ * @description 실제 서버 API를 사용한 시험 응시, 답안, UI 상태를 관리하는 atoms
+ * @version 2025-09-05 - 실제 서버 API 기반으로 완전 교체
  */
 
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { atomWithQuery, atomWithMutation } from "jotai-tanstack-query";
-import type { MathQuestion, SubmitAnswerRequest } from "@/api/common/types";
-import { getMockExamById } from "@/api/exam/api";
+import type { 
+  ExamDetail,
+  ExamSheetDetail,
+  QuestionData,
+  StudentAnswerSubmitRequest,
+  StudentAnswerDraftRequest,
+  ApiResponse 
+} from "@/api/common/server-types";
+import { getExamById } from "@/api/exam/server-api";
+import { 
+  getExamSheetById, 
+  getQuestionsByExamSheetId,
+  submitStudentAnswer,
+  saveStudentAnswerDraft 
+} from "@/api/exam-sheet/server-api";
 
 /**
  * 시험 관련 기본 상태
@@ -15,7 +29,7 @@ import { getMockExamById } from "@/api/exam/api";
 
 /**
  * 현재 활성화된 시험 ID
- * @description 사용자가 현재 응시 중인 시험의 ID
+ * @description 사용자가 현재 응시 중인 시험의 ID (UUID 형식)
  */
 export const currentExamIdAtom = atom<string | null>(null);
 
@@ -27,7 +41,7 @@ export const currentQuestionIndexAtom = atom<number>(0);
 
 /**
  * 시험 데이터 조회 (서버 상태)
- * @description React Query와 통합된 시험 정보 조회
+ * @description 실제 서버에서 시험 정보 조회
  */
 export const currentExamQueryAtom = atomWithQuery((get) => {
   const examId = get(currentExamIdAtom);
@@ -36,14 +50,14 @@ export const currentExamQueryAtom = atomWithQuery((get) => {
     return {
       queryKey: ["exam", "none"],
       enabled: false,
-      queryFn: async () => null,
+      queryFn: async (): Promise<ExamDetail | null> => null,
     };
   }
 
   return {
     queryKey: ["exam", examId],
-    queryFn: async () => {
-      const response = await getMockExamById(examId);
+    queryFn: async (): Promise<ExamDetail> => {
+      const response = await getExamById(examId);
       return response.data;
     },
     staleTime: 1000 * 60 * 5, // 5분간 캐시 유지
@@ -52,31 +66,91 @@ export const currentExamQueryAtom = atomWithQuery((get) => {
 });
 
 /**
- * 현재 문제 계산된 상태
- * @description 현재 인덱스에 해당하는 문제 객체
+ * 시험지 데이터 조회 (서버 상태)
+ * @description 실제 서버에서 시험지 상세 정보 조회
  */
-export const currentQuestionAtom = atom<MathQuestion | null>((get) => {
+export const currentExamSheetQueryAtom = atomWithQuery((get) => {
   const examQuery = get(currentExamQueryAtom);
+
+  if (examQuery.isPending || examQuery.isError || !examQuery.data?.examSheetInfo?.id) {
+    return {
+      queryKey: ["exam-sheet", "none"],
+      enabled: false,
+      queryFn: async (): Promise<ExamSheetDetail | null> => null,
+    };
+  }
+
+  const examSheetId = examQuery.data.examSheetInfo.id;
+
+  return {
+    queryKey: ["exam-sheet", examSheetId],
+    queryFn: async (): Promise<ExamSheetDetail> => {
+      const response = await getExamSheetById(examSheetId);
+      return response.data;
+    },
+    staleTime: 1000 * 60 * 10, // 10분간 캐시 유지
+    gcTime: 1000 * 60 * 60, // 1시간간 가비지 컬렉션 방지
+  };
+});
+
+/**
+ * 문제 목록 조회 (서버 상태)
+ * @description 실제 서버에서 시험지의 문제 목록 조회
+ */
+export const questionsQueryAtom = atomWithQuery((get) => {
+  const examSheetQuery = get(currentExamSheetQueryAtom);
+
+  if (examSheetQuery.isPending || examSheetQuery.isError || !examSheetQuery.data?.id) {
+    return {
+      queryKey: ["questions", "none"],
+      enabled: false,
+      queryFn: async (): Promise<QuestionData[]> => [],
+    };
+  }
+
+  const examSheetId = examSheetQuery.data.id;
+
+  return {
+    queryKey: ["questions", examSheetId],
+    queryFn: async (): Promise<QuestionData[]> => {
+      const response = await getQuestionsByExamSheetId(examSheetId);
+      return response.data;
+    },
+    staleTime: 1000 * 60 * 15, // 15분간 캐시 유지
+    gcTime: 1000 * 60 * 60, // 1시간간 가비지 컬렉션 방지
+  };
+});
+
+/**
+ * 현재 문제 계산된 상태
+ * @description 현재 인덱스에 해당하는 문제 객체 (실제 서버 데이터 기반)
+ */
+export const currentQuestionAtom = atom<QuestionData | null>((get) => {
+  const questionsQuery = get(questionsQueryAtom);
   const currentIndex = get(currentQuestionIndexAtom);
 
-  if (examQuery.isPending || examQuery.isError || !examQuery.data) {
+  if (questionsQuery.isPending || questionsQuery.isError || !questionsQuery.data) {
     return null;
   }
 
-  const problems = examQuery.data.problems;
-  return (problems[currentIndex] as MathQuestion) || null;
+  const questions = questionsQuery.data;
+  if (currentIndex < 0 || currentIndex >= questions.length) {
+    return null;
+  }
+
+  return questions[currentIndex];
 });
 
 /**
  * 시험 진행 상태 계산
- * @description 전체 문제 수, 현재 진행률 등
+ * @description 전체 문제 수, 현재 진행률 등 (실제 서버 구조 기반)
  */
 export const examProgressAtom = atom((get) => {
-  const examQuery = get(currentExamQueryAtom);
+  const questionsQuery = get(questionsQueryAtom);
   const currentIndex = get(currentQuestionIndexAtom);
   const answers = get(answersAtom);
 
-  if (!examQuery.data) {
+  if (questionsQuery.isPending || questionsQuery.isError || !questionsQuery.data) {
     return {
       totalQuestions: 0,
       currentQuestion: 0,
@@ -86,10 +160,9 @@ export const examProgressAtom = atom((get) => {
     };
   }
 
-  const totalQuestions = examQuery.data.problems.length;
+  const totalQuestions = questionsQuery.data.length;
   const answeredCount = Object.keys(answers).length;
-  const progress =
-    totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
+  const progress = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
 
   return {
     totalQuestions,
@@ -109,11 +182,11 @@ export const examProgressAtom = atom((get) => {
  * @description 문제 ID를 키로 하고 답안을 값으로 하는 맵
  *
  * 구조:
- * - 주관식: { "question-1": "x = 2y + 3" }
- * - 객관식: { "question-2": "option-id-3" }
+ * - 주관식: { "question-uuid": "답안 텍스트" }
+ * - 객관식: { "question-uuid": "선택한 옵션 ID" }
  */
 export const answersAtom = atomWithStorage<Record<string, string>>(
-  "math-answers",
+  "exam-answers",
   {},
 );
 
@@ -127,14 +200,14 @@ export const questionStatesAtom = atom<
 
 /**
  * 특정 문제의 답안 가져오기
- * @param questionId 문제 ID
+ * @param questionId 문제 ID (UUID)
  */
 export const getQuestionAnswerAtom = (questionId: string) =>
   atom((get) => get(answersAtom)[questionId] || "");
 
 /**
  * 특정 문제의 답안 설정하기
- * @param questionId 문제 ID
+ * @param questionId 문제 ID (UUID)
  * @param answer 답안 내용
  */
 export const setQuestionAnswerAtom = atom(
@@ -192,41 +265,43 @@ export const currentQuestionAnswerAtom = atom(
 
 /**
  * 답안 임시저장 mutation
- * @description 사용자 답안을 서버에 임시저장
+ * @description 사용자 답안을 서버에 임시저장 (실제 서버 API 사용)
  */
 export const saveAnswerMutationAtom = atomWithMutation(() => ({
-  mutationKey: ["save-answer"],
-  mutationFn: async (request: SubmitAnswerRequest) => {
-    // TODO: 실제 API 호출 구현
-    console.log("답안 임시저장:", request);
-    await new Promise((resolve) => setTimeout(resolve, 500)); // 임시 지연
-    return { success: true };
+  mutationKey: ["save-answer-draft"],
+  mutationFn: async (request: StudentAnswerDraftRequest): Promise<ApiResponse<boolean>> => {
+    return await saveStudentAnswerDraft(request);
   },
-  onSuccess: () => {
-    console.log("답안 임시저장 성공");
+  onSuccess: (response) => {
+    if (response.result === "SUCCESS") {
+      console.log("답안 임시저장 성공:", response.message);
+    } else {
+      console.error("답안 임시저장 실패:", response.message);
+    }
   },
   onError: (error) => {
-    console.error("답안 임시저장 실패:", error);
+    console.error("답안 임시저장 오류:", error);
   },
 }));
 
 /**
  * 답안 최종제출 mutation
- * @description 사용자 답안을 서버에 최종 제출
+ * @description 사용자 답안을 서버에 최종 제출 (실제 서버 API 사용)
  */
 export const submitAnswerMutationAtom = atomWithMutation(() => ({
   mutationKey: ["submit-answer"],
-  mutationFn: async (request: SubmitAnswerRequest) => {
-    // TODO: 실제 API 호출 구현
-    console.log("답안 최종제출:", request);
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // 임시 지연
-    return { success: true };
+  mutationFn: async (request: StudentAnswerSubmitRequest): Promise<ApiResponse<boolean>> => {
+    return await submitStudentAnswer(request);
   },
-  onSuccess: () => {
-    console.log("답안 제출 성공");
+  onSuccess: (response) => {
+    if (response.result === "SUCCESS") {
+      console.log("답안 제출 성공:", response.message);
+    } else {
+      console.error("답안 제출 실패:", response.message);
+    }
   },
   onError: (error) => {
-    console.error("답안 제출 실패:", error);
+    console.error("답안 제출 오류:", error);
   },
 }));
 
@@ -235,12 +310,10 @@ export const submitAnswerMutationAtom = atomWithMutation(() => ({
  */
 
 /**
- * 수학 문제 UI 설정 (localStorage 저장)
+ * 시험 응시 UI 설정 (localStorage 저장)
  * @description 사용자의 UI 선호도 설정
  */
-export const mathConfigAtom = atomWithStorage("math-config", {
-  /** LaTeX 미리보기 표시 여부 */
-  showLatexPreview: true,
+export const examConfigAtom = atomWithStorage("exam-config", {
   /** 자동저장 활성화 여부 */
   autoSave: true,
   /** 자동저장 간격 (밀리초) */
@@ -253,26 +326,13 @@ export const mathConfigAtom = atomWithStorage("math-config", {
   enableKeyboardShortcuts: true,
   /** 답안 확인 다이얼로그 표시 */
   showAnswerConfirmation: true,
-});
-
-/**
- * MathJax 렌더링 상태
- * @description MathJax 초기화 및 렌더링 상태 추적
- */
-export const mathJaxStateAtom = atom({
-  /** MathJax 초기화 완료 여부 */
-  isReady: false,
-  /** 렌더링된 수식 개수 */
-  renderCount: 0,
-  /** 렌더링 중인 수식 개수 */
-  pendingCount: 0,
-  /** 마지막 렌더링 시간 */
-  lastRenderTime: null as Date | null,
+  /** 문제 이동 시 자동저장 */
+  autoSaveOnNavigation: true,
 });
 
 /**
  * 시험 타이머 상태
- * @description 시험 시간 관리
+ * @description 시험 시간 관리 (실제 서버에서 제한 시간 관리)
  */
 export const examTimerAtom = atom({
   /** 시작 시간 */
@@ -283,18 +343,18 @@ export const examTimerAtom = atom({
   isPaused: false,
   /** 남은 시간 (초) */
   remainingTime: 0,
-  /** 제한 시간 (초) */
+  /** 제한 시간 (초) - 서버에서 받아온 값 */
   timeLimit: 3600, // 기본 1시간
 });
 
 /**
  * 네비게이션 상태
- * @description 문제 간 이동 및 네비게이션
+ * @description 문제 간 이동 및 네비게이션 (실제 서버 구조 기반)
  */
 export const navigationAtom = atom((get) => {
   const currentIndex = get(currentQuestionIndexAtom);
-  const examQuery = get(currentExamQueryAtom);
-  const totalQuestions = examQuery.data?.problems.length || 0;
+  const questionsQuery = get(questionsQueryAtom);
+  const totalQuestions = questionsQuery.data?.length || 0;
 
   return {
     canGoPrevious: currentIndex > 0,
@@ -324,8 +384,8 @@ export const goToPreviousQuestionAtom = atom(null, (get, set) => {
 });
 
 export const goToQuestionAtom = atom(null, (get, set, index: number) => {
-  const examQuery = get(currentExamQueryAtom);
-  const totalQuestions = examQuery.data?.problems.length || 0;
+  const questionsQuery = get(questionsQueryAtom);
+  const totalQuestions = questionsQuery.data?.length || 0;
 
   if (index >= 0 && index < totalQuestions) {
     set(currentQuestionIndexAtom, index);
@@ -336,8 +396,7 @@ export const goToQuestionAtom = atom(null, (get, set, index: number) => {
  * 자동저장 관련 상태
  */
 export const autoSaveAtom = atom((get) => {
-  const config = get(mathConfigAtom);
-  const currentQuestion = get(currentQuestionAtom);
+  const config = get(examConfigAtom);
   const currentAnswer = get(currentQuestionAnswerAtom);
 
   return {
@@ -357,12 +416,6 @@ export const resetExamStateAtom = atom(null, (get, set) => {
   set(currentQuestionIndexAtom, 0);
   set(answersAtom, {});
   set(questionStatesAtom, {});
-  set(mathJaxStateAtom, {
-    isReady: false,
-    renderCount: 0,
-    pendingCount: 0,
-    lastRenderTime: null,
-  });
   set(examTimerAtom, {
     startTime: null,
     endTime: null,
@@ -396,3 +449,38 @@ export const startExamAtom = atom(
     });
   },
 );
+
+/**
+ * 시험 종료 액션
+ * @description 시험을 종료하고 최종 제출 처리
+ */
+export const finishExamAtom = atom(null, async (get, set) => {
+  const answers = get(answersAtom);
+  const examId = get(currentExamIdAtom);
+  const examSheetQuery = get(currentExamSheetQueryAtom);
+
+  if (!examId || !examSheetQuery.data) {
+    throw new Error("시험 정보가 없습니다");
+  }
+
+  // 타이머 종료
+  set(examTimerAtom, (prev) => ({
+    ...prev,
+    endTime: new Date(),
+    isPaused: true,
+  }));
+
+  // 최종 답안 제출 요청 생성
+  const submitRequest: StudentAnswerSubmitRequest = {
+    examSheetId: examSheetQuery.data.id,
+    answers: Object.entries(answers).map(([questionId, answer]) => ({
+      questionId,
+      answer,
+      submittedAt: new Date().toISOString(),
+    })),
+  };
+
+  // 최종 제출
+  const submitMutation = get(submitAnswerMutationAtom);
+  return await submitMutation.mutateAsync(submitRequest);
+});

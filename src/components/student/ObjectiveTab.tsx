@@ -22,6 +22,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import type { ExamDetailResult, QuestionAnswer, ExamQuestionsData, Question } from "@/api/student/types";
 
 // 보기 데이터 타입
 type Option = {
@@ -42,9 +43,73 @@ const options: Option[] = [
   { value: "5", label: "보기 5", number: "⑤" },
 ];
 
-// 문제 개수 및 배점 설정
-const QUESTION_COUNT = 20;
-const SCORE_PER_QUESTION = 5;
+// 기본값 설정 (데이터가 없을 때 사용)
+const DEFAULT_SCORE_PER_QUESTION = 5;
+
+/**
+ * 백워드 호환성을 위한 데이터 유틸리티 함수들
+ * @description 신규 API와 기존 API 데이터 구조를 상호 변환
+ */
+
+/**
+ * 시험 데이터가 신규 API 구조인지 확인
+ * @param examDetail 시험 데이터
+ */
+function isExamQuestionsData(examDetail: ExamDetailResult | ExamQuestionsData): examDetail is ExamQuestionsData {
+  return 'questions' in examDetail && 'multipleChoiceCount' in examDetail;
+}
+
+/**
+ * 문제 데이터가 신규 API 구조인지 확인
+ * @param question 문제 데이터
+ */
+function isNewQuestion(question: QuestionAnswer | Question): question is Question {
+  return 'seqNo' in question && 'questionText' in question;
+}
+
+/**
+ * 시험 데이터에서 객관식 문제만 추출
+ * @param examDetail 시험 데이터 (기존 또는 신규 API)
+ */
+function extractObjectiveQuestions(examDetail: ExamDetailResult | ExamQuestionsData): (QuestionAnswer | Question)[] {
+  if (isExamQuestionsData(examDetail)) {
+    // 신규 API: questions 배열에서 MULTIPLE_CHOICE 필터링
+    return examDetail.questions?.filter(
+      (q) => q.questionType === "MULTIPLE_CHOICE"
+    ) || [];
+  } else {
+    // 기존 API: questionAnswers 배열에서 객관식 필터링
+    return examDetail?.questionAnswers?.filter(
+      (q) => q.questionType === "객관식" || q.questionType === "OBJECTIVE"
+    ) || [];
+  }
+}
+
+/**
+ * 문제 데이터에서 공통 필드 추출 (백워드 호환성)
+ * @param question 문제 데이터 (기존 또는 신규 API)
+ */
+function getQuestionFields(question: QuestionAnswer | Question) {
+  if (isNewQuestion(question)) {
+    // 신규 API 구조
+    return {
+      questionId: question.questionId,
+      questionOrder: question.seqNo, // seqNo → questionOrder 매핑
+      questionSummary: question.questionText.substring(0, 50) + (question.questionText.length > 50 ? '...' : ''), // questionText를 요약으로 변환
+      points: question.points,
+      difficulty: question.difficulty,
+    };
+  } else {
+    // 기존 API 구조
+    return {
+      questionId: question.questionId,
+      questionOrder: question.questionOrder,
+      questionSummary: question.questionSummary,
+      points: question.points,
+      difficulty: question.difficulty,
+    };
+  }
+}
 
 /**
  * 보기 선택 컴포넌트
@@ -107,50 +172,61 @@ function OptionSelector({
  * @description OMR 카드의 문제 행을 표시
  */
 type QuestionRowProps = {
-  /** 문제 번호 */
-  questionNumber: number;
+  /** 문제 데이터 (기존 API 또는 신규 API) */
+  question: QuestionAnswer | Question;
   /** 선택된 답안 */
   selectedAnswer: string;
   /** 답안 변경 핸들러 */
-  onAnswerChange: (questionId: number, value: string) => void;
+  onAnswerChange: (questionId: string, value: string) => void;
 };
 
 // 문재 행(한줄) 컴포넌트
 function QuestionRow({
-  questionNumber,
+  question,
   selectedAnswer,
   onAnswerChange,
 }: QuestionRowProps) {
   const handleValueChange = useCallback(
     (value: string) => {
-      onAnswerChange(questionNumber, value);
+      onAnswerChange(getQuestionFields(question).questionId, value);
     },
-    [questionNumber, onAnswerChange],
+    [question, onAnswerChange],
   );
-  // onAnswerChange 핸들러를 사용하여 답안 변경 이벤트 처리
 
   return (
     <div className="flex items-center gap-4 p-3 border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150">
-      {/* 문제 번호 */}
-      <div className="flex-shrink-0">
-        <Badge variant="outline" className="w-12 text-center font-bold">
-          {questionNumber}번
+      {/* 문제 번호 및 요약 */}
+      <div className="flex-shrink-0 min-w-[100px]">
+        <Badge variant="outline" className="text-center font-bold mb-1">
+          {getQuestionFields(question).questionOrder}번
         </Badge>
+        {getQuestionFields(question).questionSummary && (
+          <div className="text-xs text-gray-500 truncate max-w-[80px]">
+            {getQuestionFields(question).questionSummary}
+          </div>
+        )}
       </div>
 
       {/* 보기 선택 */}
       <div className="flex-1">
         <OptionSelector
-          questionId={questionNumber}
+          questionId={parseInt(getQuestionFields(question).questionId)}
           options={options}
           selectedValue={selectedAnswer}
           onValueChange={handleValueChange}
         />
       </div>
 
-      {/* 배점 표시 */}
-      <div className="flex-shrink-0 text-sm text-gray-600 font-medium">
-        {SCORE_PER_QUESTION}점
+      {/* 배점 및 난이도 표시 */}
+      <div className="flex-shrink-0 text-right">
+        <div className="text-sm font-semibold text-blue-600">
+          {getQuestionFields(question).points || DEFAULT_SCORE_PER_QUESTION}점
+        </div>
+        {getQuestionFields(question).difficulty && (
+          <div className="text-xs text-gray-500">
+            {getQuestionFields(question).difficulty}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -160,15 +236,24 @@ function QuestionRow({
  * OMR 카드 헤더 컴포넌트
  * @description OMR 카드 상단의 제목과 설명
  */
-function OMRCardHeader() {
+type OMRCardHeaderProps = {
+  /** 객관식 문제 데이터 (기존 API 또는 신규 API) */
+  objectiveQuestions: (QuestionAnswer | Question)[];
+};
+
+function OMRCardHeader({ objectiveQuestions }: OMRCardHeaderProps) {
+  const totalQuestions = objectiveQuestions.length;
+  const totalScore = objectiveQuestions.reduce((sum, q) => sum + (getQuestionFields(q).points || 0), 0);
+  const averageScore = totalQuestions > 0 ? Math.round((totalScore / totalQuestions) * 10) / 10 : 0;
+
   return (
     <div className="text-center mb-6 pb-4">
       <h2 className="text-2xl font-bold text-gray-900 mb-2">객관식 답안지</h2>
       <p className="text-gray-600">정답을 선택하여 표시하세요</p>
       <div className="mt-4 flex justify-center items-center gap-8 text-sm text-gray-500">
-        <span>총 문제: {QUESTION_COUNT}문제</span>
-        <span>총 배점: {QUESTION_COUNT * SCORE_PER_QUESTION}점</span>
-        <span>문항당 배점: {SCORE_PER_QUESTION}점</span>
+        <span>총 문제: {totalQuestions}문제</span>
+        <span>총 배점: {totalScore}점</span>
+        <span>평균 배점: {averageScore}점</span>
       </div>
       <Separator className="mt-4" />
     </div>
@@ -195,17 +280,22 @@ function OMRCardFooter() {
  * @description OMR 카드 형식의 객관식 답안지
  */
 type ObjectiveTabProps = {
+  /** 시험 상세 정보 (기존 API 또는 신규 API) */
+  examDetail?: ExamDetailResult | ExamQuestionsData;
   /** 다음 탭으로 이동하는 핸들러 */
   onNext?: () => void;
 };
 
-export function ObjectiveTab({ onNext }: ObjectiveTabProps) {
-  // 답안 상태 관리
-  const [answers, setAnswers] = useState<Record<number, string>>({});
+export function ObjectiveTab({ examDetail, onNext }: ObjectiveTabProps) {
+  // 객관식 문제만 필터링 (신규/기존 API 모두 지원)
+  const objectiveQuestions = examDetail ? extractObjectiveQuestions(examDetail) : [];
+
+  // 답안 상태 관리 (questionId를 키로 사용)
+  const [answers, setAnswers] = useState<Record<string, string>>({});
 
   // 답안 변경 핸들러
   const handleAnswerChange = useCallback(
-    (questionId: number, value: string) => {
+    (questionId: string, value: string) => {
       setAnswers((prev) => ({
         ...prev,
         [questionId]: value,
@@ -217,31 +307,54 @@ export function ObjectiveTab({ onNext }: ObjectiveTabProps) {
   // 다음 단계로 이동 핸들러
   const handleNext = useCallback(() => {
     console.log("객관식 답안:", answers);
+    console.log("객관식 문제 데이터:", objectiveQuestions);
     // TODO: 답안 저장 API 호출
     onNext?.();
-  }, [answers, onNext]);
+  }, [answers, objectiveQuestions, onNext]);
 
   // 답안 완성도 계산
+  const totalQuestions = objectiveQuestions.length;
   const answeredCount = Object.keys(answers).length;
-  const completionRate = (answeredCount / QUESTION_COUNT) * 100;
+  const completionRate = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
+
+  // 데이터가 없는 경우 처리
+  if (!examDetail || objectiveQuestions.length === 0) {
+    return (
+      <div className="w-full max-w-6xl mx-auto p-4">
+        <Card className="border-2 border-gray-200 shadow-lg">
+          <CardContent className="p-6 text-center">
+            <div className="text-gray-600 text-lg">
+              객관식 문제가 없습니다
+            </div>
+            <div className="mt-4 text-sm text-gray-500">
+              이 시험에는 객관식 문제가 포함되어 있지 않습니다
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-6xl mx-auto p-4">
       {/* OMR 카드 */}
       <Card className="border-2 border-gray-800 shadow-lg">
         <CardContent className="p-6">
-          <OMRCardHeader />
+          <OMRCardHeader objectiveQuestions={objectiveQuestions} />
 
           {/* 문제 목록 */}
           <div className="space-y-1">
-            {Array.from({ length: QUESTION_COUNT }, (_, index) => (
-              <QuestionRow
-                key={index + 1}
-                questionNumber={index + 1}
-                selectedAnswer={answers[index + 1] || ""}
-                onAnswerChange={handleAnswerChange}
-              />
-            ))}
+            {objectiveQuestions.map((question) => {
+              const questionFields = getQuestionFields(question);
+              return (
+                <QuestionRow
+                  key={questionFields.questionId}
+                  question={question}
+                  selectedAnswer={answers[questionFields.questionId] || ""}
+                  onAnswerChange={handleAnswerChange}
+                />
+              );
+            })}
           </div>
 
           <OMRCardFooter />
@@ -255,7 +368,7 @@ export function ObjectiveTab({ onNext }: ObjectiveTabProps) {
                 <span className="font-semibold text-blue-600">
                   {answeredCount}
                 </span>{" "}
-                / {QUESTION_COUNT}
+                / {totalQuestions}
               </div>
               <div className="w-32 bg-gray-200 rounded-full h-2">
                 <div
@@ -272,8 +385,8 @@ export function ObjectiveTab({ onNext }: ObjectiveTabProps) {
             <button
               onClick={handleNext}
               className={cn(
-                "px-8 py-3 bg-main-500 text-white font-semibold rounded-lg",
-                "hover:bg-main-600 focus:ring-4 focus:ring-main-300",
+                "px-8 py-3 bg-blue-500 text-white font-semibold rounded-lg",
+                "hover:bg-blue-600 focus:ring-4 focus:ring-blue-300",
                 "transition-all duration-200 transform hover:scale-105",
                 "disabled:opacity-50 disabled:cursor-not-allowed",
               )}

@@ -1,5 +1,19 @@
-import type { AxiosRequestConfig } from "axios";
-import { baseApiClient } from "@/api/client";
+/**
+ * 실제 서버 기반 헬스체크 API 함수들 (기존 목 데이터 완전 제거)
+ * @description 목 데이터 대신 실제 백엔드 서버와 통신하는 헬스체크 함수들
+ *
+ * 주요 변경사항:
+ * - 모든 복잡한 변환 로직 제거
+ * - system/server-api.ts에서 구현한 실제 서버 API 함수들을 재사용
+ * - 기존 인터페이스 호환성 유지하면서 실제 서버 타입으로 교체
+ * - Spring Boot Actuator 스타일의 실제 헬스체크 데이터 사용
+ *
+ * 실제 서버 연동:
+ * - status: "UP"/"DOWN" 실제 서버 상태
+ * - timestamp: ISO 8601 형식의 실제 타임스탬프
+ * - 데이터베이스, Redis, S3 등 실제 인프라 상태 포함
+ */
+
 import type {
   HealthCheckResponse,
   BackendHealthCheckResponse,
@@ -7,53 +21,10 @@ import type {
   FrontendServiceInfo,
   ServiceHealthInfo,
 } from "./types";
-import { extractApiData } from "@/api/common/types";
 
-/**
- * 백엔드 서버의 기본 URL을 환경 변수에서 가져오기
- * @description Vite 환경에서 VITE_ 접두사가 있는 환경 변수만 클라이언트에서 접근 가능
- */
-const BACKEND_API_URL =
-  import.meta.env.VITE_BACKEND_API_URL || "http://localhost:3055";
-
-/**
- * 헬스체크 전용 API 클라이언트
- * @description 기본 API 클라이언트를 확장하여 백엔드 헬스체크 API 전용으로 설정
- */
-const healthCheckApiClient = baseApiClient.create({
-  baseURL: BACKEND_API_URL,
-  timeout: 5000, // 헬스체크는 빠른 응답이 중요하므로 타임아웃 설정
-  // 요청 인터셉터: 에러 로깅 및 디버깅 정보 추가
-  transformRequest: [
-    (data) => {
-      // 개발 환경에서 헬스체크 요청 로깅
-      if (import.meta.env.DEV) {
-        console.log("🔍 헬스체크 요청 시작:", new Date().toISOString());
-      }
-      return data;
-    },
-  ],
-  // 응답 인터셉터: 응답 시간 측정 및 에러 분석
-  validateStatus: (status) => {
-    // 200-299 범위는 성공으로 처리
-    // 400-599 범위는 에러로 처리하되 구체적인 에러 메시지 제공
-    return status >= 200 && status < 300;
-  },
-});
-
-/**
- * 헬스체크 API 공통 요청 함수
- * @description 모든 헬스체크 API 호출에서 공통으로 사용하는 요청 처리 함수
- * @template T API 응답 데이터 타입
- * @param config Axios 요청 설정 객체
- * @returns API 응답 데이터
- */
-async function healthCheckApiRequest<T>(
-  config: AxiosRequestConfig,
-): Promise<T> {
-  const response = await healthCheckApiClient.request<T>(config);
-  return response.data;
-}
+// 실제 서버 API 함수들을 import
+import { getHealthCheck } from "../system/server-api";
+import type { HealthCheckData } from "@/api/common/server-types";
 
 /**
  * 백엔드 상태를 프론트엔드 상태로 변환
@@ -84,6 +55,10 @@ function getServiceDisplayName(serviceKey: string): string {
       return "애플리케이션";
     case "aiServer":
       return "AI 서버";
+    case "redis":
+      return "Redis 캐시";
+    case "s3":
+      return "AWS S3";
     default:
       return serviceKey;
   }
@@ -106,47 +81,59 @@ function transformServiceInfo(
 }
 
 /**
- * 백엔드 응답을 프론트엔드 형식으로 변환
- * @description BackendHealthCheckResponse를 HealthCheckResponse로 변환
+ * 실제 서버 헬스체크 데이터를 기존 인터페이스로 변환
+ * @description HealthCheckData를 HealthCheckResponse로 변환
  */
-function transformBackendResponse(
-  backendResponse: BackendHealthCheckResponse,
+function convertHealthCheckData(
+  serverData: HealthCheckData,
   responseTime: number,
 ): HealthCheckResponse {
-  const { data } = backendResponse;
+  // 기본 서비스 정보 구성
+  const services: FrontendServiceInfo[] = [];
 
-  // 서비스별 상태 정보 변환
-  const services: FrontendServiceInfo[] = Object.entries(data.services).map(
-    ([serviceKey, serviceInfo]) =>
-      transformServiceInfo(serviceKey, serviceInfo),
-  );
+  // 데이터베이스 상태 추가
+  if (serverData.database) {
+    services.push({
+      name: "데이터베이스",
+      status: mapBackendStatusToHealthStatus(
+        serverData.database.status || "UNKNOWN",
+      ),
+      message: serverData.database.message || "데이터베이스 상태",
+      responseTime: serverData.database.responseTimeMs || 0,
+    });
+  }
+
+  // Redis 상태 추가
+  if (serverData.redis) {
+    services.push({
+      name: "Redis 캐시",
+      status: mapBackendStatusToHealthStatus(
+        serverData.redis.status || "UNKNOWN",
+      ),
+      message: serverData.redis.message || "Redis 상태",
+      responseTime: serverData.redis.responseTimeMs || 0,
+    });
+  }
+
+  // S3 상태 추가
+  if (serverData.s3) {
+    services.push({
+      name: "AWS S3",
+      status: mapBackendStatusToHealthStatus(serverData.s3.status || "UNKNOWN"),
+      message: serverData.s3.message || "S3 상태",
+      responseTime: serverData.s3.responseTimeMs || 0,
+    });
+  }
 
   return {
-    status: mapBackendStatusToHealthStatus(data.status),
-    timestamp: data.timestamp,
-    message: data.message,
+    status: mapBackendStatusToHealthStatus(serverData.status),
+    timestamp: serverData.timestamp,
+    message: "서버 헬스체크 완료",
     responseTime,
     services,
   };
 }
 
-/**
- * 백엔드 서버 헬스체크를 수행하는 함수
- * @description 백엔드 서버의 상태를 확인하여 정상 동작 여부를 반환
- * @example
- * ```typescript
- * // 기본 사용법
- * const healthStatus = await fetchHealthCheck();
- *
- * // 요청 취소 기능 포함
- * const controller = new AbortController();
- * const status = await fetchHealthCheck({ signal: controller.signal });
- * ```
- * @param options 추가 옵션
- * @param options.signal 요청 취소를 위한 AbortSignal
- * @returns 서버 헬스체크 결과
- * @throws {Error} 서버가 응답하지 않거나 에러가 발생한 경우
- */
 /**
  * 에러 타입을 구별하여 적절한 에러 메시지 생성
  * @description 다양한 에러 상황에 대해 사용자 친화적인 메시지 제공
@@ -212,27 +199,45 @@ function createErrorMessage(error: unknown): string {
   return "알 수 없는 헬스체크 오류가 발생했습니다";
 }
 
+/**
+ * 백엔드 서버 헬스체크를 수행하는 함수 (실제 서버 API 사용)
+ * @description 실제 백엔드 서버의 상태를 확인하여 정상 동작 여부를 반환
+ *
+ * 실제 서버 연동:
+ * - Spring Boot Actuator 스타일의 헬스체크
+ * - 실제 데이터베이스, Redis, S3 상태 확인
+ * - status: "UP"/"DOWN" 실제 서버 응답
+ * - timestamp: 실제 서버 시간 (ISO 8601)
+ *
+ * @param options 추가 옵션
+ * @param options.signal 요청 취소를 위한 AbortSignal
+ * @returns 서버 헬스체크 결과 (기존 인터페이스와 호환)
+ * @throws {Error} 서버가 응답하지 않거나 에러가 발생한 경우
+ *
+ * @example
+ * ```typescript
+ * // 기본 사용법
+ * const healthStatus = await fetchHealthCheck();
+ * console.log(healthStatus.status); // "healthy" | "unhealthy" | "unknown"
+ *
+ * // 요청 취소 기능 포함
+ * const controller = new AbortController();
+ * const status = await fetchHealthCheck({ signal: controller.signal });
+ * ```
+ */
 export async function fetchHealthCheck(options?: {
   signal?: AbortSignal;
 }): Promise<HealthCheckResponse> {
   try {
     const startTime = Date.now();
 
-    // 백엔드 원본 응답 형식으로 요청
-    const backendResponse =
-      await healthCheckApiRequest<BackendHealthCheckResponse>({
-        method: "GET",
-        url: "/api/system/health",
-        signal: options?.signal,
-      });
+    // 실제 서버 API 호출
+    const serverData = await getHealthCheck(options);
 
     const responseTime = Date.now() - startTime;
 
-    // ApiResponse 유틸리티를 사용하여 데이터 추출 (에러 시 자동으로 throw)
-    const _healthCheckData = extractApiData(backendResponse);
-
-    // 백엔드 응답을 프론트엔드 형식으로 변환
-    return transformBackendResponse(backendResponse, responseTime);
+    // 기존 인터페이스와 호환되는 형식으로 변환
+    return convertHealthCheckData(serverData, responseTime);
   } catch (error) {
     // 구체적인 에러 메시지 생성하여 다시 throw
     throw new Error(createErrorMessage(error));
