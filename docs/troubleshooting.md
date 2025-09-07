@@ -324,7 +324,7 @@ pnpx shadcn@latest add button --overwrite
 **문제**: API 요청 시 CORS 에러 발생
 
 ```
-Access to fetch at 'API_URL' from origin 'localhost:3011' has been blocked by CORS policy
+Access to fetch at 'API_URL' from origin '100.82.50.108:3011' has been blocked by CORS policy
 ```
 
 **해결책**:
@@ -335,7 +335,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:3055",
+        target: "http://100.82.50.108:3055",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
@@ -380,7 +380,7 @@ const client = axios.create({
 ```typescript
 // ✅ Vite 환경 변수는 VITE_ 접두사 필요
 // .env
-VITE_API_BASE_URL=http://localhost:3055
+VITE_API_BASE_URL=http://100.82.50.108:3055
 VITE_APP_NAME=이룸클래스
 
 // 사용

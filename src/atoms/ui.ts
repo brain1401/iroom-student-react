@@ -100,7 +100,7 @@ export type UserDisplayInfo = {
  * @description 전역 헤더 및 UI에서 사용되는 사용자 이름과 배지 정보 관리
  *
  * 기본값 설명:
- * - name: "김체리" (테스트/데모용 기본값)
+ * - name: "정보 없음" (테스트/데모용 기본값)
  * - badgeLabel: "중등 B반" (학급/그룹 표시용)
  *
  * 연동 시점:
@@ -137,7 +137,7 @@ export type UserDisplayInfo = {
  * @description 전역 헤더 및 UI에서 사용되는 사용자 이름과 배지 정보 관리
  *
  * 환경 변수 기본값:
- * - name: VITE_DEFAULT_USER_NAME 또는 "김체리" (테스트/데모용 기본값)
+ * - name: VITE_DEFAULT_USER_NAME 또는 "정보 없음" (테스트/데모용 기본값)
  * - badgeLabel: VITE_DEFAULT_USER_BADGE 또는 "중등 B반" (학급/그룹 표시용)
  *
  * 연동 시점:
@@ -170,6 +170,6 @@ export type UserDisplayInfo = {
  * ```
  */
 export const userDisplayInfoAtom = atom<UserDisplayInfo>({
-  name: import.meta.env.VITE_DEFAULT_USER_NAME || "김체리",
+  name: import.meta.env.VITE_DEFAULT_USER_NAME || "정보 없음",
   badgeLabel: import.meta.env.VITE_DEFAULT_USER_BADGE || "중등 B반",
 });

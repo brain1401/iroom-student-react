@@ -18,9 +18,17 @@ import { useState, useCallback, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Camera, Image as ImageIcon, CheckCircle, Loader2 } from "lucide-react";
+import { CheckCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { ExamDetailResult, QuestionAnswer, ExamQuestionsData, Question } from "@/api/student/types";
+import type {
+  ExamDetailResult,
+  QuestionAnswer,
+  ExamQuestionsData,
+  Question,
+} from "@/api/student/types";
+import { FileUpload } from "../layout";
+import { recognizeText, parseAnswersByQuestion } from "@/api/text-recognition";
+import type { TextRecognitionResponse } from "@/api/text-recognition";
 
 // ============================================================================
 // 타입 정의
@@ -54,6 +62,23 @@ type SubmissionState = {
   isSubmitting: boolean;
 };
 
+/**
+ * 텍스트 인식 상태 타입
+ * @description 텍스트 인식 진행 상태를 관리
+ */
+type TextRecognitionState = {
+  /** 텍스트 인식 중 여부 */
+  isRecognizing: boolean;
+  /** 인식 진행률 (0-100) */
+  progress: number;
+  /** 현재 상태 메시지 */
+  message: string;
+  /** 인식 결과 */
+  recognitionResult?: TextRecognitionResponse;
+  /** 에러 메시지 */
+  error?: string;
+};
+
 // ============================================================================
 // 상수 정의
 // ============================================================================
@@ -75,44 +100,54 @@ const DEFAULT_SCORE_PER_QUESTION = 10;
 /**
  * 시험 데이터가 신규 API 구조인지 확인
  */
-function isExamQuestionsData(examDetail: ExamDetailResult | ExamQuestionsData): examDetail is ExamQuestionsData {
-  return 'questions' in examDetail && 'multipleChoiceCount' in examDetail;
+function IsExamQuestionsData(
+  examDetail: ExamDetailResult | ExamQuestionsData,
+): examDetail is ExamQuestionsData {
+  return "questions" in examDetail && "multipleChoiceCount" in examDetail;
 }
 
 /**
  * 문제 데이터가 신규 API 구조인지 확인
  */
-function isNewQuestion(question: QuestionAnswer | Question): question is Question {
-  return 'seqNo' in question && 'questionText' in question;
+function IsNewQuestion(
+  question: QuestionAnswer | Question,
+): question is Question {
+  return "seqNo" in question && "questionText" in question;
 }
 
 /**
  * 시험 데이터에서 주관식 문제만 추출
  */
-function extractSubjectiveQuestions(examDetail: ExamDetailResult | ExamQuestionsData): (QuestionAnswer | Question)[] {
-  if (isExamQuestionsData(examDetail)) {
+function ExtractSubjectiveQuestions(
+  examDetail: ExamDetailResult | ExamQuestionsData,
+): (QuestionAnswer | Question)[] {
+  if (IsExamQuestionsData(examDetail)) {
     // 신규 API: questions 배열에서 SUBJECTIVE 필터링
-    return examDetail.questions?.filter(
-      (q) => q.questionType === "SUBJECTIVE"
-    ) || [];
+    return (
+      examDetail.questions?.filter((q) => q.questionType === "SUBJECTIVE") || []
+    );
   } else {
     // 기존 API: questionAnswers 배열에서 주관식 필터링
-    return examDetail?.questionAnswers?.filter(
-      (q) => q.questionType === "주관식" || q.questionType === "SUBJECTIVE"
-    ) || [];
+    return (
+      examDetail?.questionAnswers?.filter(
+        (q) => q.questionType === "주관식" || q.questionType === "SUBJECTIVE",
+      ) || []
+    );
   }
 }
 
 /**
  * 문제 데이터에서 공통 필드 추출 (백워드 호환성)
  */
-function getQuestionFields(question: QuestionAnswer | Question) {
-  if (isNewQuestion(question)) {
+function GetQuestionFields(question: QuestionAnswer | Question) {
+  if (IsNewQuestion(question)) {
     // 신규 API 구조
     return {
       questionId: question.questionId,
       questionOrder: question.seqNo, // seqNo → questionOrder 매핑
-      questionSummary: question.questionText.substring(0, 50) + (question.questionText.length > 50 ? '...' : ''), // questionText를 요약으로 변환
+      questionSummary:
+        question.questionText.substring(0, 50) +
+        (question.questionText.length > 50 ? "..." : ""), // questionText를 요약으로 변환
       points: question.points,
       difficulty: question.difficulty,
       unitInfo: null, // 신규 API에는 unitInfo가 없음
@@ -207,70 +242,67 @@ function CreateSubmissionCountdown(
   }, [showSubmissionModal, isSubmitting, remainingTime, setRemainingTime]);
 }
 
+/**
+ * 텍스트 인식 상태 관리 함수
+ * @description 텍스트 인식 관련 상태와 핸들러를 관리
+ */
+function CreateTextRecognitionState() {
+  const [recognitionState, setRecognitionState] =
+    useState<TextRecognitionState>({
+      isRecognizing: false,
+      progress: 0,
+      message: "",
+      recognitionResult: undefined,
+      error: undefined,
+    });
+
+  const setIsRecognizing = useCallback((recognizing: boolean) => {
+    setRecognitionState((prev) => ({ ...prev, isRecognizing: recognizing }));
+  }, []);
+
+  const setProgress = useCallback((progress: number) => {
+    setRecognitionState((prev) => ({ ...prev, progress }));
+  }, []);
+
+  const setMessage = useCallback((message: string) => {
+    setRecognitionState((prev) => ({ ...prev, message }));
+  }, []);
+
+  const setRecognitionResult = useCallback(
+    (result: TextRecognitionResponse) => {
+      setRecognitionState((prev) => ({ ...prev, recognitionResult: result }));
+    },
+    [],
+  );
+
+  const setError = useCallback((error: string) => {
+    setRecognitionState((prev) => ({ ...prev, error }));
+  }, []);
+
+  const resetRecognitionState = useCallback(() => {
+    setRecognitionState({
+      isRecognizing: false,
+      progress: 0,
+      message: "",
+      recognitionResult: undefined,
+      error: undefined,
+    });
+  }, []);
+
+  return {
+    ...recognitionState,
+    setIsRecognizing,
+    setProgress,
+    setMessage,
+    setRecognitionResult,
+    setError,
+    resetRecognitionState,
+  };
+}
+
 // ============================================================================
 // 하위 컴포넌트
 // ============================================================================
-
-/**
- * 문제 촬영 버튼 컴포넌트
- * @description 문제 이미지를 촬영하는 버튼
- */
-type CaptureButtonProps = {
-  /** 문제 ID */
-  questionId: string;
-  /** 촬영 핸들러 */
-  onCapture: (questionId: string) => void;
-};
-
-function CaptureButton({ questionId, onCapture }: CaptureButtonProps) {
-  return (
-    <button
-      onClick={() => onCapture(questionId)}
-      className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 hover:border-gray-400 transition-colors duration-200"
-    >
-      <Camera className="w-4 h-4" />
-      문제 촬영
-    </button>
-  );
-}
-
-/**
- * 이미지 표시 영역 컴포넌트
- * @description 촬영된 이미지 또는 플레이스홀더를 표시
- */
-type ImageDisplayProps = {
-  /** 문제 순서 */
-  questionOrder: number;
-  /** 이미지 URL */
-  imageUrl?: string;
-  /** 이미지가 없는 경우 표시할 메시지 */
-  placeholderMessage?: string;
-};
-
-function ImageDisplay({
-  questionOrder,
-  imageUrl,
-  placeholderMessage,
-}: ImageDisplayProps) {
-  if (imageUrl) {
-    return (
-      <div className="w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
-        <img
-          src={imageUrl}
-          alt={`문제 ${questionOrder}번 이미지`}
-          className="w-full h-full object-cover"
-        />
-      </div>
-    );
-  }
-
-  return (
-    <div className="w-full h-48 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-gray-500">
-      <ImageIcon className="w-12 h-12 mb-2 opacity-50" />
-      <p className="text-sm">{placeholderMessage || "이미지를 촬영해주세요"}</p>
-    </div>
-  );
-}
 
 /**
  * 답안 입력 컴포넌트
@@ -289,7 +321,7 @@ type AnswerInputProps = {
 
 function AnswerInput({
   questionId,
-  questionOrder,
+  questionOrder: _questionOrder,
   answer,
   onAnswerChange,
 }: AnswerInputProps) {
@@ -327,7 +359,7 @@ type QuestionItemProps = {
 
 function QuestionItem({
   question,
-  onCapture,
+  onCapture: _onCapture,
   onAnswerChange,
 }: QuestionItemProps) {
   return (
@@ -335,53 +367,48 @@ function QuestionItem({
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <CardTitle className="text-lg">문제 {getQuestionFields(question).questionOrder}번</CardTitle>
-            {getQuestionFields(question).questionSummary && (
-              <span className="text-sm text-gray-500 truncate max-w-xs">
-                {getQuestionFields(question).questionSummary}
-              </span>
-            )}
+            <CardTitle className="text-lg">
+              문제 {GetQuestionFields(question).questionOrder}번
+            </CardTitle>
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="secondary">주관식</Badge>
             <Badge variant="outline" className="text-blue-600 border-blue-200">
-              {getQuestionFields(question).points || DEFAULT_SCORE_PER_QUESTION}점
+              {GetQuestionFields(question).points || DEFAULT_SCORE_PER_QUESTION}
+              점
             </Badge>
-            {getQuestionFields(question).difficulty && (
+            {GetQuestionFields(question).difficulty && (
               <Badge variant="outline" className="text-gray-500">
-                {getQuestionFields(question).difficulty}
+                {GetQuestionFields(question).difficulty}
               </Badge>
             )}
           </div>
         </div>
+
+        {GetQuestionFields(question).questionSummary && (
+          <span
+            className="text-sm text-gray-500 truncate max-w-xs flex"
+            dangerouslySetInnerHTML={{
+              __html: GetQuestionFields(question).questionSummary,
+            }}
+          />
+        )}
+        {/* 문제 이미지가 있다면 여기에 추가하는 코드 만들기 */}
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* 이미지 촬영 영역 */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h4 className="font-medium text-gray-900">문제 이미지</h4>
-            <CaptureButton questionId={question.questionId} onCapture={onCapture} />
-          </div>
-          <ImageDisplay
-            questionOrder={getQuestionFields(question).questionOrder}
-            imageUrl={question.capturedImageUrl}
-            placeholderMessage="문제를 촬영해주세요"
-          />
-        </div>
-
         {/* 단원 정보 */}
-        {getQuestionFields(question).unitInfo && (
+        {GetQuestionFields(question).unitInfo && (
           <div className="space-y-2">
             <h4 className="font-medium text-gray-900">단원 정보</h4>
             <div className="flex flex-wrap gap-2">
               <Badge variant="outline" className="text-xs">
-                {getQuestionFields(question).unitInfo?.categoryName}
+                {GetQuestionFields(question).unitInfo?.categoryName}
               </Badge>
               <Badge variant="outline" className="text-xs">
-                {getQuestionFields(question).unitInfo?.subcategoryName}
+                {GetQuestionFields(question).unitInfo?.subcategoryName}
               </Badge>
               <Badge variant="outline" className="text-xs">
-                {getQuestionFields(question).unitInfo?.unitName}
+                {GetQuestionFields(question).unitInfo?.unitName}
               </Badge>
             </div>
           </div>
@@ -401,8 +428,8 @@ function QuestionItem({
 
         {/* 답안 입력 */}
         <AnswerInput
-          questionId={getQuestionFields(question).questionId}
-          questionOrder={getQuestionFields(question).questionOrder}
+          questionId={GetQuestionFields(question).questionId}
+          questionOrder={GetQuestionFields(question).questionOrder}
           answer={question.userAnswer}
           onAnswerChange={onAnswerChange}
         />
@@ -513,6 +540,95 @@ function SubmissionCompleteModal({
   );
 }
 
+/**
+ * 텍스트 인식 진행 모달 컴포넌트
+ * @description 텍스트 인식 진행 상태를 표시
+ */
+type TextRecognitionModalProps = {
+  /** 모달 표시 여부 */
+  isVisible: boolean;
+  /** 인식 중 여부 */
+  isRecognizing: boolean;
+  /** 진행률 (0-100) */
+  progress: number;
+  /** 상태 메시지 */
+  message: string;
+  /** 에러 메시지 */
+  error?: string;
+  /** 취소 핸들러 */
+  onCancel?: () => void;
+};
+
+function TextRecognitionModal({
+  isVisible,
+  isRecognizing,
+  progress,
+  message,
+  error,
+  onCancel,
+}: TextRecognitionModalProps) {
+  if (!isVisible) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-8 max-w-md mx-4 text-center shadow-2xl">
+        {isRecognizing ? (
+          <>
+            <Loader2 className="w-16 h-16 text-blue-500 mx-auto mb-4 animate-spin" />
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              텍스트 인식 중
+            </h3>
+            <p className="text-gray-600 mb-4">{message}</p>
+            <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+              <div
+                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <div className="text-sm text-gray-500 mb-4">{progress}%</div>
+            {onCancel && (
+              <button
+                onClick={onCancel}
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+              >
+                취소
+              </button>
+            )}
+          </>
+        ) : error ? (
+          <>
+            <div className="w-16 h-16 text-red-500 mx-auto mb-4">⚠️</div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              텍스트 인식 실패
+            </h3>
+            <p className="text-gray-600 mb-4">{error}</p>
+            <button
+              onClick={onCancel}
+              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+            >
+              확인
+            </button>
+          </>
+        ) : (
+          <>
+            <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              텍스트 인식 완료
+            </h3>
+            <p className="text-gray-600 mb-4">{message}</p>
+            <button
+              onClick={onCancel}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              확인
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ============================================================================
 // 메인 컴포넌트
 // ============================================================================
@@ -521,7 +637,6 @@ function SubmissionCompleteModal({
  * 주관식 탭 메인 컴포넌트
  * @description 주관식 문제 답안 제출 UI
  */
-
 
 /**
  * 주관식 탭 메인 컴포넌트
@@ -536,26 +651,31 @@ type SubjectiveTabProps = {
 
 export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
   // 시험 데이터에서 주관식 문제들만 필터링 (신규/기존 API 모두 지원)
-  const subjectiveQuestions = examDetail ? extractSubjectiveQuestions(examDetail) : [];
+  const subjectiveQuestions = examDetail
+    ? ExtractSubjectiveQuestions(examDetail)
+    : [];
 
   // 주관식 문제를 SubjectiveQuestion 타입으로 변환하여 상태 초기화
   const [questionsState, setQuestionsState] = useState<SubjectiveQuestion[]>(
-    () => subjectiveQuestions.map(question => ({
-      ...question,
-      capturedImageUrl: undefined,
-      recognizedSolution: undefined,
-      userAnswer: undefined,
-    }))
+    () =>
+      subjectiveQuestions.map((question) => ({
+        ...question,
+        capturedImageUrl: undefined,
+        recognizedSolution: undefined,
+        userAnswer: undefined,
+      })),
   );
 
   // 시험 데이터가 변경되면 문제 상태 업데이트
   useEffect(() => {
-    const newSubjectiveQuestions = examDetail ? extractSubjectiveQuestions(examDetail) : [];
-    
-    setQuestionsState(prev => {
+    const newSubjectiveQuestions = examDetail
+      ? ExtractSubjectiveQuestions(examDetail)
+      : [];
+
+    setQuestionsState((prev) => {
       // 기존 사용자 입력 데이터 유지하면서 새 문제 데이터로 업데이트
-      return newSubjectiveQuestions.map(question => {
-        const existing = prev.find(p => p.questionId === question.questionId);
+      return newSubjectiveQuestions.map((question) => {
+        const existing = prev.find((p) => p.questionId === question.questionId);
         return {
           ...question,
           capturedImageUrl: existing?.capturedImageUrl,
@@ -576,8 +696,23 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
     setShowSubmissionModal,
     setRemainingTime,
     setIsSubmitting,
-    resetSubmissionState,
+    resetSubmissionState: _resetSubmissionState,
   } = CreateSubmissionState();
+
+  // 텍스트 인식 상태 관리
+  const {
+    isRecognizing,
+    progress,
+    message,
+    recognitionResult,
+    error: recognitionError,
+    setIsRecognizing,
+    setProgress,
+    setMessage,
+    setRecognitionResult,
+    setError: setRecognitionError,
+    resetRecognitionState,
+  } = CreateTextRecognitionState();
 
   // 카운트다운 설정
   CreateSubmissionCountdown(
@@ -590,16 +725,16 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
   // 이미지 촬영 핸들러 (문제 ID가 string 타입으로 변경)
   const handleCapture = useCallback((questionId: string) => {
     console.log(`문제 ${questionId} 촬영`);
-    
+
     // TODO: 실제 카메라/이미지 업로드 기능 구현
     // 임시로 더미 이미지 URL 설정 (개발용)
     setQuestionsState((prev) =>
       prev.map((q) =>
         q.questionId === questionId
-          ? { 
-              ...q, 
-              capturedImageUrl: `https://via.placeholder.com/400x300?text=문제+${getQuestionFields(q).questionOrder}번+이미지`,
-              recognizedSolution: `문제 ${getQuestionFields(q).questionOrder}번의 인식된 풀이 과정입니다.\n수식: 2x + 3 = 7\n따라서 x = 2`
+          ? {
+              ...q,
+              capturedImageUrl: `https://via.placeholder.com/400x300?text=문제+${GetQuestionFields(q).questionOrder}번+이미지`,
+              recognizedSolution: `문제 ${GetQuestionFields(q).questionOrder}번의 인식된 풀이 과정입니다.\n수식: 2x + 3 = 7\n따라서 x = 2`,
             }
           : q,
       ),
@@ -616,6 +751,86 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
       );
     },
     [],
+  );
+
+  // 파일 업로드 핸들러
+  const handleFilesSelect = useCallback(
+    async (files: File[]) => {
+      if (files.length === 0) return;
+
+      console.log(`[SubjectiveTab] 파일 업로드: ${files.length}개 파일`);
+
+      // 텍스트 인식 상태 초기화
+      resetRecognitionState();
+      setIsRecognizing(true);
+      setProgress(0);
+      setMessage("이미지를 분석하고 있습니다...");
+
+      try {
+        // 첫 번째 파일만 처리 (여러 파일이면 첫 번째만)
+        const file = files[0];
+
+        setProgress(20);
+        setMessage("텍스트 인식 API에 전송 중...");
+
+        // 텍스트 인식 API 호출
+        const result = await recognizeText({
+          image: file,
+          options: {
+            language: "ko", // 한국어 설정
+            accuracy: "high", // 높은 정확도
+          },
+        });
+
+        setProgress(80);
+        setMessage("인식된 텍스트를 분석 중...");
+
+        // 인식 결과 저장
+        setRecognitionResult(result);
+
+        // 인식된 텍스트를 문제별로 파싱
+        const answers = parseAnswersByQuestion(
+          result.text,
+          questionsState.length,
+        );
+
+        setProgress(100);
+        setMessage("답안을 자동으로 입력했습니다.");
+
+        // 파싱된 답안을 각 문제에 자동 입력
+        setQuestionsState((prev) =>
+          prev.map((question, index) => ({
+            ...question,
+            userAnswer: answers[index] || question.userAnswer || "",
+            recognizedSolution: result.text, // 전체 인식 결과도 저장
+          })),
+        );
+
+        console.log(`[SubjectiveTab] 텍스트 인식 완료:`, {
+          totalText: result.text,
+          parsedAnswers: answers,
+          confidence: result.confidence,
+        });
+      } catch (error) {
+        console.error("[SubjectiveTab] 텍스트 인식 실패:", error);
+        setRecognitionError(
+          error instanceof Error
+            ? error.message
+            : "텍스트 인식 중 오류가 발생했습니다.",
+        );
+      } finally {
+        setIsRecognizing(false);
+      }
+    },
+    [
+      questionsState.length,
+      resetRecognitionState,
+      setIsRecognizing,
+      setProgress,
+      setMessage,
+      setRecognitionResult,
+      setRecognitionError,
+    ],
   );
 
   // 제출 확인 모달 표시
@@ -683,9 +898,10 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
   const answeredCount = questionsState.filter((q) =>
     q.userAnswer?.trim(),
   ).length;
-  const completionRate = questionsState.length > 0 
-    ? (answeredCount / questionsState.length) * 100 
-    : 0;
+  const completionRate =
+    questionsState.length > 0
+      ? (answeredCount / questionsState.length) * 100
+      : 0;
 
   // 시험 데이터 로딩 중이거나 주관식 문제가 없는 경우
   if (!examDetail) {
@@ -709,14 +925,16 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
       <div className="w-full max-w-4xl mx-auto p-4">
         {/* 헤더 */}
         <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">주관식 답안</h2>
-          <p className="text-gray-600">문제를 촬영하고 답안을 입력하세요</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">주관식 답안</h2>
+          <p className="text-gray-600 mb-4">
+            답안를 촬영하고 인식 된 답안을 확인하세요
+          </p>
+          <FileUpload onFilesSelect={handleFilesSelect} />
+
           <div className="mt-4 flex justify-center items-center gap-8 text-sm text-gray-500">
             <span>총 문제: {questionsState.length}문제</span>
             <span>답안 완성: {answeredCount}문제</span>
-            {examDetail.examName && (
-              <span>시험: {examDetail.examName}</span>
-            )}
+            {examDetail.examName && <span>시험: {examDetail.examName}</span>}
           </div>
           <Separator className="mt-4" />
         </div>
@@ -754,7 +972,6 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
               {Math.round(completionRate)}%
             </span>
           </div>
-
           {/* 제출 버튼 */}
           <button
             onClick={handleSubmitClick}
@@ -784,6 +1001,18 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
         isVisible={showSubmissionModal}
         remainingTime={remainingTime}
         isSubmitting={isSubmitting}
+      />
+
+      {/* 텍스트 인식 모달 */}
+      <TextRecognitionModal
+        isVisible={isRecognizing || !!recognitionResult || !!recognitionError}
+        isRecognizing={isRecognizing}
+        progress={progress}
+        message={message}
+        error={recognitionError}
+        onCancel={() => {
+          resetRecognitionState();
+        }}
       />
     </>
   );

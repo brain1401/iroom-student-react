@@ -71,7 +71,7 @@ export const Route = createFileRoute("/main/")({
     // 2. 기본 학생 정보로 최근 제출 내역 prefetch
     // NOTE: 실제 로그인 정보는 클라이언트에서 localStorage로부터 복원됨
     const defaultStudentAuth = {
-      name: import.meta.env.VITE_DEFAULT_USER_NAME || "김체리",
+      name: import.meta.env.VITE_DEFAULT_USER_NAME || "정보 없음",
       birthDate: "2006-03-15",
       phone: "010-1234-5678",
       page: 0,
@@ -292,11 +292,8 @@ function RecentExamSection() {
       {/* 섹션 헤더 */}
       <header className="mb-6">
         <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-          최근 응시 시험 ({totalCount}개)
+          {loggedInStudent?.name}님이 응시한 시험 ({totalCount}개)
         </h2>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          {loggedInStudent?.name}님이 최근에 응시한 시험들을 확인해보세요
-        </p>
       </header>
 
       {/* 최근 시험 카드 그리드 */}

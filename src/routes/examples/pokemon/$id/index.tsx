@@ -42,7 +42,7 @@ function PokemonDetailPage() {
    * 🔍 차이점을 직접 확인하는 방법:
    * 1. 아래 useHydrateAtoms를 주석처리하고
    * 2. 바로 아래 useEffect 코드를 주석해제한 후
-   * 3. http://localhost:3000/examples/pokemon/nidoran-m 에서 새로고침 해보세요
+   * 3. http://100.82.50.108:3000/examples/pokemon/nidoran-m 에서 새로고침 해보세요
    * 4. 페이지 소스 보기(Ctrl+U)로 초기 HTML을 비교해보세요
    */
 

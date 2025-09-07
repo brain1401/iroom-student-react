@@ -26,7 +26,7 @@ import type {
  * @description 실제 백엔드 서버와 통신하는 HTTP 클라이언트
  */
 const examSheetApiClient = baseApiClient.create({
-  baseURL: import.meta.env.VITE_BACKEND_API_URL || "http://localhost:3055",
+  baseURL: import.meta.env.VITE_BACKEND_API_URL || "http://100.82.50.108:3055",
   timeout: 20000, // 문제지 데이터는 매우 상세하므로 타임아웃을 더 길게 설정
 });
 
@@ -556,14 +556,18 @@ export async function submitStudentAnswer(
   request: StudentAnswerSubmitRequest,
   options?: { signal?: AbortSignal },
 ): Promise<ApiResponse<boolean>> {
-  if (!request.examSheetId || !request.answers || request.answers.length === 0) {
+  if (
+    !request.examSheetId ||
+    !request.answers ||
+    request.answers.length === 0
+  ) {
     throw new Error("유효하지 않은 제출 데이터입니다");
   }
 
   // 실제 서버 API가 구현될 때까지 임시 구현
   // TODO: 실제 서버 엔드포인트 구현 후 교체
   console.log("답안 제출 요청:", request);
-  
+
   return {
     result: "SUCCESS",
     message: "답안 제출이 완료되었습니다",
@@ -589,7 +593,7 @@ export async function saveStudentAnswerDraft(
   // 실제 서버 API가 구현될 때까지 임시 구현
   // TODO: 실제 서버 엔드포인트 구현 후 교체
   console.log("답안 임시저장 요청:", request);
-  
+
   return {
     result: "SUCCESS",
     message: "답안이 임시저장되었습니다",
