@@ -415,13 +415,13 @@ export const examTabStateAtom = atom((get) => {
     isAvailable,
   } = get(examDetailDataAtom);
 
-  // 데이터가 아직 없는 경우 기본값
+  // 데이터가 아직 없는 경우 - 기본값을 null로 설정
   if (!isAvailable) {
     return {
-      shouldShowObjectiveTab: true, // 로딩 중에는 기본 탭들 표시
-      shouldShowSubjectiveTab: true,
-      defaultActiveTab: "objective" as const,
-      availableTabs: ["objective", "subjective"] as const,
+      shouldShowObjectiveTab: false, // 로딩 중에는 탭 숨김
+      shouldShowSubjectiveTab: false, // 로딩 중에는 탭 숨김
+      defaultActiveTab: null, // 로딩 중에는 기본 탭 없음
+      availableTabs: [],
       tabCounts: { objective: 0, subjective: 0 },
     };
   }
@@ -431,15 +431,24 @@ export const examTabStateAtom = atom((get) => {
   if (hasObjective) availableTabs.push("objective");
   if (hasSubjective) availableTabs.push("subjective");
 
-  // 기본 활성 탭 결정
+  // 기본 활성 탭 결정 - 주관식만 있는 경우 주관식 우선
   let defaultActiveTab: "objective" | "subjective" | null = null;
   if (hasObjective && hasSubjective) {
     defaultActiveTab = "objective"; // 둘 다 있으면 객관식 우선
-  } else if (hasObjective) {
-    defaultActiveTab = "objective";
   } else if (hasSubjective) {
-    defaultActiveTab = "subjective";
+    defaultActiveTab = "subjective"; // 주관식만 있으면 주관식 (순서 변경)
+  } else if (hasObjective) {
+    defaultActiveTab = "objective"; // 객관식만 있으면 객관식
   }
+
+  console.log(`[ExamTabState] 탭 상태 계산:`, {
+    hasObjective,
+    hasSubjective,
+    defaultActiveTab,
+    availableTabs,
+    objectiveCount,
+    subjectiveCount,
+  });
 
   return {
     shouldShowObjectiveTab: hasObjective,

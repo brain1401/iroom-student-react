@@ -5,10 +5,10 @@ import { ObjectiveTab } from "@/components/student/ObjectiveTab";
 import { SubjectiveTab } from "@/components/student/SubjectiveTab";
 import { cn } from "@/lib/utils";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { 
-  currentExamIdAtom, 
-  examTabStateAtom, 
-  examDetailDataAtom 
+import {
+  currentExamIdAtom,
+  examTabStateAtom,
+  examDetailDataAtom,
 } from "@/atoms/student";
 
 export const Route = createFileRoute("/submit/$examId/scan/")({
@@ -18,7 +18,7 @@ export const Route = createFileRoute("/submit/$examId/scan/")({
 /**
  * 시험 스캔 페이지 컴포넌트
  * @description 시험 문제 유형에 따라 동적으로 탭을 표시/숨김 처리하는 페이지
- * 
+ *
  * 주요 기능:
  * - URL에서 examId 추출하여 상태 관리
  * - 객관식/주관식 문제 수에 따른 동적 탭 제어
@@ -26,15 +26,17 @@ export const Route = createFileRoute("/submit/$examId/scan/")({
  * - 탭별 컨텐츠 애니메이션 전환
  */
 function RouteComponent() {
-  const { examId } = useParams({ from: "/submit/$examId/scan/" });
-  
+  const { examId } = Route.useParams();
+
   // Atom 상태 관리
   const setCurrentExamId = useSetAtom(currentExamIdAtom);
   const tabState = useAtomValue(examTabStateAtom);
   const examData = useAtomValue(examDetailDataAtom);
-  
+
   // 로컬 탭 상태 (사용자가 수동으로 선택한 탭)
-  const [activeTab, setActiveTab] = useState<"objective" | "subjective" | null>(null);
+  const [activeTab, setActiveTab] = useState<"objective" | "subjective" | null>(
+    null,
+  );
 
   /**
    * examId 설정 및 초기 탭 상태 설정
@@ -47,12 +49,18 @@ function RouteComponent() {
 
   /**
    * 시험 데이터 로딩 완료 후 기본 탭 설정
+   * @description tabState.defaultActiveTab이 변경되면 즉시 반영
    */
   useEffect(() => {
-    if (tabState.defaultActiveTab && activeTab === null) {
+    // 로딩 완료 후 defaultActiveTab이 설정되고, 현재 activeTab이 null이거나 유효하지 않은 경우
+    if (
+      tabState.defaultActiveTab &&
+      (activeTab === null || !tabState.availableTabs.includes(activeTab))
+    ) {
+      console.log(`[ScanPage] 기본 탭 설정: ${tabState.defaultActiveTab}`);
       setActiveTab(tabState.defaultActiveTab);
     }
-  }, [tabState.defaultActiveTab, activeTab]);
+  }, [tabState.defaultActiveTab, tabState.availableTabs, activeTab]);
 
   /**
    * 로딩 상태 처리
@@ -63,7 +71,9 @@ function RouteComponent() {
         <PageHeader title="시험 정보 로딩 중..." shouldShowBackButton={true} />
         <div className="flex items-center justify-center space-x-2">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-          <span className="text-gray-600">시험 정보를 불러오고 있습니다...</span>
+          <span className="text-gray-600">
+            시험 정보를 불러오고 있습니다...
+          </span>
         </div>
       </div>
     );
@@ -95,9 +105,15 @@ function RouteComponent() {
   }
 
   /**
-   * 사용 가능한 탭이 없는 경우
+   * 현재 활성 탭 결정
+   * @description 우선순위: 사용자 선택 탭 > 기본 탭 > 사용 가능한 첫 번째 탭
    */
-  if (tabState.availableTabs.length === 0) {
+  const currentActiveTab = activeTab || tabState.defaultActiveTab;
+
+  /**
+   * 탭이 결정되지 않은 경우 (로딩 중이거나 탭이 없음)
+   */
+  if (!currentActiveTab || tabState.availableTabs.length === 0) {
     return (
       <div className="container mx-auto flex flex-1 h-full max-w-6xl flex-col items-center justify-center space-y-6 p-4">
         <PageHeader title="시험 정보 없음" shouldShowBackButton={true} />
@@ -106,7 +122,7 @@ function RouteComponent() {
             이 시험에는 문제가 없습니다
           </div>
           <div className="text-gray-600">
-            객관식 문제 수: {tabState.tabCounts.objective}개<br/>
+            객관식 문제 수: {tabState.tabCounts.objective}개<br />
             주관식 문제 수: {tabState.tabCounts.subjective}개
           </div>
         </div>
@@ -114,10 +130,14 @@ function RouteComponent() {
     );
   }
 
-  /**
-   * 현재 활성 탭이 설정되지 않은 경우 기본값으로 설정
-   */
-  const currentActiveTab = activeTab || tabState.defaultActiveTab || tabState.availableTabs[0];
+  console.log(`[ScanPage] 탭 상태:`, {
+    activeTab,
+    defaultActiveTab: tabState.defaultActiveTab,
+    availableTabs: tabState.availableTabs,
+    currentActiveTab,
+    shouldShowObjectiveTab: tabState.shouldShowObjectiveTab,
+    shouldShowSubjectiveTab: tabState.shouldShowSubjectiveTab,
+  });
 
   /**
    * 탭 전환 핸들러
@@ -131,9 +151,9 @@ function RouteComponent() {
 
   return (
     <div className="container mx-auto flex flex-1 h-full max-w-6xl flex-col items-center space-y-6 p-4">
-      <PageHeader 
-        title={examData.examDetail.examName || "시험"} 
-        shouldShowBackButton={true} 
+      <PageHeader
+        title={examData.examDetail.examName || "시험"}
+        shouldShowBackButton={true}
       />
 
       {/* 시험 정보 요약 (개발 확인용) */}
@@ -232,23 +252,25 @@ function RouteComponent() {
         {/* 단일 탭일 때 애니메이션 없이 바로 표시 */}
         {tabState.availableTabs.length === 1 && (
           <div>
-            {tabState.shouldShowObjectiveTab && currentActiveTab === "objective" && (
-              <ObjectiveTab
-                examDetail={examData.examDetail}
-                onNext={() => {
-                  window.location.href = `/submit/${examId}/text-recongnition`;
-                }}
-              />
-            )}
-            
-            {tabState.shouldShowSubjectiveTab && currentActiveTab === "subjective" && (
-              <SubjectiveTab
-                examDetail={examData.examDetail}
-                onNext={() => {
-                  window.location.href = `/submit/${examId}/text-recongnition`;
-                }}
-              />
-            )}
+            {tabState.shouldShowObjectiveTab &&
+              currentActiveTab === "objective" && (
+                <ObjectiveTab
+                  examDetail={examData.examDetail}
+                  onNext={() => {
+                    window.location.href = `/submit/${examId}/text-recongnition`;
+                  }}
+                />
+              )}
+
+            {tabState.shouldShowSubjectiveTab &&
+              currentActiveTab === "subjective" && (
+                <SubjectiveTab
+                  examDetail={examData.examDetail}
+                  onNext={() => {
+                    window.location.href = `/submit/${examId}/text-recongnition`;
+                  }}
+                />
+              )}
           </div>
         )}
       </div>
