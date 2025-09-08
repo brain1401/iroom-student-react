@@ -19,22 +19,22 @@ TanStack Start (React 19 + SSR) + Vite 기반 현대적 React 프로젝트
 
 ```typescript
 // ❌ 절대 금지
-const response = await fetch("/api/data");
+const response = await fetch("/data");
 
 // ✅ 필수 - 외부 API (포켓몬 등)
 import { baseApiClient } from "@/api/client";
-const pokemonData = await baseApiClient.get("/api/pokemon");
+const pokemonData = await baseApiClient.get("/pokemon");
 
 // ✅ 필수 - 백엔드 API (ApiResponse<T> 래퍼)
 import { authApiClient } from "@/api/client";
 import { extractApiData, type ApiResponse } from "@/api/common/types";
 
 // 방법 1: extractApiData 유틸리티 사용 (권장)
-const response = await authApiClient.get<ApiResponse<UserData>>("/api/user/profile");
+const response = await authApiClient.get<ApiResponse<UserData>>("/user/profile");
 const userData = extractApiData(response.data);
 
 // 방법 2: 직접 처리
-const response = await authApiClient.get<ApiResponse<UserData>>("/api/user/profile");
+const response = await authApiClient.get<ApiResponse<UserData>>("/user/profile");
 if (response.data.result === "SUCCESS") {
   const userData = response.data.data;
 } else {
@@ -385,7 +385,7 @@ useEffect(() => {
 ### API 호출 및 응답 처리 에러
 ```typescript
 // ❌ fetch 사용 또는 잘못된 응답 처리
-const response = await fetch("/api/data");
+const response = await fetch("/data");
 const data = await response.json();
 
 // ✅ 올바른 백엔드 API 호출
@@ -393,7 +393,7 @@ import { authApiClient } from "@/api/client";
 import { extractApiData, type ApiResponse } from "@/api/common/types";
 
 try {
-  const response = await authApiClient.get<ApiResponse<UserData>>("/api/user");
+  const response = await authApiClient.get<ApiResponse<UserData>>("/user");
   const userData = extractApiData(response.data);
   // 성공 처리
 } catch (error) {
