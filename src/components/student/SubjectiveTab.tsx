@@ -15,7 +15,7 @@
  */
 
 import { useState, useCallback, useEffect } from "react";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -34,8 +34,10 @@ import type { AsyncResultResponse } from "@/api/text-recognition/async-api";
 import { Button } from "@/components/ui/button";
 import { submitAndGrade } from "@/api/grading";
 import type { SubmitAndGradeRequest } from "@/api/grading";
-import { loggedInStudentAtom } from "@/atoms/auth";
+import { loggedInStudentAtom, setLoginInfoAtom } from "@/atoms/auth";
 import { currentExamIdAtom, objectiveAnswersAtom } from "@/atoms/student";
+import { upsertStudent } from "@/api/student";
+import type { StudentAuthRequest } from "@/api/student";
 
 // ============================================================================
 // 타입 정의
@@ -729,6 +731,7 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
   const examIdFromAtom = useAtomValue(currentExamIdAtom);
   const loggedInStudent = useAtomValue(loggedInStudentAtom);
   const objectiveAnswers = useAtomValue(objectiveAnswersAtom);
+  const setLoginInfo = useSetAtom(setLoginInfoAtom);
 
   // 이미지 촬영 핸들러 (문제 ID가 string 타입으로 변경)
   const handleCapture = useCallback((questionId: string) => {
@@ -842,10 +845,7 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
     [handleTextRecognition],
   );
 
-  // 제출 확인 모달 표시
-  const handleSubmitClick = useCallback(() => {
-    setShowConfirmModal(true);
-  }, [setShowConfirmModal]);
+  // 제출 버튼 클릭 시 즉시 제출 실행 (handleSubmit 정의 후 재정의)
 
   // 제출 확인 모달에서 확인 클릭
   const handleConfirmSubmit = useCallback(() => {
@@ -878,32 +878,101 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
         throw new Error("examId 없음: 제출 불가");
       }
 
-      const studentId = Number(loggedInStudent?.studentId || 0);
-      const studentName = loggedInStudent?.name;
-      const studentPhone = loggedInStudent?.phoneNumber;
+      // FastAPI가 정수 기반 ID를 선호하므로 숫자 문자열은 number로 변환
+      let studentIdNumber: number | null = null;
+      let studentName = loggedInStudent?.name || "";
+      let studentPhone = (loggedInStudent?.phoneNumber || "").trim();
+
+      // 1차: 현재 로그인 정보에서 숫자 변환 시도
+      const rawId = loggedInStudent?.studentId ?? "";
+      const numericId = Number(rawId);
+      if (Number.isFinite(numericId) && numericId > 0) {
+        studentIdNumber = numericId;
+      } else {
+        // 2차: upsert로 보강하여 백엔드의 정수 student_id 확보
+        if (!studentName || !loggedInStudent?.birthDate || !studentPhone) {
+          setIsSubmitting(false);
+          setShowSubmissionModal(false);
+          window.alert("학생 정보가 불완전합니다. 이전 단계에서 다시 입력해주세요");
+          return;
+        }
+
+        const authReq: StudentAuthRequest = {
+          name: studentName,
+          birthDate: loggedInStudent.birthDate,
+          phone: studentPhone,
+        };
+
+        try {
+          const upserted = await upsertStudent(authReq);
+          // 전역 로그인 정보 갱신
+          const normalizedStudentId = (upserted as any).studentId ?? (upserted as any).id?.toString() ?? "";
+          const normalizedPhone = (upserted as any).phoneNumber ?? (upserted as any).phone ?? "";
+
+          setLoginInfo({
+            studentId: normalizedStudentId,
+            name: upserted.name,
+            birthDate: upserted.birthDate,
+            phoneNumber: normalizedPhone,
+          });
+
+          studentName = upserted.name;
+          studentPhone = normalizedPhone;
+
+          const parsed = Number(normalizedStudentId);
+          if (Number.isFinite(parsed) && parsed > 0) {
+            studentIdNumber = parsed;
+          } else {
+            throw new Error("백엔드에서 학생 ID를 확인하지 못했습니다");
+          }
+        } catch {
+          setIsSubmitting(false);
+          setShowSubmissionModal(false);
+          window.alert("학생 정보 확인에 실패했습니다. 잠시 후 다시 시도");
+          return;
+        }
+      }
+
+      // 주관식 답안 변환 (값이 있는 항목만 전송)
+      const subjectiveAnswersPayload = questionsState
+        .map((q) => ({
+          question_id: GetQuestionFields(q).questionId,
+          answer_text: (q.userAnswer || "").trim(),
+          answer_image_url: q.capturedImageUrl,
+        }))
+        .filter((item) => (item.answer_text?.length || 0) > 0 || !!item.answer_image_url);
+
+      // 객관식 답안 변환 (유효한 숫자 선택만 전송)
+      const objectiveAnswersPayload = Object.entries(objectiveAnswers)
+        .map(([questionId, value]) => {
+          const parsed = Number(value);
+          return Number.isFinite(parsed) && parsed > 0
+            ? { question_id: questionId, selected_choice: parsed }
+            : null;
+        })
+        .filter((v): v is { question_id: string; selected_choice: number } => v !== null);
+
+      const mergedAnswers = [...subjectiveAnswersPayload, ...objectiveAnswersPayload];
+
+      if (mergedAnswers.length === 0) {
+        throw new Error("제출할 답안이 없습니다");
+      }
 
       // 객관식 + 주관식 병합 payload
+      // 안전 가드: null 체크
+      if (studentIdNumber === null) {
+        setIsSubmitting(false);
+        setShowSubmissionModal(false);
+        window.alert("학생 ID 확인 실패");
+        return;
+      }
+
       const payload: SubmitAndGradeRequest = {
         exam_id: examId,
-        student_id: studentId,
+        student_id: studentIdNumber,
         student_name: studentName,
         student_phone: studentPhone,
-        answers: [
-          // 주관식 답안 변환
-          ...questionsState.map((q) => ({
-            question_id: GetQuestionFields(q).questionId,
-            answer_text: (q.userAnswer || "").trim() || null,
-            answer_image_url: q.capturedImageUrl || null,
-          })),
-          // 객관식 답안 변환 (전역 저장된 questionId -> value)
-          ...Object.entries(objectiveAnswers).map(([questionId, value]) => {
-            const parsed = Number(value);
-            const isNumeric = Number.isFinite(parsed) && parsed > 0;
-            return isNumeric
-              ? { question_id: questionId, selected_choice: parsed }
-              : { question_id: questionId, answer_text: String(value) };
-          }),
-        ],
+        answers: mergedAnswers,
         force_grading: true,
         grading_options: {},
       };
@@ -936,10 +1005,17 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
     objectiveAnswers,
   ]);
 
+  // 제출 버튼 클릭 시 즉시 제출 실행
+  const handleSubmitClick = useCallback(() => {
+    handleSubmit();
+  }, [handleSubmit]);
+
   // 답안 완성도 계산
   const answeredCount = questionsState.filter((q) =>
     q.userAnswer?.trim(),
   ).length;
+  const objectiveAnsweredCount = Object.keys(objectiveAnswers).length;
+  const canSubmit = answeredCount > 0 || objectiveAnsweredCount > 0;
   const completionRate =
     questionsState.length > 0
       ? (answeredCount / questionsState.length) * 100
@@ -1043,7 +1119,7 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
           {/* 제출 버튼 */}
           <button
             onClick={handleSubmitClick}
-            disabled={answeredCount === 0 || showSubmissionModal}
+            disabled={!canSubmit || showSubmissionModal}
             className={cn(
               "px-8 py-3 bg-main-500 text-white font-semibold rounded-lg",
               "hover:bg-main-600 focus:ring-4 focus:ring-main-300",

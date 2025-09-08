@@ -76,9 +76,13 @@ export async function submitAndGrade(
   payload: SubmitAndGradeRequest,
   options?: { signal?: AbortSignal },
 ): Promise<SubmitAndGradeResponse> {
+  const gradingBaseUrl =
+    (import.meta as any).env?.VITE_GRADING_API_URL || "http://localhost:8000";
+
   const response = await baseApiClient.request<SubmitAndGradeResponse>({
     method: "POST",
-    url: "/grading/submit-and-grade",
+    // FastAPI (외부 서비스) 절대 경로 사용
+    url: `${gradingBaseUrl}/grading/submit-and-grade`,
     data: payload,
     signal: options?.signal,
   });

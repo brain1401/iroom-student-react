@@ -120,12 +120,16 @@ function RouteComponent() {
       // 학생 정보 upsert API 호출
       const result = await upsertStudent(authRequest);
 
+      // 응답 호환 처리: studentId|id, phoneNumber|phone 모두 지원
+      const studentId = (result as any).studentId ?? (result as any).id?.toString() ?? "";
+      const phoneNumber = (result as any).phoneNumber ?? (result as any).phone ?? "";
+
       // 전역 로그인 상태 갱신
       setLoginInfo({
-        studentId: result.studentId,
+        studentId,
         name: result.name,
         birthDate: result.birthDate,
-        phoneNumber: result.phoneNumber,
+        phoneNumber,
       });
 
       // 제출 성공 후 스캔 페이지로 이동
