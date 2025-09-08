@@ -104,7 +104,6 @@ export async function submitAsyncTextRecognition(
         headers: {
           Accept: "*/*",
         },
-        credentials: "include", // 쿠키 포함 (인증용)
       },
     );
 
@@ -154,7 +153,6 @@ export async function checkAsyncStatus(
         headers: {
           Accept: "application/json",
         },
-        credentials: "include", // 쿠키 포함 (인증용)
       },
     );
 
@@ -204,7 +202,6 @@ export async function getAsyncResult(
         headers: {
           Accept: "application/json",
         },
-        credentials: "include", // 쿠키 포함 (인증용)
       },
     );
 
