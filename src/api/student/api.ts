@@ -12,7 +12,6 @@ import type {
   UpsertStudentResponse,
   RecentSubmissionsParams,
   RecentSubmissionListResponse,
-  StudentInfo,
   ExamDetailParams,
   ExamDetailResult,
   ExamQuestionsData,
@@ -35,7 +34,7 @@ export async function upsertStudent(
   authData: StudentAuthRequest,
 ): Promise<UpsertStudentResponse> {
   const response = await authApiClient.post<ApiResponse<UpsertStudentResponse>>(
-    "/auth/upsert-student",
+    "/api/auth/upsert-student",
     authData,
   );
 
