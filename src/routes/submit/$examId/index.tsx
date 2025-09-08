@@ -27,6 +27,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
 import { User, Phone, CheckCircle2, Loader2 } from "lucide-react";
+import { upsertStudent } from "@/api/student/api";
+import type { StudentAuthRequest } from "@/api/student/types";
+import { useSetAtom } from "jotai";
+import { setLoginInfoAtom } from "@/atoms/auth";
 
 /**
  * 제출 양식 스키마
@@ -77,6 +81,10 @@ function RouteComponent() {
 
   /** 폼 제출 중 로딩 상태 */
   const [isSubmitting, setIsSubmitting] = useState(false);
+  /** 제출 에러 상태 */
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  /** 로그인 정보 설정 핸들러 */
+  const setLoginInfo = useSetAtom(setLoginInfoAtom);
 
   /**
    * React Hook Form 설정
@@ -99,13 +107,30 @@ function RouteComponent() {
    */
   const onSubmit = async (data: SubmissionFormData) => {
     setIsSubmitting(true);
+    setSubmitError(null);
 
     try {
-      // TODO: 실제 API 호출로 응시자 정보 저장
-      console.log("제출된 응시자 정보:", data);
+      // 학생 upsert 요청 데이터 생성
+      const authRequest: StudentAuthRequest = {
+        name: data.name.trim(),
+        birthDate: `20${data.birth.substring(0, 2)}-${data.birth.substring(2, 4)}-${data.birth.substring(4, 6)}`,
+        phone: data.phoneNumber,
+      };
 
-      // 임시 지연 (실제 API 호출 시뮬레이션)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // 학생 정보 upsert API 호출
+      const result = await upsertStudent(authRequest);
+
+      // 응답 호환 처리: studentId|id, phoneNumber|phone 모두 지원
+      const studentId = (result as any).studentId ?? (result as any).id?.toString() ?? "";
+      const phoneNumber = (result as any).phoneNumber ?? (result as any).phone ?? "";
+
+      // 전역 로그인 상태 갱신
+      setLoginInfo({
+        studentId,
+        name: result.name,
+        birthDate: result.birthDate,
+        phoneNumber,
+      });
 
       // 제출 성공 후 스캔 페이지로 이동
       await navigate({
@@ -113,7 +138,8 @@ function RouteComponent() {
         params: { examId },
       });
     } catch (error) {
-      console.error("응시자 정보 저장 실패:", error);
+      console.error("응시자 정보 upsert 실패:", error);
+      setSubmitError("응시자 정보 확인 중 오류 발생. 잠시 후 다시 시도");
     } finally {
       setIsSubmitting(false);
     }
@@ -179,6 +205,12 @@ function RouteComponent() {
         </CardHeader>
 
         <CardContent className="space-y-6 ">
+          {/* API 에러 메시지 */}
+          {submitError && (
+            <Alert variant="destructive">
+              <AlertDescription>{submitError}</AlertDescription>
+            </Alert>
+          )}
           {/* 안내 메시지 */}
           <Alert className="border-purple-200 bg-main-50">
             <CheckCircle2 className="h-4 w-4 text-main-600" />

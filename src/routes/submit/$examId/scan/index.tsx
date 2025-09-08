@@ -9,6 +9,7 @@ import {
   currentExamIdAtom,
   examTabStateAtom,
   examDetailDataAtom,
+  objectiveAnswersAtom,
 } from "@/atoms/student";
 
 export const Route = createFileRoute("/submit/$examId/scan/")({
@@ -30,6 +31,7 @@ function RouteComponent() {
 
   // Atom 상태 관리
   const setCurrentExamId = useSetAtom(currentExamIdAtom);
+  const resetObjectiveAnswers = useSetAtom(objectiveAnswersAtom);
   const tabState = useAtomValue(examTabStateAtom);
   const examData = useAtomValue(examDetailDataAtom);
 
@@ -46,6 +48,14 @@ function RouteComponent() {
       setCurrentExamId(examId);
     }
   }, [examId, setCurrentExamId]);
+
+  /**
+   * 객관식 답안 초기화
+   * @description 다른 시험에서 남아있던 선택값이 보이지 않도록 examId 변경 시 초기화
+   */
+  useEffect(() => {
+    resetObjectiveAnswers({});
+  }, [examId, resetObjectiveAnswers]);
 
   /**
    * 시험 데이터 로딩 완료 후 기본 탭 설정

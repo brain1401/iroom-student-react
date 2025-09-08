@@ -6,6 +6,7 @@
 
 import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
+import { atomWithStorage } from "jotai/utils";
 import { loggedInStudentAtom } from "./auth";
 import { getRecentSubmissions, getExamQuestions } from "@/api/student";
 import type { RecentSubmissionsParams, ExamQuestionsData } from "@/api/student";
@@ -472,6 +473,15 @@ export const examTabStateAtom = atom((get) => {
     },
   };
 });
+
+/**
+ * 객관식 답안 전역 저장 atom
+ * @description questionId를 키로, 선택값(문자열)을 값으로 저장
+ */
+export const objectiveAnswersAtom = atomWithStorage<Record<string, string>>(
+  "objective-answers",
+  {},
+);
 
 /**
  * 시험 액션 atom
