@@ -21,10 +21,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Calendar, FileText, CheckCircle2, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {
-  examHistoryDataAtom,
-  examHistoryActionsAtom,
-} from "@/atoms/main";
+import { examHistoryDataAtom, examHistoryActionsAtom } from "@/atoms/main";
 import { loggedInStudentAtom } from "@/atoms/auth";
 
 /**
@@ -194,6 +191,8 @@ export function ExamHistorySection() {
     isEmpty,
   } = examHistoryData;
 
+  console.log("examHistory :", examHistory);
+
   return (
     <section id="exam-history" className="mt-12 mb-20 mx-8">
       {/* 섹션 헤더 */}
@@ -202,7 +201,8 @@ export function ExamHistorySection() {
           전체 시험 이력
         </h2>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          {loggedInStudent?.name}님이 지금까지 응시한 모든 시험 ({totalElements}개)
+          {loggedInStudent?.name}님이 지금까지 응시한 모든 시험 ({totalElements}
+          개)
         </p>
       </header>
 
@@ -231,7 +231,7 @@ export function ExamHistorySection() {
             >
               이전
             </Button>
-            
+
             <div className="flex items-center gap-1 px-2">
               {/* 페이지 번호 표시 (최대 5개) */}
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
@@ -245,7 +245,7 @@ export function ExamHistorySection() {
                     pageNum = currentPage - 2 + i;
                   }
                 }
-                
+
                 return (
                   <Button
                     key={pageNum}

@@ -22,7 +22,12 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import type { ExamDetailResult, QuestionAnswer, ExamQuestionsData, Question } from "@/api/student/types";
+import type {
+  ExamDetailResult,
+  QuestionAnswer,
+  ExamQuestionsData,
+  Question,
+} from "@/api/student/types";
 
 // 보기 데이터 타입
 type Option = {
@@ -55,33 +60,43 @@ const DEFAULT_SCORE_PER_QUESTION = 5;
  * 시험 데이터가 신규 API 구조인지 확인
  * @param examDetail 시험 데이터
  */
-function isExamQuestionsData(examDetail: ExamDetailResult | ExamQuestionsData): examDetail is ExamQuestionsData {
-  return 'questions' in examDetail && 'multipleChoiceCount' in examDetail;
+function isExamQuestionsData(
+  examDetail: ExamDetailResult | ExamQuestionsData,
+): examDetail is ExamQuestionsData {
+  return "questions" in examDetail && "multipleChoiceCount" in examDetail;
 }
 
 /**
  * 문제 데이터가 신규 API 구조인지 확인
  * @param question 문제 데이터
  */
-function isNewQuestion(question: QuestionAnswer | Question): question is Question {
-  return 'seqNo' in question && 'questionText' in question;
+function isNewQuestion(
+  question: QuestionAnswer | Question,
+): question is Question {
+  return "seqNo" in question && "questionText" in question;
 }
 
 /**
  * 시험 데이터에서 객관식 문제만 추출
  * @param examDetail 시험 데이터 (기존 또는 신규 API)
  */
-function extractObjectiveQuestions(examDetail: ExamDetailResult | ExamQuestionsData): (QuestionAnswer | Question)[] {
+function extractObjectiveQuestions(
+  examDetail: ExamDetailResult | ExamQuestionsData,
+): (QuestionAnswer | Question)[] {
   if (isExamQuestionsData(examDetail)) {
     // 신규 API: questions 배열에서 MULTIPLE_CHOICE 필터링
-    return examDetail.questions?.filter(
-      (q) => q.questionType === "MULTIPLE_CHOICE"
-    ) || [];
+    return (
+      examDetail.questions?.filter(
+        (q) => q.questionType === "MULTIPLE_CHOICE",
+      ) || []
+    );
   } else {
     // 기존 API: questionAnswers 배열에서 객관식 필터링
-    return examDetail?.questionAnswers?.filter(
-      (q) => q.questionType === "객관식" || q.questionType === "OBJECTIVE"
-    ) || [];
+    return (
+      examDetail?.questionAnswers?.filter(
+        (q) => q.questionType === "객관식" || q.questionType === "OBJECTIVE",
+      ) || []
+    );
   }
 }
 
@@ -95,7 +110,9 @@ function getQuestionFields(question: QuestionAnswer | Question) {
     return {
       questionId: question.questionId,
       questionOrder: question.seqNo, // seqNo → questionOrder 매핑
-      questionSummary: question.questionText.substring(0, 50) + (question.questionText.length > 50 ? '...' : ''), // questionText를 요약으로 변환
+      questionSummary:
+        question.questionText.substring(0, 50) +
+        (question.questionText.length > 50 ? "..." : ""), // questionText를 요약으로 변환
       points: question.points,
       difficulty: question.difficulty,
     };
@@ -195,16 +212,14 @@ function QuestionRow({
 
   return (
     <div className="flex items-center gap-4 p-3 border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150">
-      {/* 문제 번호 및 요약 */}
-      <div className="flex-shrink-0 min-w-[100px]">
-        <Badge variant="outline" className="text-center font-bold mb-1">
-          {getQuestionFields(question).questionOrder}번
-        </Badge>
-        {getQuestionFields(question).questionSummary && (
-          <div className="text-xs text-gray-500 truncate max-w-[80px]">
-            {getQuestionFields(question).questionSummary}
-          </div>
-        )}
+      <div className="flex flex-col items-center gap-4">
+        {/* 문제 번호 및 요약 */}
+
+        <div className="flex-shrink-0 flex flex-col items-center">
+          <Badge variant="outline" className="text-center font-bold mb-1">
+            {getQuestionFields(question).questionOrder}번
+          </Badge>
+        </div>
       </div>
 
       {/* 보기 선택 */}
@@ -243,8 +258,14 @@ type OMRCardHeaderProps = {
 
 function OMRCardHeader({ objectiveQuestions }: OMRCardHeaderProps) {
   const totalQuestions = objectiveQuestions.length;
-  const totalScore = objectiveQuestions.reduce((sum, q) => sum + (getQuestionFields(q).points || 0), 0);
-  const averageScore = totalQuestions > 0 ? Math.round((totalScore / totalQuestions) * 10) / 10 : 0;
+  const totalScore = objectiveQuestions.reduce(
+    (sum, q) => sum + (getQuestionFields(q).points || 0),
+    0,
+  );
+  const averageScore =
+    totalQuestions > 0
+      ? Math.round((totalScore / totalQuestions) * 10) / 10
+      : 0;
 
   return (
     <div className="text-center mb-6 pb-4">
@@ -288,7 +309,9 @@ type ObjectiveTabProps = {
 
 export function ObjectiveTab({ examDetail, onNext }: ObjectiveTabProps) {
   // 객관식 문제만 필터링 (신규/기존 API 모두 지원)
-  const objectiveQuestions = examDetail ? extractObjectiveQuestions(examDetail) : [];
+  const objectiveQuestions = examDetail
+    ? extractObjectiveQuestions(examDetail)
+    : [];
 
   // 답안 상태 관리 (questionId를 키로 사용)
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -315,7 +338,8 @@ export function ObjectiveTab({ examDetail, onNext }: ObjectiveTabProps) {
   // 답안 완성도 계산
   const totalQuestions = objectiveQuestions.length;
   const answeredCount = Object.keys(answers).length;
-  const completionRate = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
+  const completionRate =
+    totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
 
   // 데이터가 없는 경우 처리
   if (!examDetail || objectiveQuestions.length === 0) {
@@ -323,9 +347,7 @@ export function ObjectiveTab({ examDetail, onNext }: ObjectiveTabProps) {
       <div className="w-full max-w-6xl mx-auto p-4">
         <Card className="border-2 border-gray-200 shadow-lg">
           <CardContent className="p-6 text-center">
-            <div className="text-gray-600 text-lg">
-              객관식 문제가 없습니다
-            </div>
+            <div className="text-gray-600 text-lg">객관식 문제가 없습니다</div>
             <div className="mt-4 text-sm text-gray-500">
               이 시험에는 객관식 문제가 포함되어 있지 않습니다
             </div>
