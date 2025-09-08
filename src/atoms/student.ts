@@ -153,8 +153,8 @@ export const studentRecentSubmissionsDataAtom = atom((get) => {
   }
 
   // RecentSubmissionListResponse 타입 체크 (content와 totalElements 필드 존재 여부)
-  const hasPageStructure = 'content' in data && 'totalElements' in data;
-  
+  const hasPageStructure = "content" in data && "totalElements" in data;
+
   if (hasPageStructure) {
     // 새로운 페이지네이션 구조
     const typedData = data;
@@ -169,7 +169,10 @@ export const studentRecentSubmissionsDataAtom = atom((get) => {
     };
   } else {
     // 이전 구조 (호환성을 위해 유지) - 실제로는 사용되지 않아야 함
-    const oldData = data as { recentSubmissions: RecentSubmission[]; totalCount: number };
+    const oldData = data as {
+      recentSubmissions: RecentSubmission[];
+      totalCount: number;
+    };
     return {
       recentSubmissions: oldData.recentSubmissions || [],
       totalCount: oldData.totalCount || 0,
@@ -347,8 +350,8 @@ export const examQuestionsQueryAtom = atomWithQuery((get) => {
  * - isAvailable: boolean - 데이터 사용 가능 여부
  */
 export const examDetailDataAtom = atom((get) => {
-  const queryResult = get(examQuestionsQueryAtom);
   const examId = get(examQuestionsParamsAtom);
+  const queryResult = get(examQuestionsQueryAtom);
 
   // examId가 없는 경우
   if (!examId) {

@@ -48,7 +48,7 @@ export async function getHealthCheck(options?: {
     // 헬스체크는 인증이 필요하지 않으므로 baseApiClient 사용
     const response = await baseApiClient.request<HealthCheckData>({
       method: "GET",
-      url: "/api/system/health",
+      url: "/system/health",
       signal: options?.signal,
     });
 
@@ -81,8 +81,8 @@ export async function getSystemStatistics(
 ): Promise<SystemStatistics> {
   try {
     const url = type
-      ? `/api/system/statistics?type=${encodeURIComponent(type)}`
-      : "/api/system/statistics";
+      ? `/system/statistics?type=${encodeURIComponent(type)}`
+      : "/system/statistics";
 
     const response = await baseApiClient.request<ApiResponse<SystemStatistics>>(
       {
@@ -122,7 +122,7 @@ export async function getSystemInfo(options?: {
   try {
     const response = await baseApiClient.request<ApiResponse<SystemInfo>>({
       method: "GET",
-      url: "/api/system/info",
+      url: "/system/info",
       signal: options?.signal,
     });
 
@@ -152,7 +152,7 @@ export async function getApiVersion(options?: {
   try {
     const response = await baseApiClient.request<ApiResponse<ApiVersionInfo>>({
       method: "GET",
-      url: "/api/system/version",
+      url: "/system/version",
       signal: options?.signal,
     });
 

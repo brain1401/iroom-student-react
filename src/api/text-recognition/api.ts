@@ -9,11 +9,12 @@ import type {
   TextRecognitionResponse,
   TextRecognitionError,
 } from "./types";
+import { apiBaseUrl } from "../client/apiClient";
 
 /**
  * 텍스트 인식 API 엔드포인트
  * @description 백엔드 텍스트 인식 API URL
- * Swagger 문서: http://localhost:3055/api/swagger-ui/index.html#/%ED%85%8D%EC%8A%A4%ED%8A%B8%20%EC%9D%B8%EC%8B%9D%20API
+ * Swagger 문서: https://iroomclass.com/api/swagger-ui/index.html#/%ED%85%8D%EC%8A%A4%ED%8A%B8%20%EC%9D%B8%EC%8B%9D%20API
  *
  * 가능한 엔드포인트들:
  * - /api/ocr/recognize
@@ -21,26 +22,26 @@ import type {
  * - /api/ocr
  * - /api/recognize
  */
-const BASE_API_URL = "http://localhost:3055";
+const BASE_API_URL = apiBaseUrl;
 
 /**
  * 가능한 텍스트 인식 API 엔드포인트들
  * @description 여러 가능한 엔드포인트를 시도해보기 위한 배열
  */
 const POSSIBLE_ENDPOINTS = [
-  "/api/ocr/recognize",
-  "/api/ocr",
-  "/api/recognize",
-  "/api/text-recognition",
-  "/api/ocr/text",
-  "/api/ocr/process",
-  "/api/vision/ocr",
-  "/api/vision/recognize",
-  "/api/vision/text",
-  "/api/document/ocr",
-  "/api/document/recognize",
-  "/api/ai/ocr",
-  "/api/ai/recognize",
+  "/ocr/recognize",
+  "/ocr",
+  "/recognize",
+  "/text-recognition",
+  "/ocr/text",
+  "/ocr/process",
+  "/vision/ocr",
+  "/vision/recognize",
+  "/vision/text",
+  "/document/ocr",
+  "/document/recognize",
+  "/ai/ocr",
+  "/ai/recognize",
   "/ocr/recognize",
   "/ocr",
   "/recognize",
@@ -68,13 +69,7 @@ const POSSIBLE_ENDPOINTS = [
  * @description 서버가 실행 중인지 확인
  */
 async function testServerConnection(): Promise<boolean> {
-  const healthEndpoints = [
-    "/health",
-    "/api/health",
-    "/api/status",
-    "/status",
-    "/",
-  ];
+  const healthEndpoints = ["/health", "/health", "/status", "/status", "/"];
 
   for (const endpoint of healthEndpoints) {
     try {

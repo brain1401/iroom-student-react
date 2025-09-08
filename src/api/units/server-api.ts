@@ -47,14 +47,14 @@ export async function getAllUnits(options?: {
 }): Promise<UnitTreeNode[]> {
   try {
     const queryParams = new URLSearchParams();
-    
+
     if (options?.includeQuestions) {
       queryParams.append("includeQuestions", "true");
     }
-    
-    const url = queryParams.toString() 
-      ? `/api/units?${queryParams.toString()}`
-      : "/api/units";
+
+    const url = queryParams.toString()
+      ? `/units?${queryParams.toString()}`
+      : "/units";
 
     const response = await authApiClient.request<ApiResponse<UnitTreeNode[]>>({
       method: "GET",
@@ -84,7 +84,7 @@ export async function getAllUnits(options?: {
  */
 export async function getUnitsByGrade(
   grade: number,
-  options?: { 
+  options?: {
     /** 요청 취소를 위한 AbortSignal */
     signal?: AbortSignal;
     /** 문제 포함 조회 여부 */
@@ -93,14 +93,14 @@ export async function getUnitsByGrade(
 ): Promise<UnitTreeNode[]> {
   try {
     const queryParams = new URLSearchParams();
-    
+
     if (options?.includeQuestions) {
       queryParams.append("includeQuestions", "true");
     }
-    
-    const url = queryParams.toString() 
-      ? `/api/units/grade/${grade}?${queryParams.toString()}`
-      : `/api/units/grade/${grade}`;
+
+    const url = queryParams.toString()
+      ? `/units/grade/${grade}?${queryParams.toString()}`
+      : `/units/grade/${grade}`;
 
     const response = await authApiClient.request<ApiResponse<UnitTreeNode[]>>({
       method: "GET",
@@ -143,8 +143,8 @@ export async function searchUnits(
     if (params.offset) queryParams.append("offset", params.offset.toString());
 
     const url = queryParams.toString()
-      ? `/api/units/search?${queryParams.toString()}`
-      : "/api/units/search";
+      ? `/units/search?${queryParams.toString()}`
+      : "/units/search";
 
     const response = await authApiClient.request<
       ApiResponse<UnitListApiResponse>
@@ -184,7 +184,7 @@ export async function analyzeUnitCoverage(
       ApiResponse<UnitCoverageAnalysis>
     >({
       method: "GET",
-      url: `/api/exam-sheets/${examSheetId}/unit-coverage`,
+      url: `/exam-sheets/${examSheetId}/unit-coverage`,
       signal: options?.signal,
     });
 
@@ -217,9 +217,7 @@ export async function getUnitStatistics(
   options?: { signal?: AbortSignal },
 ): Promise<UnitStatistics> {
   try {
-    const url = unitId
-      ? `/api/units/${unitId}/statistics`
-      : "/api/units/statistics";
+    const url = unitId ? `/units/${unitId}/statistics` : "/units/statistics";
 
     const response = await authApiClient.request<ApiResponse<UnitStatistics>>({
       method: "GET",

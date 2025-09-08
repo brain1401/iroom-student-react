@@ -20,13 +20,14 @@ import type {
   StudentAnswerSubmitRequest,
   StudentAnswerDraftRequest,
 } from "@/api/common/server-types";
+import { apiBaseUrl } from "../client/apiClient";
 
 /**
  * 문제지 관리 API 전용 클라이언트
  * @description 실제 백엔드 서버와 통신하는 HTTP 클라이언트
  */
 const examSheetApiClient = baseApiClient.create({
-  baseURL: import.meta.env.VITE_BACKEND_API_URL || "http://localhost:3055",
+  baseURL: apiBaseUrl,
   timeout: 20000, // 문제지 데이터는 매우 상세하므로 타임아웃을 더 길게 설정
 });
 
@@ -133,7 +134,7 @@ export async function getAllExamSheets(
     searchParams.append("maxPoints", params.maxPoints.toString());
 
   const queryString = searchParams.toString();
-  const url = `/api/exam-sheets${queryString ? `?${queryString}` : ""}`;
+  const url = `/exam-sheets${queryString ? `?${queryString}` : ""}`;
 
   return examSheetApiRequest<ExamSheetListApiResponse>({
     method: "GET",
@@ -174,7 +175,7 @@ export async function getExamSheetById(
 
   return examSheetApiRequest<ExamSheetDetailApiResponse>({
     method: "GET",
-    url: `/api/exam-sheets/${examSheetId}`,
+    url: `/exam-sheets/${examSheetId}`,
     signal: options?.signal,
   });
 }
@@ -237,7 +238,7 @@ export async function getRecentExamSheets(
   // 별도 API 엔드포인트가 있다면 활용
   return examSheetApiRequest<ExamSheetListApiResponse>({
     method: "GET",
-    url: `/api/exam-sheets/recent?limit=${limit}`,
+    url: `/exam-sheets/recent?limit=${limit}`,
     signal: options?.signal,
   });
 }
@@ -260,7 +261,7 @@ export async function getExamSheetStatsByGrade(options?: {
 }) {
   return examSheetApiRequest({
     method: "GET",
-    url: "/api/exam-sheets/statistics/by-grade",
+    url: "/exam-sheets/statistics/by-grade",
     signal: options?.signal,
   });
 }
@@ -289,7 +290,7 @@ export async function getExamSheetUsage(
 
   return examSheetApiRequest({
     method: "GET",
-    url: `/api/exam-sheets/${examSheetId}/usage`,
+    url: `/exam-sheets/${examSheetId}/usage`,
     signal: options?.signal,
   });
 }

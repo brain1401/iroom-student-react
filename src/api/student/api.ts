@@ -56,7 +56,7 @@ export async function getRecentSubmissions(
 
   const response = await authApiClient.post<
     ApiResponse<RecentSubmissionListResponse>
-  >("/api/student/recent-submissions", {
+  >("/student/recent-submissions", {
     ...authData,
     page,
     size,
@@ -78,9 +78,10 @@ export async function getExamHistory(
 ): Promise<ExamHistoryResponse> {
   const { page = 0, size = 10, ...authData } = params;
 
-  const response = await authApiClient.post<
-    ApiResponse<ExamHistoryResponse>
-  >(`/api/student/exam-history?page=${page}&size=${size}`, authData);
+  const response = await authApiClient.post<ApiResponse<ExamHistoryResponse>>(
+    `/student/exam-history?page=${page}&size=${size}`,
+    authData,
+  );
 
   return extractApiData(response.data);
 }
@@ -96,7 +97,7 @@ export async function getStudentInfo(
   authData: StudentAuthRequest,
 ): Promise<StudentInfoDto> {
   const response = await authApiClient.post<ApiResponse<StudentInfoDto>>(
-    "/api/student/info",
+    "/student/info",
     authData,
   );
 
@@ -123,7 +124,7 @@ export async function getExamDetail(
   const { examId, ...authData } = params;
 
   const response = await authApiClient.post<ApiResponse<ExamDetailResult>>(
-    `/api/student/exam-detail/${examId}`,
+    `/student/exam-detail/${examId}`,
     authData,
   );
 
@@ -156,7 +157,7 @@ export async function getExamQuestions(
 ): Promise<ExamQuestionsData> {
   const response = await baseApiClient.request<ApiResponse<ExamQuestionsData>>({
     method: "GET",
-    url: `/api/exams/${examId}/questions`,
+    url: `/exams/${examId}/questions`,
     signal: options?.signal,
   });
 

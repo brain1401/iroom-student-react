@@ -14,13 +14,14 @@ import type {
   ExamItem,
   ExamIdsApiResponse,
 } from "@/api/common/server-types";
+import { apiBaseUrl } from "../client/apiClient";
 
 /**
  * 시험 관리 API 전용 클라이언트
  * @description 실제 백엔드 서버와 통신하는 HTTP 클라이언트
  */
 const examApiClient = baseApiClient.create({
-  baseURL: import.meta.env.VITE_BACKEND_API_URL || "http://localhost:3055",
+  baseURL: apiBaseUrl,
   timeout: 15000, // 시험 데이터는 크므로 타임아웃을 길게 설정
 });
 
@@ -107,7 +108,7 @@ export async function getAllExams(
   if (params.search) searchParams.append("search", params.search);
 
   const queryString = searchParams.toString();
-  const url = `/api/exams${queryString ? `?${queryString}` : ""}`;
+  const url = `/exams${queryString ? `?${queryString}` : ""}`;
 
   return examApiRequest<ExamListApiResponse>({
     method: "GET",
@@ -152,7 +153,7 @@ export async function getExamById(
 
   return examApiRequest<ExamDetailApiResponse>({
     method: "GET",
-    url: `/api/exams/${examId}`,
+    url: `/exams/${examId}`,
     signal: options?.signal,
   });
 }

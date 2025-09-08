@@ -3,6 +3,8 @@
  * @description 비동기 OCR 처리를 위한 API 호출 함수
  */
 
+import { apiBaseUrl } from "../client/apiClient";
+
 // 간단한 fetch 기반 API - authApiClient 대신 직접 fetch 사용
 
 /**
@@ -97,7 +99,7 @@ export async function submitAsyncTextRecognition(
 
     // fetch를 사용하여 multipart/form-data로 전송
     const response = await fetch(
-      `http://localhost:3055/api/text-recognition/async/submit?${params.toString()}`,
+      `${apiBaseUrl}/text-recognition/async/submit?${params.toString()}`,
       {
         method: "POST",
         body: formData,
@@ -147,7 +149,7 @@ export async function checkAsyncStatus(
     console.log("[AsyncTextRecognition] 상태 확인:", jobId);
 
     const response = await fetch(
-      `http://localhost:3055/api/text-recognition/async/status/${jobId}`,
+      `${apiBaseUrl}/text-recognition/async/status/${jobId}`,
       {
         method: "GET",
         headers: {
@@ -196,7 +198,7 @@ export async function getAsyncResult(
     console.log("[AsyncTextRecognition] 결과 조회:", jobId);
 
     const response = await fetch(
-      `http://localhost:3055/api/text-recognition/async/result/${jobId}`,
+      `${apiBaseUrl}/text-recognition/async/result/${jobId}`,
       {
         method: "GET",
         headers: {

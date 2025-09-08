@@ -69,7 +69,7 @@ export async function loginTeacher(
       ApiResponse<TeacherAuthResult>
     >({
       method: "POST",
-      url: "/api/auth/teacher/login",
+      url: "/auth/teacher/login",
       data: credentials,
       signal: options?.signal,
     });
@@ -99,7 +99,7 @@ export async function logout(options?: {
   try {
     const response = await authApiClient.request<ApiResponse<LogoutResult>>({
       method: "POST",
-      url: "/api/auth/logout",
+      url: "/auth/logout",
       signal: options?.signal,
     });
 
