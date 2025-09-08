@@ -8,16 +8,16 @@
 
 ```typescript
 // ❌ 절대 금지: fetch 직접 사용
-const response = await fetch("/api/data");
+const response = await fetch("/data");
 
 // ✅ 필수: API 클라이언트 사용
 import { baseApiClient, authApiClient } from "@/api/client";
 
 // 인증 불필요한 공개 API
-const pokemonData = await baseApiClient.get("/api/v2/pokemon/25");
+const pokemonData = await baseApiClient.get("/v2/pokemon/25");
 
 // 인증 필요한 API (httpOnly 쿠키 포함)
-const userData = await authApiClient.get("/api/user/profile");
+const userData = await authApiClient.get("/user/profile");
 ```
 
 ### 2. 주석 작성 규칙
@@ -300,11 +300,11 @@ git push origin feature/새기능명
 
 ```typescript
 // ❌ 잘못된 예시
-const response = await fetch("/api/pokemon"); // fetch 직접 사용
+const response = await fetch("/pokemon"); // fetch 직접 사용
 const data = await response.json();
 
 // ✅ 올바른 예시
-const data = await baseApiClient.get("/api/pokemon");
+const data = await baseApiClient.get("/pokemon");
 ```
 
 ### 2. 상태 관리 실수

@@ -487,18 +487,18 @@ if (filtered.length === 0) {
 ```typescript
 // ✅ 외부 API (포켓몬 등)
 import { baseApiClient } from "@/api/client";
-const pokemonData = await baseApiClient.get("/api/pokemon/1");
+const pokemonData = await baseApiClient.get("/pokemon/1");
 
 // ✅ 백엔드 API (인증 + ApiResponse<T>)
 import { authApiClient } from "@/api/client";
 import { extractApiData, type ApiResponse } from "@/api/common/types";
 
 // 방법 1: extractApiData 유틸리티 (권장)
-const response = await authApiClient.get<ApiResponse<UserData>>("/api/user");
+const response = await authApiClient.get<ApiResponse<UserData>>("/user");
 const userData = extractApiData(response.data);
 
 // 방법 2: 수동 처리
-const response = await authApiClient.get<ApiResponse<UserData>>("/api/user");
+const response = await authApiClient.get<ApiResponse<UserData>>("/user");
 if (response.data.result === "SUCCESS") {
   const userData = response.data.data;
 } else {
@@ -544,7 +544,7 @@ import {
 } from "@/api/common/types";
 
 try {
-  const response = await authApiClient.get<ApiResponse<UserData>>("/api/user");
+  const response = await authApiClient.get<ApiResponse<UserData>>("/user");
   const userData = extractApiData(response.data); // 자동 에러 throw
 } catch (error) {
   if (error instanceof ApiError) {
@@ -555,7 +555,7 @@ try {
 }
 
 // ✅ 타입 가드 사용
-const response = await authApiClient.get<ApiResponse<UserData>>("/api/user");
+const response = await authApiClient.get<ApiResponse<UserData>>("/user");
 
 if (isErrorResponse(response.data)) {
   // 에러 처리 (타입: { result: "ERROR", message: string, data: unknown })

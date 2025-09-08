@@ -1934,17 +1934,17 @@ paths:
         **지원 정렬:** id, examName, grade, createdAt
 
         **사용 예시:**
-        - 전체 조회: `/api/exams`
-        - 1학년 시험: `/api/exams?grade=1`
-        - 검색: `/api/exams?search=중간고사`
-        - 최근 시험: `/api/exams?recent=true`
-        - 단원 정보 포함: `/api/exams?includeUnits=true`
-        - 복합: `/api/exams?grade=2&search=수학&includeUnits=true&page=0&size=10`
+        - 전체 조회: `/exams`
+        - 1학년 시험: `/exams?grade=1`
+        - 검색: `/exams?search=중간고사`
+        - 최근 시험: `/exams?recent=true`
+        - 단원 정보 포함: `/exams?includeUnits=true`
+        - 복합: `/exams?grade=2&search=수학&includeUnits=true&page=0&size=10`
 
         **기존 엔드포인트 통합:**
-        - `/api/exams/all` → `/api/exams` (파라미터 없이)
-        - `/api/exams/recent` → `/api/exams?recent=true`
-        - `/api/exams/search` → `/api/exams?search={keyword}`
+        - `/exams/all` → `/exams` (파라미터 없이)
+        - `/exams/recent` → `/exams?recent=true`
+        - `/exams/search` → `/exams?search={keyword}`
       operationId: getExams
       parameters:
         - name: grade
@@ -2024,8 +2024,8 @@ paths:
         - 기본값: `false` (기본 시험 정보만 반환)
 
         **사용 예시:**
-        - 기본 정보만: `/api/exams/{examId}`
-        - 단원 정보 포함: `/api/exams/{examId}?includeUnits=true`
+        - 기본 정보만: `/exams/{examId}`
+        - 단원 정보 포함: `/exams/{examId}?includeUnits=true`
       operationId: getExam
       parameters:
         - name: examId
@@ -2088,7 +2088,7 @@ paths:
         - 대분류 표시 순서 → 중분류 표시 순서 → 단원 표시 순서
 
         **사용 예시:**
-        - `/api/exams/{examId}/units`
+        - `/exams/{examId}/units`
 
         **성능 최적화:**
         - Projection 인터페이스를 사용하여 필요한 정보만 조회
@@ -2144,7 +2144,7 @@ paths:
         - 단원명 및 식별자
 
         **사용 예시:**
-        - `/api/exams/{examId}/unit-stats`
+        - `/exams/{examId}/unit-stats`
 
         **활용 목적:**
         - 시험 분석 및 리포트 생성
@@ -2255,8 +2255,8 @@ paths:
         - 단원별 기본 정보
 
         **사용 예시:**
-        - 1학년 사용 단원: `/api/exams/units/by-grade?grade=1`
-        - 2학년 사용 단원: `/api/exams/units/by-grade?grade=2`
+        - 1학년 사용 단원: `/exams/units/by-grade?grade=1`
+        - 2학년 사용 단원: `/exams/units/by-grade?grade=2`
       operationId: getUnitsByGrade
       parameters:
         - name: grade
@@ -2307,10 +2307,10 @@ paths:
         - `by-grade`: 학년별 시험 개수 통계
 
         **사용 예시:**
-        - 학년별 통계: `/api/exams/statistics?type=by-grade`
+        - 학년별 통계: `/exams/statistics?type=by-grade`
 
         **기존 엔드포인트 통합:**
-        - `/api/exams/statistics/by-grade` → `/api/exams/statistics?type=by-grade`
+        - `/exams/statistics/by-grade` → `/exams/statistics?type=by-grade`
       operationId: getExamStatistics
       parameters:
         - name: type

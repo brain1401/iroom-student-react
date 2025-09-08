@@ -273,7 +273,7 @@ import { extractApiData, type ApiResponse } from "@/api/common/types";
 export async function getAllMockExams(): Promise<MockExam[]> {
   const response = await examApiClient.request<ApiResponse<MockExam[]>>({
     method: "GET",
-    url: "/api/exam/list",
+    url: "/exam/list",
   });
 
   // ApiResponse<T>에서 데이터 자동 추출 (에러 시 자동 throw)

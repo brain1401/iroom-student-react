@@ -34,18 +34,18 @@ http://100.82.50.108:3011
 
 ```typescript
 // ❌ 절대 금지: fetch 직접 사용
-const response = await fetch("/api/data");
+const response = await fetch("/data");
 
 // ✅ 필수: API 클라이언트 사용
 import { baseApiClient, authApiClient } from "@/api/client";
 import { extractApiData, type ApiResponse } from "@/api/common/types";
 
 // 외부 API (포켓몬 등) - baseApiClient 사용
-const pokemonData = await baseApiClient.get("/api/v2/pokemon/25");
+const pokemonData = await baseApiClient.get("/v2/pokemon/25");
 
 // 백엔드 API (모의고사 등) - authApiClient + ApiResponse<T>
 const response =
-  await authApiClient.get<ApiResponse<UserData>>("/api/user/profile");
+  await authApiClient.get<ApiResponse<UserData>>("/user/profile");
 const userData = extractApiData(response.data); // 자동 에러 처리
 ```
 
@@ -89,7 +89,7 @@ import {
 // 방법 1: extractApiData 사용 (가장 권장)
 try {
   const response =
-    await authApiClient.get<ApiResponse<ExamData>>("/api/exam/list");
+    await authApiClient.get<ApiResponse<ExamData>>("/exam/list");
   const examData = extractApiData(response.data); // 실패 시 자동 throw
   // 성공 처리
 } catch (error) {
@@ -99,7 +99,7 @@ try {
 
 // 방법 2: 타입 가드 사용
 const response =
-  await authApiClient.get<ApiResponse<ExamData>>("/api/exam/list");
+  await authApiClient.get<ApiResponse<ExamData>>("/exam/list");
 if (isErrorResponse(response.data)) {
   throw new Error(response.data.message);
 } else {

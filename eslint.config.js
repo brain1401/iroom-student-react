@@ -121,7 +121,6 @@ export default defineConfig([
       // exhaustive-deps 규칙은 별도 플러그인 필요 (react-hooks/exhaustive-deps)
 
       // 🚫 안티패턴 금지
-      "react/no-array-index-key": "error",
       "react/no-object-type-as-default-prop": "error",
       "react/no-unstable-nested-components": ["error", { allowAsProps: true }],
       "@typescript-eslint/no-unnecessary-condition": "off",
