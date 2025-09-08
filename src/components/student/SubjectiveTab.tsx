@@ -15,6 +15,7 @@
  */
 
 import { useState, useCallback, useEffect } from "react";
+import { useAtomValue } from "jotai";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -26,11 +27,15 @@ import type {
   ExamQuestionsData,
   Question,
 } from "@/api/student/types";
-import { FileUpload } from "../layout";
+// import { FileUpload } from "../layout";
 import { recognizeTextAsync } from "@/api/text-recognition/async-api";
 import type { AsyncResultResponse } from "@/api/text-recognition/async-api";
 // useMutation 제거 - 간단한 fetch 방식 사용
 import { Button } from "@/components/ui/button";
+import { submitAndGrade } from "@/api/grading";
+import type { SubmitAndGradeRequest } from "@/api/grading";
+import { loggedInStudentAtom } from "@/atoms/auth";
+import { currentExamIdAtom, objectiveAnswersAtom } from "@/atoms/student";
 
 // ============================================================================
 // 타입 정의
@@ -88,8 +93,7 @@ type TextRecognitionState = {
 /** 제출 완료 후 대기 시간 (초) */
 const SUBMISSION_COUNTDOWN_SECONDS = 3;
 
-/** API 호출 시뮬레이션 시간 (밀리초) */
-const API_SIMULATION_DELAY = 2000;
+// const API_SIMULATION_DELAY = 2000;
 
 // 기본값 설정 (데이터가 없을 때 사용)
 const DEFAULT_SCORE_PER_QUESTION = 10;
@@ -721,6 +725,11 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
     setRemainingTime,
   );
 
+  // 현재 시험/학생/객관식 답안 상태
+  const examIdFromAtom = useAtomValue(currentExamIdAtom);
+  const loggedInStudent = useAtomValue(loggedInStudentAtom);
+  const objectiveAnswers = useAtomValue(objectiveAnswersAtom);
+
   // 이미지 촬영 핸들러 (문제 ID가 string 타입으로 변경)
   const handleCapture = useCallback((questionId: string) => {
     console.log(`문제 ${questionId} 촬영`);
@@ -858,18 +867,48 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
     setIsSubmitting(true);
 
     try {
-      // TODO: 답안 제출 API 호출
-      // const response = await submitSubjectiveAnswers({
-      //   examId: examDetail?.examId,
-      //   answers: questionsState.map(q => ({
-      //     questionId: q.questionId,
-      //     userAnswer: q.userAnswer,
-      //     capturedImageUrl: q.capturedImageUrl,
-      //   }))
-      // });
+      // examId 결정 (신규 API 우선, 없으면 atom)
+      const examId = (
+        IsExamQuestionsData((examDetail as ExamQuestionsData) || ({} as ExamQuestionsData))
+          ? (examDetail as ExamQuestionsData).examId
+          : undefined
+      ) || examIdFromAtom || "";
 
-      // API 호출 시뮬레이션
-      await new Promise((resolve) => setTimeout(resolve, API_SIMULATION_DELAY));
+      if (!examId) {
+        throw new Error("examId 없음: 제출 불가");
+      }
+
+      const studentId = Number(loggedInStudent?.studentId || 0);
+      const studentName = loggedInStudent?.name;
+      const studentPhone = loggedInStudent?.phoneNumber;
+
+      // 객관식 + 주관식 병합 payload
+      const payload: SubmitAndGradeRequest = {
+        exam_id: examId,
+        student_id: studentId,
+        student_name: studentName,
+        student_phone: studentPhone,
+        answers: [
+          // 주관식 답안 변환
+          ...questionsState.map((q) => ({
+            question_id: GetQuestionFields(q).questionId,
+            answer_text: (q.userAnswer || "").trim() || null,
+            answer_image_url: q.capturedImageUrl || null,
+          })),
+          // 객관식 답안 변환 (전역 저장된 questionId -> value)
+          ...Object.entries(objectiveAnswers).map(([questionId, value]) => {
+            const parsed = Number(value);
+            const isNumeric = Number.isFinite(parsed) && parsed > 0;
+            return isNumeric
+              ? { question_id: questionId, selected_choice: parsed }
+              : { question_id: questionId, answer_text: String(value) };
+          }),
+        ],
+        force_grading: true,
+        grading_options: {},
+      };
+
+      await submitAndGrade(payload);
 
       // 제출 완료 상태로 변경
       setIsSubmitting(false);
@@ -892,6 +931,9 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
     setShowSubmissionModal,
     setIsSubmitting,
     setRemainingTime,
+    examIdFromAtom,
+    loggedInStudent,
+    objectiveAnswers,
   ]);
 
   // 답안 완성도 계산

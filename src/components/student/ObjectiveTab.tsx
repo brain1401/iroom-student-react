@@ -15,7 +15,8 @@
  * ```
  */
 
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
+import { useAtom, useAtomValue } from "jotai";
 import { Card, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -28,6 +29,7 @@ import type {
   ExamQuestionsData,
   Question,
 } from "@/api/student/types";
+import { currentExamIdAtom, objectiveAnswersAtom } from "@/atoms/student";
 
 // 보기 데이터 타입
 type Option = {
@@ -60,7 +62,7 @@ const DEFAULT_SCORE_PER_QUESTION = 5;
  * 시험 데이터가 신규 API 구조인지 확인
  * @param examDetail 시험 데이터
  */
-function isExamQuestionsData(
+function IsExamQuestionsData(
   examDetail: ExamDetailResult | ExamQuestionsData,
 ): examDetail is ExamQuestionsData {
   return "questions" in examDetail && "multipleChoiceCount" in examDetail;
@@ -70,7 +72,7 @@ function isExamQuestionsData(
  * 문제 데이터가 신규 API 구조인지 확인
  * @param question 문제 데이터
  */
-function isNewQuestion(
+function IsNewQuestion(
   question: QuestionAnswer | Question,
 ): question is Question {
   return "seqNo" in question && "questionText" in question;
@@ -80,10 +82,10 @@ function isNewQuestion(
  * 시험 데이터에서 객관식 문제만 추출
  * @param examDetail 시험 데이터 (기존 또는 신규 API)
  */
-function extractObjectiveQuestions(
+function ExtractObjectiveQuestions(
   examDetail: ExamDetailResult | ExamQuestionsData,
 ): (QuestionAnswer | Question)[] {
-  if (isExamQuestionsData(examDetail)) {
+  if (IsExamQuestionsData(examDetail)) {
     // 신규 API: questions 배열에서 MULTIPLE_CHOICE 필터링
     return (
       examDetail.questions?.filter(
@@ -104,8 +106,8 @@ function extractObjectiveQuestions(
  * 문제 데이터에서 공통 필드 추출 (백워드 호환성)
  * @param question 문제 데이터 (기존 또는 신규 API)
  */
-function getQuestionFields(question: QuestionAnswer | Question) {
-  if (isNewQuestion(question)) {
+function GetQuestionFields(question: QuestionAnswer | Question) {
+  if (IsNewQuestion(question)) {
     // 신규 API 구조
     return {
       questionId: question.questionId,
@@ -205,7 +207,7 @@ function QuestionRow({
 }: QuestionRowProps) {
   const handleValueChange = useCallback(
     (value: string) => {
-      onAnswerChange(getQuestionFields(question).questionId, value);
+      onAnswerChange(GetQuestionFields(question).questionId, value);
     },
     [question, onAnswerChange],
   );
@@ -217,7 +219,7 @@ function QuestionRow({
 
         <div className="flex-shrink-0 flex flex-col items-center">
           <Badge variant="outline" className="text-center font-bold mb-1">
-            {getQuestionFields(question).questionOrder}번
+            {GetQuestionFields(question).questionOrder}번
           </Badge>
         </div>
       </div>
@@ -225,7 +227,7 @@ function QuestionRow({
       {/* 보기 선택 */}
       <div className="flex-1">
         <OptionSelector
-          questionId={parseInt(getQuestionFields(question).questionId)}
+          questionId={parseInt(GetQuestionFields(question).questionId)}
           options={options}
           selectedValue={selectedAnswer}
           onValueChange={handleValueChange}
@@ -235,11 +237,11 @@ function QuestionRow({
       {/* 배점 및 난이도 표시 */}
       <div className="flex-shrink-0 text-right">
         <div className="text-sm font-semibold text-blue-600">
-          {getQuestionFields(question).points || DEFAULT_SCORE_PER_QUESTION}점
+          {GetQuestionFields(question).points || DEFAULT_SCORE_PER_QUESTION}점
         </div>
-        {getQuestionFields(question).difficulty && (
+        {GetQuestionFields(question).difficulty && (
           <div className="text-xs text-gray-500">
-            {getQuestionFields(question).difficulty}
+            {GetQuestionFields(question).difficulty}
           </div>
         )}
       </div>
@@ -259,7 +261,7 @@ type OMRCardHeaderProps = {
 function OMRCardHeader({ objectiveQuestions }: OMRCardHeaderProps) {
   const totalQuestions = objectiveQuestions.length;
   const totalScore = objectiveQuestions.reduce(
-    (sum, q) => sum + (getQuestionFields(q).points || 0),
+    (sum, q) => sum + (GetQuestionFields(q).points || 0),
     0,
   );
   const averageScore =
@@ -310,11 +312,12 @@ type ObjectiveTabProps = {
 export function ObjectiveTab({ examDetail, onNext }: ObjectiveTabProps) {
   // 객관식 문제만 필터링 (신규/기존 API 모두 지원)
   const objectiveQuestions = examDetail
-    ? extractObjectiveQuestions(examDetail)
+    ? ExtractObjectiveQuestions(examDetail)
     : [];
 
-  // 답안 상태 관리 (questionId를 키로 사용)
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  // 전역 객관식 답안 상태 (questionId -> 선택값)
+  const [answers, setAnswers] = useAtom(objectiveAnswersAtom);
+  const examId = useAtomValue(currentExamIdAtom);
 
   // 답안 변경 핸들러
   const handleAnswerChange = useCallback(
@@ -329,11 +332,9 @@ export function ObjectiveTab({ examDetail, onNext }: ObjectiveTabProps) {
 
   // 다음 단계로 이동 핸들러
   const handleNext = useCallback(() => {
-    console.log("객관식 답안:", answers);
-    console.log("객관식 문제 데이터:", objectiveQuestions);
-    // TODO: 답안 저장 API 호출
+    console.log("[ObjectiveTab] 객관식 답안 저장:", { examId, answers });
     onNext?.();
-  }, [answers, objectiveQuestions, onNext]);
+  }, [answers, onNext, examId]);
 
   // 답안 완성도 계산
   const totalQuestions = objectiveQuestions.length;
@@ -367,7 +368,7 @@ export function ObjectiveTab({ examDetail, onNext }: ObjectiveTabProps) {
           {/* 문제 목록 */}
           <div className="space-y-1">
             {objectiveQuestions.map((question) => {
-              const questionFields = getQuestionFields(question);
+              const questionFields = GetQuestionFields(question);
               return (
                 <QuestionRow
                   key={questionFields.questionId}
