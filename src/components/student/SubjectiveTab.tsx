@@ -802,7 +802,7 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
                 question.userAnswer ||
                 "",
               recognizedSolution: matchedAnswer
-                ? `${matchedAnswer.solution_process.extracted_text}
+                ? `${matchedAnswer.final_answer.extracted_text}
 
 최종 답: ${matchedAnswer.final_answer.extracted_text}`
                 : question.recognizedSolution,

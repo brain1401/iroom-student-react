@@ -37,10 +37,6 @@ export type AsyncResultResponse = {
   answers: Array<{
     question_number: number;
     question_label: string;
-    solution_process: {
-      extracted_text: string;
-      latex_formula?: string | null;
-    };
     final_answer: {
       extracted_text: string;
       latex_formula?: string | null;
@@ -249,7 +245,7 @@ export async function pollUntilComplete(
     onProgress?: (status: AsyncStatusResponse) => void; // 진행 상황 콜백
   },
 ): Promise<AsyncResultResponse> {
-  const interval = options?.interval || 2000; // 기본 2초
+  const interval = options?.interval || 500; // 기본 0.5초
   const maxAttempts = options?.maxAttempts || 60; // 기본 60회 (2분)
 
   const checkStatus = async (
@@ -279,7 +275,7 @@ export async function pollUntilComplete(
         throw new Error("텍스트 인식 작업이 실패했습니다");
       }
 
-      // 아직 처리 중인 경우 2초 후 재시도
+      // 아직 처리 중인 경우 0.5초 후 재시도
       await new Promise((resolve) => setTimeout(resolve, interval));
       return checkStatus(attempts + 1);
     } catch (error) {
