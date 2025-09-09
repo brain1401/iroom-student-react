@@ -34,7 +34,7 @@ export async function upsertStudent(
   authData: StudentAuthRequest,
 ): Promise<UpsertStudentResponse> {
   const response = await authApiClient.post<ApiResponse<UpsertStudentResponse>>(
-    "/api/auth/upsert-student",
+    "/auth/upsert-student",
     authData,
   );
 
