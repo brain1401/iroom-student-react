@@ -1,4 +1,5 @@
 import { baseApiClient } from "@/api/client";
+import { aiApiBaseUrl, apiBaseUrl } from "../client/apiClient";
 
 /**
  * 제출 및 채점 요청 타입
@@ -9,10 +10,6 @@ export type SubmitAndGradeRequest = {
   exam_id: string;
   /** 학생 ID (백엔드 정수 ID) */
   student_id: number | string;
-  /** 학생 이름 */
-  student_name?: string;
-  /** 학생 전화번호 */
-  student_phone?: string;
   /** 문제별 답안 목록 */
   answers: Array<{
     /** 문제 ID (UUID) */
@@ -76,18 +73,13 @@ export async function submitAndGrade(
   payload: SubmitAndGradeRequest,
   options?: { signal?: AbortSignal },
 ): Promise<SubmitAndGradeResponse> {
-  const gradingBaseUrl =
-    (import.meta as any).env?.VITE_GRADING_API_URL || "http://localhost:8000";
-
   const response = await baseApiClient.request<SubmitAndGradeResponse>({
     method: "POST",
     // FastAPI (외부 서비스) 절대 경로 사용
-    url: `${gradingBaseUrl}/grading/submit-and-grade`,
+    url: `${aiApiBaseUrl}/grading/submit-and-grade`,
     data: payload,
     signal: options?.signal,
   });
 
   return response.data;
 }
-
-

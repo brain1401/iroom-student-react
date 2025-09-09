@@ -765,71 +765,73 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
   );
 
   // 간단한 텍스트 인식 함수
-  const handleTextRecognition = useCallback(async (file: File) => {
-    try {
-      // 상태 초기화
-      resetRecognitionState();
-      setIsRecognizing(true);
-      setProgress(0);
-      setMessage("이미지를 업로드하고 있습니다...");
+  const handleTextRecognition = useCallback(
+    async (file: File) => {
+      try {
+        // 상태 초기화
+        resetRecognitionState();
+        setIsRecognizing(true);
+        setProgress(0);
+        setMessage("이미지를 업로드하고 있습니다...");
 
-      // 비동기 텍스트 인식 실행
-      const result = await recognizeTextAsync(file, {
-        priority: 5,
-        useCache: true,
-        onProgress: (message, progress) => {
-          setMessage(message);
-          setProgress(progress);
-        },
-      });
+        // 비동기 텍스트 인식 실행
+        const result = await recognizeTextAsync(file, {
+          priority: 5,
+          useCache: true,
+          onProgress: (message, progress) => {
+            setMessage(message);
+            setProgress(progress);
+          },
+        });
 
-      // 성공 시 결과 처리
-      setRecognitionResult(result);
+        // 성공 시 결과 처리
+        setRecognitionResult(result);
 
-      // 각 문제에 답안 자동 입력
-      setQuestionsState((prev) =>
-        prev.map((question) => {
-          const matchedAnswer = result.answers.find(
-            (a) =>
-              a.question_number === GetQuestionFields(question).questionOrder,
-          );
+        // 각 문제에 답안 자동 입력
+        setQuestionsState((prev) =>
+          prev.map((question) => {
+            const matchedAnswer = result.answers.find(
+              (a) =>
+                a.question_number === GetQuestionFields(question).questionOrder,
+            );
 
-          return {
-            ...question,
-            userAnswer:
-              matchedAnswer?.final_answer.extracted_text ||
-              question.userAnswer ||
-              "",
-            recognizedSolution: matchedAnswer
-              ? `${matchedAnswer.solution_process.extracted_text}
+            return {
+              ...question,
+              userAnswer:
+                matchedAnswer?.final_answer.extracted_text ||
+                question.userAnswer ||
+                "",
+              recognizedSolution: matchedAnswer
+                ? `${matchedAnswer.solution_process.extracted_text}
 
 최종 답: ${matchedAnswer.final_answer.extracted_text}`
-              : question.recognizedSolution,
-          };
-        }),
-      );
+                : question.recognizedSolution,
+            };
+          }),
+        );
 
-      setMessage("답안을 자동으로 입력했습니다!");
-      setIsRecognizing(false);
-
-    } catch (error) {
-      console.error("[SubjectiveTab] 텍스트 인식 실패:", error);
-      setRecognitionError(
-        error instanceof Error
-          ? error.message
-          : "텍스트 인식 중 오류가 발생했습니다.",
-      );
-      setIsRecognizing(false);
-    }
-  }, [
-    resetRecognitionState,
-    setIsRecognizing,
-    setProgress,
-    setMessage,
-    setRecognitionResult,
-    setRecognitionError,
-    setQuestionsState,
-  ]);
+        setMessage("답안을 자동으로 입력했습니다!");
+        setIsRecognizing(false);
+      } catch (error) {
+        console.error("[SubjectiveTab] 텍스트 인식 실패:", error);
+        setRecognitionError(
+          error instanceof Error
+            ? error.message
+            : "텍스트 인식 중 오류가 발생했습니다.",
+        );
+        setIsRecognizing(false);
+      }
+    },
+    [
+      resetRecognitionState,
+      setIsRecognizing,
+      setProgress,
+      setMessage,
+      setRecognitionResult,
+      setRecognitionError,
+      setQuestionsState,
+    ],
+  );
 
   // 파일 업로드 핸들러
   const handleFilesSelect = useCallback(
@@ -868,11 +870,14 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
 
     try {
       // examId 결정 (신규 API 우선, 없으면 atom)
-      const examId = (
-        IsExamQuestionsData((examDetail as ExamQuestionsData) || ({} as ExamQuestionsData))
+      const examId =
+        (IsExamQuestionsData(
+          (examDetail as ExamQuestionsData) || ({} as ExamQuestionsData),
+        )
           ? (examDetail as ExamQuestionsData).examId
-          : undefined
-      ) || examIdFromAtom || "";
+          : undefined) ||
+        examIdFromAtom ||
+        "";
 
       if (!examId) {
         throw new Error("examId 없음: 제출 불가");
@@ -893,7 +898,9 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
         if (!studentName || !loggedInStudent?.birthDate || !studentPhone) {
           setIsSubmitting(false);
           setShowSubmissionModal(false);
-          window.alert("학생 정보가 불완전합니다. 이전 단계에서 다시 입력해주세요");
+          window.alert(
+            "학생 정보가 불완전합니다. 이전 단계에서 다시 입력해주세요",
+          );
           return;
         }
 
@@ -906,8 +913,8 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
         try {
           const upserted = await upsertStudent(authReq);
           // 전역 로그인 정보 갱신
-          const normalizedStudentId = (upserted as any).studentId ?? (upserted as any).id?.toString() ?? "";
-          const normalizedPhone = (upserted as any).phoneNumber ?? (upserted as any).phone ?? "";
+          const normalizedStudentId = upserted.id.toString();
+          const normalizedPhone = upserted.phone;
 
           setLoginInfo({
             studentId: normalizedStudentId,
@@ -940,7 +947,10 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
           answer_text: (q.userAnswer || "").trim(),
           answer_image_url: q.capturedImageUrl,
         }))
-        .filter((item) => (item.answer_text?.length || 0) > 0 || !!item.answer_image_url);
+        .filter(
+          (item) =>
+            (item.answer_text?.length || 0) > 0 || !!item.answer_image_url,
+        );
 
       // 객관식 답안 변환 (유효한 숫자 선택만 전송)
       const objectiveAnswersPayload = Object.entries(objectiveAnswers)
@@ -950,9 +960,15 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
             ? { question_id: questionId, selected_choice: parsed }
             : null;
         })
-        .filter((v): v is { question_id: string; selected_choice: number } => v !== null);
+        .filter(
+          (v): v is { question_id: string; selected_choice: number } =>
+            v !== null,
+        );
 
-      const mergedAnswers = [...subjectiveAnswersPayload, ...objectiveAnswersPayload];
+      const mergedAnswers = [
+        ...subjectiveAnswersPayload,
+        ...objectiveAnswersPayload,
+      ];
 
       if (mergedAnswers.length === 0) {
         throw new Error("제출할 답안이 없습니다");
@@ -970,8 +986,6 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
       const payload: SubmitAndGradeRequest = {
         exam_id: examId,
         student_id: studentIdNumber,
-        student_name: studentName,
-        student_phone: studentPhone,
         answers: mergedAnswers,
         force_grading: true,
         grading_options: {},
@@ -1149,11 +1163,7 @@ export function SubjectiveTab({ examDetail, onNext }: SubjectiveTabProps) {
 
       {/* 텍스트 인식 모달 */}
       <TextRecognitionModal
-        isVisible={
-          isRecognizing ||
-          !!recognitionResult ||
-          !!recognitionError
-        }
+        isVisible={isRecognizing || !!recognitionResult || !!recognitionError}
         isRecognizing={isRecognizing}
         progress={progress}
         message={message}

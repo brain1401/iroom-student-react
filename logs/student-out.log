@@ -38,3 +38,116 @@
 2025-09-08T20:45:53: > bun run .output/server/index.mjs -p 3011
 2025-09-08T20:45:53: 
 2025-09-08T20:45:53: Listening on http://127.0.0.1:3011/...
+2025-09-09T16:11:12: 
+2025-09-09T16:11:12: > start
+2025-09-09T16:11:12: > bun run .output/server/index.mjs -p 3011
+2025-09-09T16:11:12: 
+2025-09-09T16:11:12: Listening on http://127.0.0.1:3011/...
+2025-09-09T16:16:58: 폼 상태: {
+2025-09-09T16:16:58:   isFormValid: false,
+2025-09-09T16:16:58:   hasErrors: false,
+2025-09-09T16:16:58:   isSubmitting: false,
+2025-09-09T16:16:58:   currentGrade: "",
+2025-09-09T16:16:58:   currentBirth: "",
+2025-09-09T16:16:58:   birthLength: 0,
+2025-09-09T16:16:58:   isButtonDisabled: true,
+2025-09-09T16:16:58: }
+2025-09-09T16:26:47: 폼 상태: {
+2025-09-09T16:26:47:   isFormValid: false,
+2025-09-09T16:26:47:   hasErrors: false,
+2025-09-09T16:26:47:   isSubmitting: false,
+2025-09-09T16:26:47:   currentGrade: "",
+2025-09-09T16:26:47:   currentBirth: "",
+2025-09-09T16:26:47:   birthLength: 0,
+2025-09-09T16:26:47:   isButtonDisabled: true,
+2025-09-09T16:26:47: }
+2025-09-09T16:27:16: 폼 상태: {
+2025-09-09T16:27:16:   isFormValid: false,
+2025-09-09T16:27:16:   hasErrors: false,
+2025-09-09T16:27:16:   isSubmitting: false,
+2025-09-09T16:27:16:   currentGrade: "",
+2025-09-09T16:27:16:   currentBirth: "",
+2025-09-09T16:27:16:   birthLength: 0,
+2025-09-09T16:27:16:   isButtonDisabled: true,
+2025-09-09T16:27:16: }
+2025-09-09T16:34:38: 폼 상태: {
+2025-09-09T16:34:38:   isFormValid: false,
+2025-09-09T16:34:38:   hasErrors: false,
+2025-09-09T16:34:38:   isSubmitting: false,
+2025-09-09T16:34:38:   currentGrade: "",
+2025-09-09T16:34:38:   currentBirth: "",
+2025-09-09T16:34:38:   birthLength: 0,
+2025-09-09T16:34:38:   isButtonDisabled: true,
+2025-09-09T16:34:38: }
+2025-09-09T16:41:01: 폼 상태: {
+2025-09-09T16:41:01:   isFormValid: false,
+2025-09-09T16:41:01:   hasErrors: false,
+2025-09-09T16:41:01:   isSubmitting: false,
+2025-09-09T16:41:01:   currentGrade: "",
+2025-09-09T16:41:01:   currentBirth: "",
+2025-09-09T16:41:01:   birthLength: 0,
+2025-09-09T16:41:01:   isButtonDisabled: true,
+2025-09-09T16:41:01: }
+2025-09-09T16:41:22: 폼 상태: {
+2025-09-09T16:41:22:   isFormValid: false,
+2025-09-09T16:41:22:   hasErrors: false,
+2025-09-09T16:41:22:   isSubmitting: false,
+2025-09-09T16:41:22:   currentGrade: "",
+2025-09-09T16:41:22:   currentBirth: "",
+2025-09-09T16:41:22:   birthLength: 0,
+2025-09-09T16:41:22:   isButtonDisabled: true,
+2025-09-09T16:41:22: }
+2025-09-09T16:41:40: 폼 상태: {
+2025-09-09T16:41:40:   isFormValid: false,
+2025-09-09T16:41:40:   hasErrors: false,
+2025-09-09T16:41:40:   isSubmitting: false,
+2025-09-09T16:41:40:   currentGrade: "",
+2025-09-09T16:41:40:   currentBirth: "",
+2025-09-09T16:41:40:   birthLength: 0,
+2025-09-09T16:41:40:   isButtonDisabled: true,
+2025-09-09T16:41:40: }
+2025-09-09T16:41:55: 폼 상태: {
+2025-09-09T16:41:55:   isFormValid: false,
+2025-09-09T16:41:55:   hasErrors: false,
+2025-09-09T16:41:55:   isSubmitting: false,
+2025-09-09T16:41:55:   currentGrade: "",
+2025-09-09T16:41:55:   currentBirth: "",
+2025-09-09T16:41:55:   birthLength: 0,
+2025-09-09T16:41:55:   isButtonDisabled: true,
+2025-09-09T16:41:55: }
+2025-09-09T16:41:55: 폼 상태: {
+2025-09-09T16:41:55:   isFormValid: false,
+2025-09-09T16:41:55:   hasErrors: false,
+2025-09-09T16:41:55:   isSubmitting: false,
+2025-09-09T16:41:55:   currentGrade: "",
+2025-09-09T16:41:55:   currentBirth: "",
+2025-09-09T16:41:55:   birthLength: 0,
+2025-09-09T16:41:55:   isButtonDisabled: true,
+2025-09-09T16:41:55: }
+2025-09-09T16:42:00: 폼 상태: {
+2025-09-09T16:42:00:   isFormValid: false,
+2025-09-09T16:42:00:   hasErrors: false,
+2025-09-09T16:42:00:   isSubmitting: false,
+2025-09-09T16:42:00:   currentGrade: "",
+2025-09-09T16:42:00:   currentBirth: "",
+2025-09-09T16:42:00:   birthLength: 0,
+2025-09-09T16:42:00:   isButtonDisabled: true,
+2025-09-09T16:42:00: }
+2025-09-09T16:42:00: 폼 상태: {
+2025-09-09T16:42:00:   isFormValid: false,
+2025-09-09T16:42:00:   hasErrors: false,
+2025-09-09T16:42:00:   isSubmitting: false,
+2025-09-09T16:42:00:   currentGrade: "",
+2025-09-09T16:42:00:   currentBirth: "",
+2025-09-09T16:42:00:   birthLength: 0,
+2025-09-09T16:42:00:   isButtonDisabled: true,
+2025-09-09T16:42:00: }
+2025-09-09T17:03:28: 폼 상태: {
+2025-09-09T17:03:28:   isFormValid: false,
+2025-09-09T17:03:28:   hasErrors: false,
+2025-09-09T17:03:28:   isSubmitting: false,
+2025-09-09T17:03:28:   currentGrade: "",
+2025-09-09T17:03:28:   currentBirth: "",
+2025-09-09T17:03:28:   birthLength: 0,
+2025-09-09T17:03:28:   isButtonDisabled: true,
+2025-09-09T17:03:28: }

@@ -37,27 +37,19 @@ export type StudentInfo = {
  */
 export type UpsertStudentResponse = {
   /** 학생 고유 ID (자동 생성) */
-  studentId: string;
+  id: number;
   /** 학생 이름 */
   name: string;
   /** 생년월일 (YYYY-MM-DD 형식) */
   birthDate: string;
   /** 전화번호 (하이픈 포함) */
-  phoneNumber: string;
-  /** 학년 정보 (선택적) */
-  grade?: string;
-  /** 학생 번호 (선택적) */
-  studentNumber?: string;
-  /** 이메일 (선택적) */
-  email?: string;
-  /** 주소 (선택적) */
-  address?: string;
-  /** 학부모 전화번호 (선택적) */
-  parentPhone?: string;
+  phone: string;
   /** 생성일시 (ISO 8601 형식) */
   createdAt: string;
   /** 수정일시 (ISO 8601 형식) */
   updatedAt: string;
+  /** 새로운 학생 여부 */
+  newStudent: boolean;
 };
 
 /**

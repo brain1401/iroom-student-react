@@ -17,6 +17,8 @@ export class ApiError extends Error {
 
 export const apiBaseUrl = "https://iroomclass.com/api";
 
+export const aiApiBaseUrl = "https://ai.iroomclass.com/api";
+
 // 통합 API 클라이언트 생성
 const createApiClient = (): AxiosInstance => {
   const client = axios.create({
