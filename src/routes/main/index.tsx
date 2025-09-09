@@ -125,19 +125,17 @@ function MainPage() {
     <main className="min-h-screen bg-gray-50 dark:bg-slate-900">
       {/* 페이지 헤더 */}
       <div className="pt-8 pb-4 px-8">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          홈
-        </h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">홈</h1>
         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
           시험 응시 내역을 확인하고 관리하세요
         </p>
       </div>
 
-      {/* 최근 응시 시험 섹션 (상단) */}
-      <RecentExamsSection />
-
       {/* 전체 시험 이력 섹션 (하단) */}
       <ExamHistorySection />
+
+      {/* 최근 응시 시험 섹션 (상단) */}
+      <RecentExamsSection />
 
       {/* 로그아웃 버튼 */}
       <LogoutButton />
