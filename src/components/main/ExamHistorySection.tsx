@@ -78,21 +78,9 @@ function ExamHistoryCard({
           {isGraded && (
             <div className="flex items-center justify-between text-sm">
               <span className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
-                {totalScore >= 60 ? (
-                  <CheckCircle2 className="w-4 h-4 text-green-500" />
-                ) : (
-                  <XCircle className="w-4 h-4 text-red-500" />
-                )}
                 점수
               </span>
-              <span
-                className={cn(
-                  "font-bold",
-                  totalScore >= 60 ? "text-green-600" : "text-red-600",
-                )}
-              >
-                {totalScore}점
-              </span>
+              <span className="font-bold">{totalScore}점</span>
             </div>
           )}
         </div>
